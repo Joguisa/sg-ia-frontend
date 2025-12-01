@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nBuild base frontend architecture with Angular 17+ Standalone\n\nAdd foundational architecture for SG-IA frontend consuming PHP API:\n\n- Create environment configuration (dev & prod) pointing to API\n- Generate core models/interfaces for all API response types (23 files)\n- Implement HTTP services for Auth, Player, Game, Question, and Admin modules\n- Add error interceptor with 401/403/404/5xx handling\n- Create MainLayoutComponent (Standalone) with responsive sidebar/header/footer\n- Integrate global CSS with 600+ lines including:\n  - CSS variables for colors, spacing, typography, shadows\n  - Component styles (buttons, forms, cards, alerts, badges, tables)\n  - Utility classes (flexbox, grid, margin, padding, text, responsive)\n  - Accessibility features (focus states, print styles)\n- Update app.config.ts to provide HTTP client with interceptors\n- Document complete architecture in ARQUITECTURA_BASE.md\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

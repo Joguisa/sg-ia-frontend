@@ -1,0 +1,102 @@
+<div class="d-flex flex-column flex-root">
+  <!-- Main Page -->
+  <div class="page d-flex flex-row flex-column-fluid">
+    <!-- Sidebar/Aside -->
+    <div class="aside aside-extended bg-white" [class.aside-open]="sidebarOpen">
+      <!-- Aside Primary -->
+      <div class="aside-primary d-flex flex-column align-items-lg-center flex-row-auto">
+        <!-- Logo -->
+        <div class="aside-logo d-none d-lg-flex flex-column align-items-center flex-column-auto py-10">
+          <a routerLink="/" class="logo-link">
+            <span class="logo-text">SG-IA</span>
+          </a>
+        </div>
+
+        <!-- Navigation -->
+        <div class="aside-nav d-flex flex-column align-items-center flex-column-fluid w-100 pt-5 pt-lg-0">
+          <ul class="nav flex-column">
+            <li class="nav-item mb-3">
+              <a class="nav-link btn btn-custom btn-icon" routerLink="/game" title="Juego">
+                <span class="svg-icon svg-icon-2x">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 3C4.89543 3 4 3.89543 4 5V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V5C20 3.89543 19.1046 3 18 3H6ZM9 12H15V14H9V12Z" fill="black" />
+                  </svg>
+                </span>
+              </a>
+            </li>
+
+            <li class="nav-item mb-3">
+              <a class="nav-link btn btn-custom btn-icon" routerLink="/leaderboard" title="Clasificación">
+                <span class="svg-icon svg-icon-2x">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path opacity="0.3" d="M20 3H4C2.89543 3 2 3.89543 2 5V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V5C22 3.89543 21.1046 3 20 3Z" fill="black" />
+                    <path d="M5 9C5 8.44772 5.44772 8 6 8H7C7.55228 8 8 8.44772 8 9V17C8 17.5523 7.55228 18 7 18H6C5.44772 18 5 17.5523 5 17V9ZM10 6C10 5.44772 10.4477 5 11 5H12C12.5523 5 13 5.44772 13 6V17C13 17.5523 12.5523 18 12 18H11C10.4477 18 10 17.5523 10 17V6ZM15 12C15 11.4477 15.4477 11 16 11H17C17.5523 11 18 11.4477 18 12V17C18 17.5523 17.5523 18 17 18H16C15.4477 18 15 17.5523 15 17V12Z" fill="black" />
+                  </svg>
+                </span>
+              </a>
+            </li>
+
+            <li class="nav-item mb-3">
+              <a class="nav-link btn btn-custom btn-icon" routerLink="/profile" title="Mi Perfil">
+                <span class="svg-icon svg-icon-2x">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path opacity="0.3" d="M20 3H4C2.89543 3 2 3.89543 2 5V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V5C22 3.89543 21.1046 3 20 3Z" fill="black" />
+                    <path d="M5 9C5 7.89543 5.89543 7 7 7C8.10457 7 9 7.89543 9 9C9 10.1046 8.10457 11 7 11C5.89543 11 5 10.1046 5 9ZM14 16C14 15.4477 14.4477 15 15 15H19C19.5523 15 20 15.4477 20 16V18C20 18.5523 19.5523 19 19 19H15C14.4477 19 14 18.5523 14 18V16ZM5 13C5.55228 13 6 13.4477 6 14V18C6 18.5523 5.55228 19 5 19C4.44772 19 4 18.5523 4 18V14C4 13.4477 4.44772 13 5 13Z" fill="black" />
+                  </svg>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="aside-footer d-flex flex-column align-items-center flex-column-auto pt-5">
+          <div class="d-flex align-items-center mb-3" *ngIf="isAuthenticated$ | async">
+            <button (click)="logout()" class="btn btn-icon btn-custom" title="Cerrar sesión">
+              <span class="svg-icon svg-icon-2x">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path opacity="0.3" d="M19 22H5C4.4 22 4 21.6 4 21V3C4 2.4 4.4 2 5 2H14L14.5 6H19C19.6 6 20 6.4 20 7V21C20 21.6 19.6 22 19 22Z" fill="black" />
+                  <path d="M15.5 16.5C15.5 15.9 15.1 15.5 14.5 15.5H7V12.5H14.5C15.1 12.5 15.5 12.1 15.5 11.5V10.5C15.5 9.9 15.1 9.5 14.5 9.5H7C6.4 9.5 6 9.9 6 10.5V16.5C6 17.1 6.4 17.5 7 17.5H14.5C15.1 17.5 15.5 17.1 15.5 16.5Z" fill="black" />
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Wrapper -->
+    <div class="wrapper d-flex flex-column flex-row-fluid">
+      <!-- Header -->
+      <div class="header bg-white shadow-sm">
+        <div class="container-fluid d-flex align-items-center justify-content-between px-4 py-3">
+          <button class="btn btn-icon btn-custom d-lg-none" (click)="toggleSidebar()" id="kt_aside_toggle">
+            <span class="svg-icon svg-icon-2x">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="4" width="18" height="2" fill="black" />
+                <rect x="3" y="11" width="18" height="2" fill="black" />
+                <rect x="3" y="18" width="18" height="2" fill="black" />
+              </svg>
+            </span>
+          </button>
+          <h1 class="page-title mb-0">SG-IA - Sistema de Juego Inteligente</h1>
+          <div class="ms-auto"></div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="content flex-row-fluid">
+        <div class="container-fluid">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer bg-light text-center py-3 border-top">
+        <p class="mb-0 text-muted small">
+          &copy; 2024 SG-IA. Todos los derechos reservados.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
