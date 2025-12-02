@@ -4,6 +4,7 @@ import { GameBoardComponent } from './features/game/board/game-board.component';
 import { AdminLoginComponent } from './features/admin/login/admin-login.component';
 import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard.component';
 import { AdminQuestionsComponent } from './features/admin/questions/admin-questions.component';
+import { AdminSettingsComponent } from './features/admin/settings/admin-settings.component';
 import { PlayerProfileComponent } from './features/profile/player-profile.component';
 import { LeaderboardComponent } from './features/leaderboard/leaderboard.component';
 import { AdminGuard } from './core/guards/admin.guard';
@@ -75,7 +76,7 @@ export const routes: Routes = [
   {
     path: 'admin/settings',
     canActivate: [AdminGuard],
-    component: GameStartComponent,  // TODO: Replace with AdminSettingsComponent
+    component: AdminSettingsComponent,
     data: { title: 'Configuración de Administrador' }
   },
 

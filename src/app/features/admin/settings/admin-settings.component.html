@@ -1,0 +1,234 @@
+<div class="admin-settings-container">
+  <!-- Header with Navigation -->
+  <div class="settings-header">
+    <div class="header-content">
+      <div class="header-title">
+        <span class="ki-duotone ki-technology-4 fs-2x text-primary"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span><span class="path6"></span><span class="path7"></span></span>
+        <div class="header-text">
+          <h1>Configuración del Modelo IA</h1>
+          <p class="header-subtitle">Ajusta el prompt del sistema y parámetros de Gemini</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-sm btn-secondary" (click)="goToDashboard()">
+          <span class="ki-duotone ki-arrow-left"><span class="path1"></span><span class="path2"></span></span>
+          Volver al Dashboard
+        </button>
+        <button class="btn btn-sm btn-danger" (click)="logout()">
+          <span class="ki-duotone ki-exit-right"><span class="path1"></span><span class="path2"></span></span>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success & Error Messages -->
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <span class="ki-duotone ki-verify text-success"><span class="path1"></span><span class="path2"></span></span>
+      <span>{{ successMessage() }}</span>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger">
+      <span class="ki-duotone ki-information-5 text-danger"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando configuración...</p>
+    </div>
+  }
+
+  <!-- Settings Content -->
+  @if (!isLoading()) {
+    <div class="settings-content">
+      <!-- System Prompt Section -->
+      <div class="settings-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="ki-duotone ki-document-text fs-2x text-primary"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+            Instrucción del Sistema
+          </h2>
+          <p class="card-subtitle">Define la personalidad y reglas estrictas para la generación de preguntas con IA</p>
+        </div>
+
+        <div class="card-body">
+          <div class="form-group">
+            <label for="prompt-textarea" class="form-label">
+              System Prompt
+              <span class="required">*</span>
+            </label>
+            <p class="form-help">Este texto guía a Gemini en cómo generar preguntas. Sé específico y detallado.</p>
+
+            <textarea
+              id="prompt-textarea"
+              class="form-control form-textarea"
+              rows="12"
+              [(ngModel)]="promptText"
+              (change)="onPromptChange()"
+              [disabled]="isSaving()"
+              placeholder="Escribe el prompt del sistema aquí...">
+            </textarea>
+
+            <div class="textarea-footer">
+              <span class="char-count">{{ promptText().length }} caracteres</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Temperature Settings -->
+      <div class="settings-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="ki-duotone ki-thermometer fs-2x text-warning"><span class="path1"></span><span class="path2"></span></span>
+            Creatividad (Temperatura)
+          </h2>
+          <p class="card-subtitle">Controla el nivel de variabilidad en las respuestas de la IA</p>
+        </div>
+
+        <div class="card-body">
+          <div class="form-group">
+            <label for="temperature-slider" class="form-label">
+              Temperatura: <span class="temperature-value">{{ temperature().toFixed(1) }}</span>
+            </label>
+
+            <div class="temperature-info">
+              <div class="info-card">
+                <span class="info-label">Nivel:</span>
+                <span class="info-value">{{ getTemperatureLabel() }}</span>
+              </div>
+              <div class="info-card">
+                <span class="info-label">Descripción:</span>
+                <span class="info-value">{{ getTemperatureDescription() }}</span>
+              </div>
+            </div>
+
+            <!-- Slider -->
+            <div class="slider-container">
+              <span class="slider-label slider-min">
+                <span class="ki-duotone ki-arrow-left-alt text-danger"><span class="path1"></span><span class="path2"></span></span>
+                Preciso (0.0)
+              </span>
+
+              <input
+                id="temperature-slider"
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                [(ngModel)]="temperature"
+                (change)="onTemperatureChange()"
+                [disabled]="isSaving()"
+                class="form-range">
+
+              <span class="slider-label slider-max">
+                Creativo (1.0)
+                <span class="ki-duotone ki-arrow-right-alt text-success"><span class="path1"></span><span class="path2"></span></span>
+              </span>
+            </div>
+
+            <p class="form-help">
+              <strong>0.0 = Determinista:</strong> Respuestas idénticas y predecibles.
+              <br>
+              <strong>1.0 = Creativo:</strong> Máxima variedad y aleatoriedad.
+              <br>
+              <strong>Recomendado: 0.7</strong> (Balance entre precisión y diversidad)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <!-- Discard Changes -->
+        @if (hasChanges()) {
+          <button
+            class="btn btn-secondary btn-lg"
+            (click)="discardChanges()"
+            [disabled]="isSaving()">
+            <span class="ki-duotone ki-cross"><span class="path1"></span><span class="path2"></span></span>
+            Descartar Cambios
+          </button>
+        }
+
+        <!-- Reset to Default -->
+        <button
+          class="btn btn-warning btn-lg"
+          (click)="resetToDefault()"
+          [disabled]="isSaving()">
+          <span class="ki-duotone ki-reload"><span class="path1"></span><span class="path2"></span></span>
+          Restaurar Predeterminado
+        </button>
+
+        <!-- Save Changes -->
+        <button
+          class="btn btn-primary btn-lg"
+          (click)="saveChanges()"
+          [disabled]="!hasChanges() || isSaving()">
+          @if (!isSaving()) {
+            <span class="ki-duotone ki-save-2"><span class="path1"></span><span class="path2"></span></span>
+            Guardar Cambios
+          } @else {
+            <span class="spinner-small"></span>
+            Guardando...
+          }
+        </button>
+      </div>
+
+      <!-- Info Section -->
+      <div class="info-section">
+        <h3 class="info-title">
+          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          Información Importante
+        </h3>
+
+        <div class="info-cards">
+          <div class="info-item">
+            <span class="info-icon">
+              <span class="ki-duotone ki-bulb-on fs-2x text-warning"><span class="path1"></span><span class="path2"></span></span>
+            </span>
+            <div class="info-text">
+              <h4>Cambios Inmediatos</h4>
+              <p>Los cambios en el prompt afectarán a todas las nuevas preguntas generadas, no a las existentes.</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="info-icon">
+              <span class="ki-duotone ki-shield-tick fs-2x text-success"><span class="path1"></span><span class="path2"></span></span>
+            </span>
+            <div class="info-text">
+              <h4>Validación Estricta</h4>
+              <p>Las preguntas generadas se validan según las reglas del prompt. Sé claro y específico.</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="info-icon">
+              <span class="ki-duotone ki-flask fs-2x text-info"><span class="path1"></span><span class="path2"></span></span>
+            </span>
+            <div class="info-text">
+              <h4>Experimenta</h4>
+              <p>Prueba diferentes valores de temperatura para encontrar el balance ideal para tu caso.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="settings-footer">
+        <p class="footer-text">
+          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          Última actualización: En tiempo real | Modelo: Gemini API
+        </p>
+      </div>
+    </div>
+  }
+</div>
