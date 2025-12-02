@@ -10,6 +10,11 @@ import {
   LeaderboardResponse,
   SessionStatsResponse
 } from '../models/game';
+import {
+  GameSession,
+  QuestionFullResponse,
+  AnswerSubmitResponse
+} from '../models/game/game-flow.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -17,31 +22,53 @@ import {
 export class GameService {
   constructor(private http: HttpClient) {}
 
-  startSession(playerId: number, startDifficulty?: number): Observable<SessionResponse> {
+  /**
+   * Inicia una nueva sesión de juego
+   */
+  startSession(playerId: number, startDifficulty: number = 1.0): Observable<GameSession> {
     const body = {
       player_id: playerId,
-      ...(startDifficulty !== undefined && { start_difficulty: startDifficulty })
+      start_difficulty: startDifficulty
     };
-    return this.http.post<SessionResponse>(
+    return this.http.post<GameSession>(
       `${environment.apiBaseUrl}${environment.apiEndpoints.games.start}`,
       body
     );
   }
 
-  getNextQuestion(categoryId: number, difficulty: number): Observable<QuestionResponse> {
+  /**
+   * Obtiene la siguiente pregunta con todas sus opciones
+   */
+  getNextQuestion(
+    sessionId: number,
+    difficulty: number,
+    categoryId: number = 1
+  ): Observable<QuestionFullResponse> {
     const params = `category_id=${categoryId}&difficulty=${difficulty}`;
-    return this.http.get<QuestionResponse>(
+    return this.http.get<QuestionFullResponse>(
       `${environment.apiBaseUrl}${environment.apiEndpoints.games.next}?${params}`
     );
   }
 
+  /**
+   * Envía la respuesta del jugador y recibe feedback educativo
+   */
   submitAnswer(
     sessionId: number,
-    answerData: AnswerRequest
-  ): Observable<AnswerResponse> {
-    return this.http.post<AnswerResponse>(
+    questionId: number,
+    selectedOptionId: number | null,
+    isCorrect: boolean,
+    timeTaken: number
+  ): Observable<AnswerSubmitResponse> {
+    const body = {
+      question_id: questionId,
+      is_correct: isCorrect,
+      time_taken: timeTaken,
+      selected_option_id: selectedOptionId
+    };
+    return this.http.post<AnswerSubmitResponse>(
       `${environment.apiBaseUrl}${environment.apiEndpoints.games.answer(sessionId)}`,
-      answerData
+      body
     );
   }
 

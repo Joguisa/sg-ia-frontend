@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { GameStartComponent } from './features/game/start/game-start.component';
+import { GameBoardComponent } from './features/game/board/game-board.component';
 import { AdminLoginComponent } from './features/admin/login/admin-login.component';
 import { AdminGuard } from './core/guards/admin.guard';
 
@@ -17,13 +18,13 @@ export const routes: Routes = [
     component: GameStartComponent
   },
 
-  // Public - Game Board (placeholder)
+  // Public - Game Board
   {
     path: 'game',
     children: [
       {
         path: 'board',
-        component: GameStartComponent  // TODO: Replace with GameBoardComponent
+        component: GameBoardComponent
       }
     ]
   },
