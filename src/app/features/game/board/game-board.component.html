@@ -2,8 +2,8 @@
   <!-- HEADER -->
   <div class="game-header">
     <div class="header-left">
-      <div class="player-info">
-        <i class="ki-duotone ki-profile-circle text-primary fs-2 me-2"><span class="path1"></span><span class="path2"></span></i>
+      <div class="player-info d-flex align-items-center gap-2">
+        <span class="ki-duotone ki-profile-circle fs-2 text-primary"><span class="path1"></span><span class="path2"></span></span>
         <span class="player-name">{{ playerName() }}</span>
       </div>
     </div>
@@ -19,13 +19,13 @@
     </div>
 
     <div class="header-right">
-      <div class="stats-group">
-        <div class="stat-item lives">
-          <i class="ki-duotone ki-rescue text-danger fs-1 me-2"><span class="path1"></span><span class="path2"></span></i>
+      <div class="stats-group d-flex align-items-center gap-4">
+        <div class="stat-item d-flex align-items-center gap-2">
+          <span class="ki-duotone ki-rescue fs-1 text-danger me-2"><span class="path1"></span><span class="path2"></span></span>
           <span class="lives-value">{{ lives() }}/3</span>
         </div>
-        <div class="stat-item score">
-          <i class="ki-duotone ki-cup text-warning fs-1 me-2"><span class="path1"></span><span class="path2"></span></i>
+        <div class="stat-item d-flex align-items-center gap-2">
+          <span class="ki-duotone ki-cup fs-1 text-warning me-2"><span class="path1"></span><span class="path2"></span></span>
           <span class="score-value">{{ score() }}</span>
         </div>
       </div>
@@ -50,8 +50,8 @@
           <div class="question-card">
             <div class="question-header">
               <span class="question-number">Pregunta #{{ questionCount() }}</span>
-              <div [class]="'timer ' + getTimerColor()">
-                <i class="ki-duotone ki-electronic-clock text-primary me-1"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></i>
+              <div [class]="'timer ' + getTimerColor()" class="d-flex align-items-center gap-2">
+                <span class="ki-duotone ki-time fs-1 text-primary me-2"><span class="path1"></span><span class="path2"></span></span>
                 <span class="timer-value">{{ questionTimer() }}s</span>
               </div>
             </div>
@@ -100,11 +100,11 @@
         <!-- Feedback Card -->
         <div class="feedback-card" [ngClass]="isAnswerCorrect() ? 'success' : 'error'">
           <!-- Result Icon and Status -->
-          <div class="feedback-header">
+          <div class="feedback-header d-flex flex-column align-items-center gap-3">
             @if (isAnswerCorrect()) {
-              <i class="ki-duotone ki-verify fs-3x text-success"><span class="path1"></span><span class="path2"></span></i>
+              <span class="ki-duotone ki-verify fs-2x text-success"><span class="path1"></span><span class="path2"></span></span>
             } @else {
-              <i class="ki-duotone ki-cross-circle fs-3x text-danger"><span class="path1"></span><span class="path2"></span></i>
+              <span class="ki-duotone ki-cross fs-2x text-danger"><span class="path1"></span><span class="path2"></span></span>
             }
             <h2 class="result-title">
               {{ isAnswerCorrect() ? '¡Correcto!' : 'Respuesta Incorrecta' }}
@@ -122,8 +122,8 @@
 
           <!-- Explanation Section (CRÍTICO - Educativo) -->
           <div class="explanation-section">
-            <span class="explanation-label">
-              <i class="ki-duotone ki-book text-primary me-1"><span class="path1"></span><span class="path2"></span></i>
+            <span class="explanation-label d-flex align-items-center gap-2">
+              <span class="ki-duotone ki-book fs-1 text-primary"><span class="path1"></span><span class="path2"></span></span>
               Explicación Médica:
             </span>
             <p class="explanation-text">
@@ -172,8 +172,8 @@
     <!-- GAME OVER STATE -->
     @if (gameState() === 'gameover') {
       <div class="gameover-screen">
-        <div class="gameover-card">
-          <i class="ki-duotone ki-game-controller text-warning fs-3x mb-3"><span class="path1"></span><span class="path2"></span></i>
+        <div class="gameover-card d-flex flex-column align-items-center text-center">
+          <span class="ki-duotone ki-game-controller fs-2x text-warning mb-3"><span class="path1"></span><span class="path2"></span></span>
           <h2 class="gameover-title">¡Fin del Juego!</h2>
           <p class="gameover-message">
             Completaste {{ questionCount() }} preguntas con una puntuación de {{ score() }} puntos.
