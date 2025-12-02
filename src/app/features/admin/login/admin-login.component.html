@@ -10,7 +10,10 @@
     <div class="login-card">
       <!-- Header -->
       <div class="card-header">
-        <h1 class="login-title">🔐 Panel de Control</h1>
+        <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
+          <span class="ki-duotone ki-security-user fs-2x text-primary"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        </div>
+        <h1 class="login-title">Panel de Control</h1>
         <p class="login-subtitle">Acceso administrativo</p>
       </div>
 
@@ -20,7 +23,7 @@
         <div class="form-group">
           <label for="email" class="form-label">Correo Electrónico</label>
           <div class="input-wrapper">
-            <span class="input-icon">✉️</span>
+            <span class="ki-duotone ki-sms text-primary"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
             <input
               type="email"
               id="email"
@@ -40,7 +43,7 @@
         <div class="form-group">
           <label for="password" class="form-label">Contraseña</label>
           <div class="input-wrapper">
-            <span class="input-icon">🔒</span>
+            <span class="ki-duotone ki-lock text-primary"><span class="path1"></span><span class="path2"></span></span>
             <input
               [type]="showPassword() ? 'text' : 'password'"
               id="password"
@@ -55,19 +58,24 @@
             />
             <button
               type="button"
-              class="toggle-password"
+              class="toggle-password d-flex align-items-center"
               (click)="togglePasswordVisibility()"
               [disabled]="isLoading()"
               title="Mostrar/Ocultar contraseña"
             >
-              {{ showPassword() ? '👁️' : '👁️‍🗨️' }}
+              @if (showPassword()) {
+                <span class="ki-duotone ki-eye text-primary"><span class="path1"></span><span class="path2"></span></span>
+              } @else {
+                <span class="ki-duotone ki-eye-off text-muted"><span class="path1"></span><span class="path2"></span></span>
+              }
             </button>
           </div>
         </div>
 
         <!-- Error Message -->
-        <div *ngIf="errorMessage()" class="alert alert-danger">
-          ⚠️ {{ errorMessage() }}
+        <div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-start gap-2">
+          <span class="ki-duotone ki-information-5 text-danger mt-1"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          <span>{{ errorMessage() }}</span>
         </div>
 
         <!-- Submit Button -->
@@ -104,15 +112,15 @@
     <!-- Info box -->
     <div class="info-box">
       <div class="info-item">
-        <span class="info-icon">📊</span>
+        <span class="ki-duotone ki-chart-line-2 fs-2x text-info"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
         <span class="info-text">Gestión de preguntas</span>
       </div>
       <div class="info-item">
-        <span class="info-icon">⚙️</span>
+        <span class="ki-duotone ki-setting-3 fs-2x text-warning"><span class="path1"></span><span class="path2"></span></span>
         <span class="info-text">Configuración de IA</span>
       </div>
       <div class="info-item">
-        <span class="info-icon">📈</span>
+        <span class="ki-duotone ki-graph-up fs-2x text-success"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
         <span class="info-text">Análisis de datos</span>
       </div>
     </div>
