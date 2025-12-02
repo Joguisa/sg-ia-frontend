@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { GameStartComponent } from './features/game/start/game-start.component';
 import { GameBoardComponent } from './features/game/board/game-board.component';
 import { AdminLoginComponent } from './features/admin/login/admin-login.component';
+import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard.component';
 import { PlayerProfileComponent } from './features/profile/player-profile.component';
 import { AdminGuard } from './core/guards/admin.guard';
 
@@ -56,7 +57,7 @@ export const routes: Routes = [
   {
     path: 'admin/dashboard',
     canActivate: [AdminGuard],
-    component: GameStartComponent,  // TODO: Replace with AdminDashboardComponent
+    component: AdminDashboardComponent,
     data: { title: 'Panel de Administrador' }
   },
 

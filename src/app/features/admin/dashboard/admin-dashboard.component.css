@@ -1,0 +1,698 @@
+/* ============================================================================
+   ADMIN DASHBOARD - Main Container
+   ============================================================================ */
+.admin-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ============================================================================
+   HEADER WITH LOGOUT
+   ============================================================================ */
+.dashboard-header {
+  background: linear-gradient(90deg, #0f3460 0%, #1a1a2e 100%);
+  padding: 30px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  color: white;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.header-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-logout {
+  padding: 10px 20px;
+  background: rgba(255, 59, 48, 0.9);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background: rgba(255, 59, 48, 1);
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-logout .ki-duotone {
+  font-size: 16px;
+}
+
+/* ============================================================================
+   LOADING STATE
+   ============================================================================ */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+  gap: 20px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #00bcd4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ============================================================================
+   ERROR STATE
+   ============================================================================ */
+.error-container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.alert {
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.alert-danger {
+  background-color: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #ff9999;
+}
+
+.alert strong {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.alert p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ============================================================================
+   DASHBOARD CONTENT
+   ============================================================================ */
+.dashboard-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* ============================================================================
+   SECTION TITLES
+   ============================================================================ */
+.section-title {
+  margin: 0 0 24px;
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(0, 188, 212, 0.3);
+}
+
+/* ============================================================================
+   KPI SECTION & GRID
+   ============================================================================ */
+.kpi-section {
+  margin-bottom: 50px;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.kpi-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* KPI Colors */
+.kpi-players::before {
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.kpi-sessions::before {
+  background: linear-gradient(90deg, #f093fb, #f5576c);
+}
+
+.kpi-questions::before {
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+}
+
+.kpi-pending::before {
+  background: linear-gradient(90deg, #fa709a, #fee140);
+}
+
+.kpi-icon {
+  flex: 0 0 auto;
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpi-players .kpi-icon {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.kpi-sessions .kpi-icon {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.kpi-questions .kpi-icon {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.kpi-pending .kpi-icon {
+  background: linear-gradient(135deg, #fa709a, #fee140);
+}
+
+.kpi-content {
+  flex: 1;
+}
+
+.kpi-label {
+  margin: 0 0 8px;
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #7f8c8d;
+  letter-spacing: 0.5px;
+}
+
+.kpi-value {
+  margin: 0 0 4px;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.kpi-trend {
+  margin: 0;
+  font-size: 12px;
+  color: #95a5a6;
+}
+
+/* ============================================================================
+   QUICK ACTIONS SECTION
+   ============================================================================ */
+.quick-actions-section {
+  margin-bottom: 50px;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.action-card {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+}
+
+.action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f5f7fa, #f0f2f5);
+}
+
+.action-icon .ki-duotone {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.text-primary {
+  color: #667eea;
+}
+
+.text-warning {
+  color: #f39c12;
+}
+
+.action-content {
+  flex: 1;
+}
+
+.action-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.action-description {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #7f8c8d;
+  line-height: 1.6;
+}
+
+.btn-action {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.btn-action:hover {
+  transform: translateX(4px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.btn-action .ki-duotone {
+  font-size: 16px;
+}
+
+/* ============================================================================
+   ANALYTICS SECTION
+   ============================================================================ */
+.analytics-section {
+  margin-bottom: 40px;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.analytics-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-header {
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+  padding: 20px;
+  border-bottom: 1px solid #e8ecf1;
+}
+
+.analytics-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.analytics-title .ki-duotone {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.analytics-subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: #95a5a6;
+  font-weight: 500;
+}
+
+.analytics-content {
+  padding: 20px;
+}
+
+.questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.question-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.question-item:hover {
+  background: #f0f2f5;
+  border-left-color: #667eea;
+}
+
+.question-rank {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.question-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.question-text {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a2e;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.question-meta {
+  margin: 0;
+  font-size: 11px;
+  color: #95a5a6;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.question-meta .ki-duotone {
+  font-size: 10px;
+}
+
+.question-rate {
+  flex: 0 0 auto;
+  width: 60px;
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px;
+  background: white;
+}
+
+.rate-value {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.rate-label {
+  margin: 2px 0 0;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #95a5a6;
+  font-weight: 600;
+}
+
+/* Success Rate Colors */
+.success-rate-success-high {
+  background: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+}
+
+.success-rate-success-medium {
+  background: rgba(243, 156, 18, 0.1);
+  color: #f39c12;
+}
+
+.success-rate-success-low {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.no-data {
+  text-align: center;
+  color: #95a5a6;
+  font-size: 14px;
+  padding: 30px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+/* ============================================================================
+   DASHBOARD FOOTER
+   ============================================================================ */
+.dashboard-footer {
+  text-align: center;
+  padding: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  margin-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-text {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.footer-text .ki-duotone {
+  font-size: 14px;
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+.text-white {
+  color: white !important;
+}
+
+.text-danger {
+  color: #e74c3c !important;
+}
+
+.text-success {
+  color: #27ae60 !important;
+}
+
+.fs-2x {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.fs-3x {
+  font-size: 32px;
+  line-height: 1;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+@media (max-width: 1024px) {
+  .dashboard-content {
+    padding: 30px 16px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-title h1 {
+    font-size: 24px;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .btn-logout {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dashboard-content {
+    padding: 20px 16px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .kpi-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .kpi-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .kpi-value {
+    font-size: 28px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .action-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .action-icon .ki-duotone {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-title h1 {
+    font-size: 20px;
+  }
+
+  .header-title {
+    gap: 12px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .kpi-value {
+    font-size: 24px;
+  }
+
+  .kpi-label {
+    font-size: 12px;
+  }
+
+  .question-text {
+    font-size: 12px;
+  }
+
+  .question-rank {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
