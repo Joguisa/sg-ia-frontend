@@ -59,31 +59,37 @@ export class AdminLoginComponent {
     this.authService.login(this.email().trim(), this.password()).subscribe({
       next: (response: LoginResponse) => {
         // DEBUG: Log del response
-        console.log('Response del servidor:', response);
+        console.log('[AdminLogin] Response del servidor:', response);
 
         // Verificar que la respuesta sea exitosa y contenga el token
         if (response.ok && response.token) {
-          console.log('Login exitoso, token recibido:', response.token);
+          console.log('[AdminLogin] Login exitoso, token recibido:', response.token);
 
-          // Guardar token explícitamente
+          // PASO 1: Guardar token - ESTO dispara el BehaviorSubject automáticamente
+          // vía el tap() operator en AuthService.login()
+          // PERO también lo hacemos explícitamente para asegurar sincronización
           this.authService.setToken(response.token);
 
-          console.log('Login exitoso, redirigiendo...');
+          // PEQUEÑO DELAY para asegurar que el observable haya emitido
+          // (Generalmente no es necesario, pero útil para edge cases)
+          setTimeout(() => {
+            console.log('[AdminLogin] Token establecido, iniciando navegación...');
 
-          // Redirigir al dashboard admin
-          this.router.navigate(['/admin/dashboard']).then((success) => {
-            if (success) {
-              console.log('Redirección a /admin/dashboard completada');
-            } else {
-              console.error('Error: No se pudo redirigir a /admin/dashboard');
-            }
-          });
+            // PASO 2: Navegar al dashboard - El AdminGuard esperará el observable
+            this.router.navigate(['/admin/dashboard']).then((success) => {
+              if (success) {
+                console.log('[AdminLogin] ✅ Redirección a /admin/dashboard completada');
+              } else {
+                console.error('[AdminLogin] ❌ Error: No se pudo redirigir a /admin/dashboard');
+              }
+            });
 
-          this.isLoading.set(false);
+            this.isLoading.set(false);
+          }, 50); // 50ms delay para permitir que el observable emita
         } else {
           // Mostrar error si response.ok es false
           const errorMsg = response.error || 'Credenciales inválidas. Intenta de nuevo.';
-          console.error('Login fallido:', errorMsg);
+          console.error('[AdminLogin] Login fallido:', errorMsg);
           this.errorMessage.set(errorMsg);
           this.isLoading.set(false);
         }

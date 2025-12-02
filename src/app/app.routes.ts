@@ -7,7 +7,16 @@ import { AdminGuard } from './core/guards/admin.guard';
 export const routes: Routes = [
   // ============================================================================
   // TIER 1: PUBLIC SPECIFIC ROUTES (Exact matches first - most specific)
+  // Orden: Más específicas al inicio (ej: admin/login antes de admin/*)
   // ============================================================================
+
+  // Admin - Login (Public access needed to login)
+  // NOTA: DEBE estar ANTES de otros /admin/* para evitar conflictos
+  {
+    path: 'admin/login',
+    component: AdminLoginComponent,
+    data: { title: 'Acceso de Administrador' }
+  },
 
   // Public - Player Entry
   {
@@ -37,15 +46,9 @@ export const routes: Routes = [
     data: { title: 'Mi Perfil' }
   },
 
-  // Admin - Login (Public access needed to login)
-  {
-    path: 'admin/login',
-    component: AdminLoginComponent,
-    data: { title: 'Acceso de Administrador' }
-  },
-
   // ============================================================================
   // TIER 2: PROTECTED ADMIN ROUTES (with AdminGuard)
+  // NOTA: Estas rutas tienen canActivate [AdminGuard] que espera async
   // ============================================================================
 
   // Admin - Dashboard (Protected)
@@ -74,6 +77,7 @@ export const routes: Routes = [
 
   // ============================================================================
   // TIER 3: ROOT REDIRECT (Default route)
+  // NOTA: pathMatch: 'full' asegura que solo "/" sea redirigido, no "/foo"
   // ============================================================================
 
   {
@@ -83,7 +87,8 @@ export const routes: Routes = [
   },
 
   // ============================================================================
-  // TIER 4: WILDCARD - 404 FALLBACK (MUST BE LAST)
+  // TIER 4: WILDCARD - 404 FALLBACK (MUST BE LAST!!!)
+  // NOTA: NUNCA mover esta ruta antes - captura TODAS las rutas desconocidas
   // ============================================================================
 
   {
