@@ -1,0 +1,102 @@
+<div class="game-start-container">
+  <!-- Background decoration -->
+  <div class="background-decoration"></div>
+
+  <!-- Main content -->
+  <div class="content-wrapper">
+    <div class="card game-card">
+      <!-- Header -->
+      <div class="card-header text-center">
+        <h1 class="game-title">🏥 Bienvenido al Reto de Salud</h1>
+        <p class="game-subtitle">Pon a prueba tus conocimientos sobre salud e inteligencia artificial</p>
+      </div>
+
+      <!-- Form -->
+      <form (ngSubmit)="onSubmit()" class="game-form">
+        <!-- Name Input -->
+        <div class="form-group">
+          <label for="name" class="form-label">¿Cuál es tu nombre?</label>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            [(ngModel)]="name"
+            [ngModelOptions]="{ updateOn: 'blur' }"
+            name="name"
+            placeholder="Ej: Juan Pérez"
+            [disabled]="isLoading()"
+            required
+          />
+        </div>
+
+        <!-- Age Input -->
+        <div class="form-group">
+          <label for="age" class="form-label">¿Cuántos años tienes?</label>
+          <input
+            type="number"
+            id="age"
+            class="form-control"
+            [(ngModel)]="age"
+            [ngModelOptions]="{ updateOn: 'blur' }"
+            name="age"
+            placeholder="Ej: 25"
+            min="1"
+            max="120"
+            [disabled]="isLoading()"
+            required
+          />
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage()" class="alert alert-danger">
+          {{ errorMessage() }}
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="btn btn-primary btn-play"
+          [disabled]="isLoading()"
+        >
+          <span *ngIf="!isLoading()" class="btn-text">
+            🎮 ¡Jugar Ahora!
+          </span>
+          <span *ngIf="isLoading()" class="btn-text">
+            <span class="spinner"></span> Iniciando...
+          </span>
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        <p class="footer-text">
+          ¿Eres administrador?
+          <button
+            type="button"
+            class="link-button"
+            (click)="goToAdmin()"
+            [disabled]="isLoading()"
+          >
+            Ingresa aquí
+          </button>
+        </p>
+      </div>
+    </div>
+
+    <!-- Features section -->
+    <div class="features-section">
+      <div class="feature-item">
+        <span class="feature-icon">⚡</span>
+        <p class="feature-text">Preguntas dinámicas</p>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">📈</span>
+        <p class="feature-text">Dificultad adaptativa</p>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🏆</span>
+        <p class="feature-text">Compite en el ranking</p>
+      </div>
+    </div>
+  </div>
+</div>
