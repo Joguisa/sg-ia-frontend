@@ -43,10 +43,19 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return this.tokenSubject.value;
+    // Read directly from localStorage to ensure we always get the latest value
+    const token = localStorage.getItem('token');
+
+    // Keep BehaviorSubject in sync if there's a mismatch
+    if (token !== this.tokenSubject.value) {
+      this.tokenSubject.next(token);
+    }
+
+    return token;
   }
 
   isAuthenticated(): boolean {
-    return !!this.tokenSubject.value;
+    const token = this.getToken();
+    return !!token;
   }
 }
