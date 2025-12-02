@@ -3,6 +3,7 @@ import { GameStartComponent } from './features/game/start/game-start.component';
 import { GameBoardComponent } from './features/game/board/game-board.component';
 import { AdminLoginComponent } from './features/admin/login/admin-login.component';
 import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard.component';
+import { AdminQuestionsComponent } from './features/admin/questions/admin-questions.component';
 import { PlayerProfileComponent } from './features/profile/player-profile.component';
 import { LeaderboardComponent } from './features/leaderboard/leaderboard.component';
 import { AdminGuard } from './core/guards/admin.guard';
@@ -66,7 +67,7 @@ export const routes: Routes = [
   {
     path: 'admin/questions',
     canActivate: [AdminGuard],
-    component: GameStartComponent,  // TODO: Replace with AdminQuestionsComponent
+    component: AdminQuestionsComponent,
     data: { title: 'Gestión de Preguntas' }
   },
 

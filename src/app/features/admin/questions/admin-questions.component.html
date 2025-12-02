@@ -1,0 +1,317 @@
+<div class="admin-questions-container">
+  <!-- Header with Navigation -->
+  <div class="questions-header">
+    <div class="header-content">
+      <div class="header-title">
+        <span class="ki-duotone ki-file-text fs-2x text-primary"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <div class="header-text">
+          <h1>Gestión de Preguntas</h1>
+          <p class="header-subtitle">Administra la base de datos de preguntas y genera nuevas con IA</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-sm btn-secondary" (click)="goToDashboard()">
+          <span class="ki-duotone ki-arrow-left"><span class="path1"></span><span class="path2"></span></span>
+          Volver al Dashboard
+        </button>
+        <button class="btn btn-sm btn-danger" (click)="logout()">
+          <span class="ki-duotone ki-exit-right"><span class="path1"></span><span class="path2"></span></span>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success & Error Messages -->
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <span class="ki-duotone ki-verify text-success"><span class="path1"></span><span class="path2"></span></span>
+      <span>{{ successMessage() }}</span>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger">
+      <span class="ki-duotone ki-information-5 text-danger"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando preguntas...</p>
+    </div>
+  }
+
+  <!-- Main Content -->
+  @if (!isLoading()) {
+    <div class="questions-content">
+      <!-- AI Generator Section -->
+      <div class="generator-section">
+        <div class="generator-header" (click)="toggleGenerator()">
+          <div class="generator-title">
+            <span class="ki-duotone ki-spark fs-2x text-warning"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+            <h2>Generador Automático (Gemini AI)</h2>
+          </div>
+          <button class="btn-toggle" [ngClass]="{ 'open': isGeneratorOpen() }">
+            <span class="ki-duotone ki-arrow-down"><span class="path1"></span><span class="path2"></span></span>
+          </button>
+        </div>
+
+        @if (isGeneratorOpen()) {
+          <div class="generator-content">
+            <div class="form-grid">
+              <!-- Categoría -->
+              <div class="form-group">
+                <label for="gen-category">Categoría</label>
+                <select
+                  id="gen-category"
+                  class="form-control"
+                  [(ngModel)]="generatorCategoryId"
+                  [disabled]="isGenerating()">
+                  <option [value]="null">Selecciona una categoría...</option>
+                  @for (cat of categories(); track cat.id) {
+                    <option [value]="cat.id">{{ cat.name }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Dificultad -->
+              <div class="form-group">
+                <label for="gen-difficulty">Dificultad (1-5)</label>
+                <div class="difficulty-input">
+                  <input
+                    id="gen-difficulty"
+                    type="range"
+                    min="1"
+                    max="5"
+                    [(ngModel)]="generatorDifficulty"
+                    [disabled]="isGenerating()"
+                    class="form-range">
+                  <span class="difficulty-value">{{ generatorDifficulty() }}</span>
+                </div>
+              </div>
+
+              <!-- Cantidad -->
+              <div class="form-group">
+                <label for="gen-quantity">Cantidad (1-50)</label>
+                <input
+                  id="gen-quantity"
+                  type="number"
+                  min="1"
+                  max="50"
+                  [(ngModel)]="generatorQuantity"
+                  [disabled]="isGenerating()"
+                  class="form-control">
+              </div>
+            </div>
+
+            <!-- Mensaje de estado -->
+            @if (generationMessage()) {
+              <div class="generation-message">
+                <span>{{ generationMessage() }}</span>
+              </div>
+            }
+
+            <!-- Botón Generar -->
+            <button
+              class="btn btn-primary btn-generate"
+              (click)="generateQuestionsWithAI()"
+              [disabled]="isGenerating()">
+              @if (!isGenerating()) {
+                <span class="ki-duotone ki-spark"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                Generar con IA
+              } @else {
+                <span class="spinner-small"></span>
+                Generando...
+              }
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <h3 class="filters-title">Filtros y Búsqueda</h3>
+        <div class="filters-grid">
+          <!-- Search -->
+          <div class="filter-item">
+            <label>Búsqueda</label>
+            <div class="search-input">
+              <span class="ki-duotone ki-magnifier"><span class="path1"></span><span class="path2"></span></span>
+              <input
+                type="text"
+                placeholder="Buscar por ID o texto..."
+                [(ngModel)]="searchTerm"
+                class="form-control">
+            </div>
+          </div>
+
+          <!-- Category Filter -->
+          <div class="filter-item">
+            <label>Categoría</label>
+            <select [(ngModel)]="selectedCategory" class="form-control">
+              <option [value]="null">Todas las categorías</option>
+              @for (cat of categories(); track cat.id) {
+                <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Status Filter -->
+          <div class="filter-item">
+            <label>Estado</label>
+            <select [(ngModel)]="selectedStatus" class="form-control">
+              <option value="all">Todas</option>
+              <option value="verified">
+                <span class="ki-duotone ki-verify"><span class="path1"></span><span class="path2"></span></span>
+                Verificadas
+              </option>
+              <option value="pending">
+                <span class="ki-duotone ki-time"><span class="path1"></span><span class="path2"></span></span>
+                Pendientes
+              </option>
+            </select>
+          </div>
+
+          <!-- Results Count -->
+          <div class="filter-item results-count">
+            <p>{{ filteredQuestions().length }} pregunta{{ filteredQuestions().length !== 1 ? 's' : '' }} encontrada{{ filteredQuestions().length !== 1 ? 's' : '' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Questions Table -->
+      <div class="table-card">
+        @if (filteredQuestions().length > 0) {
+          <div class="table-responsive">
+            <table class="questions-table">
+              <thead>
+                <tr class="table-header">
+                  <th class="col-id">ID</th>
+                  <th class="col-statement">Pregunta</th>
+                  <th class="col-category">Categoría</th>
+                  <th class="col-difficulty">Dificultad</th>
+                  <th class="col-status">Estado</th>
+                  <th class="col-ai">IA</th>
+                  <th class="col-actions">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (question of filteredQuestions(); track question.id) {
+                  <tr class="table-row" [ngClass]="{ 'pending-verify': !question.admin_verified }">
+                    <!-- ID -->
+                    <td class="col-id">
+                      <code>{{ question.id }}</code>
+                    </td>
+
+                    <!-- Statement -->
+                    <td class="col-statement">
+                      <span class="question-text" [title]="question.statement">
+                        {{ truncateText(question.statement, 60) }}
+                      </span>
+                    </td>
+
+                    <!-- Category -->
+                    <td class="col-category">
+                      <span class="badge badge-primary">
+                        {{ getCategoryName(question.category_id) }}
+                      </span>
+                    </td>
+
+                    <!-- Difficulty -->
+                    <td class="col-difficulty">
+                      <div class="difficulty-badge" [ngClass]="'difficulty-' + question.difficulty">
+                        {{ question.difficulty }}
+                      </div>
+                    </td>
+
+                    <!-- Status -->
+                    <td class="col-status">
+                      @if (question.admin_verified) {
+                        <span class="status-badge status-verified">
+                          <span class="ki-duotone ki-verify fs-2 text-success"><span class="path1"></span><span class="path2"></span></span>
+                          Verificada
+                        </span>
+                      } @else {
+                        <span class="status-badge status-pending">
+                          <span class="ki-duotone ki-time fs-2 text-warning"><span class="path1"></span><span class="path2"></span></span>
+                          Pendiente
+                        </span>
+                      }
+                    </td>
+
+                    <!-- AI Generated -->
+                    <td class="col-ai">
+                      @if (question.is_ai_generated) {
+                        <span class="ai-badge">
+                          <span class="ki-duotone ki-spark text-info"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                          IA
+                        </span>
+                      } @else {
+                        <span class="manual-badge">Manual</span>
+                      }
+                    </td>
+
+                    <!-- Actions -->
+                    <td class="col-actions">
+                      <div class="action-buttons">
+                        <!-- Verify/Unverify -->
+                        <button
+                          class="btn-action btn-verify"
+                          (click)="toggleVerifyQuestion(question.id, question.admin_verified)"
+                          [title]="question.admin_verified ? 'Desverificar' : 'Verificar'">
+                          <span class="ki-duotone ki-verify fs-3"><span class="path1"></span><span class="path2"></span></span>
+                        </button>
+
+                        <!-- Delete with Confirmation -->
+                        @if (deleteConfirmId() !== question.id) {
+                          <button
+                            class="btn-action btn-delete"
+                            (click)="deleteQuestion(question.id)"
+                            title="Eliminar">
+                            <span class="ki-duotone ki-trash fs-3"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></span>
+                          </button>
+                        } @else {
+                          <div class="confirm-buttons">
+                            <button
+                              class="btn-confirm confirm-yes"
+                              (click)="confirmDelete(question.id)"
+                              title="Confirmar eliminación">
+                              <span class="ki-duotone ki-check fs-2"><span class="path1"></span><span class="path2"></span></span>
+                            </button>
+                            <button
+                              class="btn-confirm confirm-no"
+                              (click)="cancelDelete()"
+                              title="Cancelar">
+                              <span class="ki-duotone ki-cross fs-2"><span class="path1"></span><span class="path2"></span></span>
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="no-data">
+            <span class="ki-duotone ki-document fs-3x text-muted"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+            <p>No hay preguntas disponibles. ¡Crea algunas con el generador IA!</p>
+          </div>
+        }
+      </div>
+
+      <!-- Footer Info -->
+      <div class="questions-footer">
+        <p class="footer-text">
+          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          Total: {{ allQuestions().length }} preguntas en base de datos
+        </p>
+      </div>
+    </div>
+  }
+</div>
