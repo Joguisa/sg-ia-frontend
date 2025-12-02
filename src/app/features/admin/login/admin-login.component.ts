@@ -65,13 +65,8 @@ export class AdminLoginComponent {
         if (response.ok && response.token) {
           console.log('[AdminLogin] Login exitoso, token recibido:', response.token);
 
-          // PASO 1: Guardar token - ESTO dispara el BehaviorSubject automáticamente
-          // vía el tap() operator en AuthService.login()
-          // PERO también lo hacemos explícitamente para asegurar sincronización
           this.authService.setToken(response.token);
 
-          // PEQUEÑO DELAY para asegurar que el observable haya emitido
-          // (Generalmente no es necesario, pero útil para edge cases)
           setTimeout(() => {
             console.log('[AdminLogin] Token establecido, iniciando navegación...');
 
@@ -85,7 +80,7 @@ export class AdminLoginComponent {
             });
 
             this.isLoading.set(false);
-          }, 50); // 50ms delay para permitir que el observable emita
+          }, 50);
         } else {
           // Mostrar error si response.ok es false
           const errorMsg = response.error || 'Credenciales inválidas. Intenta de nuevo.';
