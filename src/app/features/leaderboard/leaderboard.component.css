@@ -1,0 +1,745 @@
+/* ============================================================================
+   LEADERBOARD CONTAINER - Main wrapper
+   ============================================================================ */
+.leaderboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+.leaderboard-header {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 40px 20px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.header-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: white;
+}
+
+.header-title .ki-duotone {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.header-text h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.header-subtitle {
+  margin: 8px 0 0;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+/* ============================================================================
+   LOADING STATE
+   ============================================================================ */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 20px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ============================================================================
+   ERROR STATE
+   ============================================================================ */
+.error-container {
+  max-width: 1000px;
+  margin: 0 auto 30px;
+}
+
+.alert {
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.alert-danger {
+  background-color: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #ff9999;
+}
+
+.alert strong {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.alert p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ============================================================================
+   LEADERBOARD CONTENT
+   ============================================================================ */
+.leaderboard-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ============================================================================
+   MY RANK CARD
+   ============================================================================ */
+.my-rank-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-left: 5px solid #667eea;
+}
+
+.rank-badge {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: white;
+  flex: 0 0 auto;
+}
+
+.rank-badge.rank-gold {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.rank-badge.rank-silver {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+}
+
+.rank-badge.rank-bronze {
+  background: linear-gradient(135deg, #cd7f32, #b8860b);
+}
+
+.rank-badge.rank-default {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.rank-badge .ki-duotone,
+.rank-badge .rank-number {
+  line-height: 1;
+}
+
+.rank-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+}
+
+.rank-info {
+  flex: 1;
+}
+
+.rank-label {
+  margin: 0 0 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #7f8c8d;
+  letter-spacing: 0.5px;
+}
+
+.rank-position {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+/* ============================================================================
+   LEADERBOARD TABLE CARD
+   ============================================================================ */
+.leaderboard-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  margin-bottom: 30px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* Table Header */
+.table-header {
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+  border-bottom: 2px solid #e8ecf1;
+  font-weight: 600;
+  color: #2c3e50;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.table-header th {
+  padding: 16px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table-header .ki-duotone {
+  font-size: 16px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* Column Widths */
+.col-rank {
+  width: 80px;
+  text-align: center;
+}
+
+.col-player {
+  min-width: 180px;
+}
+
+.col-age {
+  width: 70px;
+  text-align: center;
+}
+
+.col-games {
+  width: 100px;
+  text-align: center;
+}
+
+.col-high-score {
+  width: 120px;
+  text-align: right;
+}
+
+.col-total-score {
+  width: 120px;
+  text-align: right;
+}
+
+.col-accuracy {
+  width: 100px;
+  text-align: right;
+}
+
+/* Table Rows */
+.table-row {
+  border-bottom: 1px solid #ecf0f1;
+  transition: all 0.3s ease;
+}
+
+.table-row:hover {
+  background-color: #f8f9fa;
+}
+
+.table-row.current-player {
+  background-color: rgba(102, 126, 234, 0.08);
+  border-left: 4px solid #667eea;
+}
+
+.table-row td {
+  padding: 16px 12px;
+  vertical-align: middle;
+}
+
+/* Rank Cell */
+.rank-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.rank-cell.rank-gold {
+  background: rgba(243, 156, 18, 0.1);
+}
+
+.rank-cell.rank-silver {
+  background: rgba(149, 165, 166, 0.1);
+}
+
+.rank-cell.rank-bronze {
+  background: rgba(205, 127, 50, 0.1);
+}
+
+.rank-cell.rank-default {
+  background: transparent;
+  color: #7f8c8d;
+}
+
+/* Player Cell */
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-cell .ki-duotone {
+  font-size: 18px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.player-name {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.you-badge {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+
+/* Value Cells */
+.age-value,
+.games-value,
+.high-score-value,
+.total-score-value {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.high-score-value,
+.total-score-value {
+  font-family: 'Monaco', 'Courier New', monospace;
+}
+
+/* Accuracy Cell */
+.accuracy-cell {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.accuracy-value {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.accuracy-high {
+  background: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+}
+
+.accuracy-medium {
+  background: rgba(243, 156, 18, 0.1);
+  color: #f39c12;
+}
+
+.accuracy-low {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px 20px;
+  color: #7f8c8d;
+  font-size: 16px;
+}
+
+/* ============================================================================
+   LEGEND SECTION
+   ============================================================================ */
+.legend-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.legend-title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.legend-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.legend-item .ki-duotone {
+  font-size: 24px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.legend-text {
+  font-size: 14px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* ============================================================================
+   ACTION BUTTONS
+   ============================================================================ */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.btn-lg {
+  padding: 16px 32px;
+  font-size: 16px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.btn-secondary:hover {
+  background: #f8f9fa;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn .ki-duotone {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+.leaderboard-footer {
+  text-align: center;
+  padding: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+}
+
+.footer-text {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.footer-text .ki-duotone {
+  font-size: 16px;
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+.text-white {
+  color: white !important;
+}
+
+.text-warning {
+  color: #f39c12 !important;
+}
+
+.text-gray-400 {
+  color: #bdc3c7 !important;
+}
+
+.text-gray-500 {
+  color: #95a5a6 !important;
+}
+
+.fs-2 {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.fs-2x {
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+@media (max-width: 1024px) {
+  .leaderboard-header {
+    margin-bottom: 30px;
+  }
+
+  .header-text h1 {
+    font-size: 28px;
+  }
+
+  .col-high-score,
+  .col-total-score {
+    width: 100px;
+  }
+
+  .table-header th,
+  .table-row td {
+    padding: 12px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .leaderboard-container {
+    padding: 16px;
+  }
+
+  .leaderboard-header {
+    padding: 30px 16px;
+    margin-bottom: 24px;
+  }
+
+  .header-title {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header-text h1 {
+    font-size: 24px;
+  }
+
+  .header-subtitle {
+    font-size: 14px;
+  }
+
+  .my-rank-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .rank-badge {
+    width: 70px;
+    height: 70px;
+    font-size: 28px;
+  }
+
+  .rank-number {
+    font-size: 32px;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .leaderboard-table {
+    font-size: 13px;
+  }
+
+  .table-header th {
+    padding: 12px 6px;
+    font-size: 11px;
+  }
+
+  .table-row td {
+    padding: 12px 6px;
+  }
+
+  .col-rank {
+    width: 60px;
+  }
+
+  .col-player {
+    min-width: 140px;
+  }
+
+  .col-high-score,
+  .col-total-score {
+    width: 80px;
+  }
+
+  .col-accuracy {
+    width: 80px;
+  }
+
+  .player-name {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .btn-lg {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .legend-items {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .leaderboard-header {
+    padding: 20px 16px;
+  }
+
+  .header-text h1 {
+    font-size: 20px;
+  }
+
+  .header-title .ki-duotone {
+    font-size: 32px;
+  }
+
+  .rank-badge {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  .rank-position {
+    font-size: 20px;
+  }
+
+  .table-header th {
+    font-size: 10px;
+    padding: 10px 4px;
+  }
+
+  .table-row td {
+    padding: 10px 4px;
+    font-size: 12px;
+  }
+
+  .col-player {
+    min-width: 100px;
+  }
+
+  .player-cell {
+    gap: 6px;
+  }
+
+  .player-cell .ki-duotone {
+    font-size: 14px;
+  }
+
+  .you-badge {
+    font-size: 8px;
+    padding: 2px 6px;
+    margin-left: 4px;
+  }
+
+  .accuracy-value {
+    font-size: 12px;
+    padding: 2px 8px;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .legend-title {
+    font-size: 14px;
+  }
+}

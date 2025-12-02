@@ -4,6 +4,7 @@ import { GameBoardComponent } from './features/game/board/game-board.component';
 import { AdminLoginComponent } from './features/admin/login/admin-login.component';
 import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard.component';
 import { PlayerProfileComponent } from './features/profile/player-profile.component';
+import { LeaderboardComponent } from './features/leaderboard/leaderboard.component';
 import { AdminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
@@ -34,10 +35,10 @@ export const routes: Routes = [
     data: { title: 'Tablero del Juego' }
   },
 
-  // Public - Leaderboard (placeholder)
+  // Public - Leaderboard
   {
     path: 'leaderboard',
-    component: GameStartComponent,  // TODO: Replace with LeaderboardComponent
+    component: LeaderboardComponent,
     data: { title: 'Clasificación' }
   },
 
