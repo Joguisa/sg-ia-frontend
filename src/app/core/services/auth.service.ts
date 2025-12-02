@@ -32,6 +32,11 @@ export class AuthService {
       );
   }
 
+  setToken(token: string): void {
+    localStorage.setItem('token', token);
+    this.tokenSubject.next(token);
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     this.tokenSubject.next(null);
