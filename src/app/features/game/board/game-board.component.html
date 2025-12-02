@@ -3,7 +3,7 @@
   <div class="game-header">
     <div class="header-left">
       <div class="player-info">
-        <span class="player-avatar">👤</span>
+        <i class="ki-duotone ki-profile-circle text-primary fs-2 me-2"><span class="path1"></span><span class="path2"></span></i>
         <span class="player-name">{{ playerName() }}</span>
       </div>
     </div>
@@ -21,14 +21,12 @@
     <div class="header-right">
       <div class="stats-group">
         <div class="stat-item lives">
-          <span class="lives-label">Vidas:</span>
-          <span *ngFor="let alive of livesDisplay()" class="heart" [class.empty]="!alive">
-            ❤️
-          </span>
+          <i class="ki-duotone ki-rescue text-danger fs-1 me-2"><span class="path1"></span><span class="path2"></span></i>
+          <span class="lives-value">{{ lives() }}/3</span>
         </div>
         <div class="stat-item score">
-          <span class="score-label">🏆</span>
-          <span class="score-value">{{ score }}</span>
+          <i class="ki-duotone ki-cup text-warning fs-1 me-2"><span class="path1"></span><span class="path2"></span></i>
+          <span class="score-value">{{ score() }}</span>
         </div>
       </div>
     </div>
@@ -37,136 +35,154 @@
   <!-- MAIN CONTENT -->
   <div class="game-content">
     <!-- LOADING STATE -->
-    <div *ngIf="gameState() === 'loading'" class="loading-screen">
-      <div class="spinner"></div>
-      <p>Cargando pregunta...</p>
-    </div>
+    @if (gameState() === 'loading') {
+      <div class="loading-screen">
+        <div class="spinner"></div>
+        <p>Cargando pregunta...</p>
+      </div>
+    }
 
     <!-- PLAYING STATE -->
-    <div *ngIf="gameState() === 'playing' && currentQuestion()" class="playing-screen">
-      <!-- Question Card -->
-      <div class="question-section">
-        <div class="question-card">
-          <div class="question-header">
-            <span class="question-number">Pregunta #{{ questionCount() }}</span>
-            <div [class]="'timer ' + getTimerColor()">
-              <span class="timer-value">{{ questionTimer() }}s</span>
+    @if (gameState() === 'playing' && currentQuestion()) {
+      <div class="playing-screen">
+        <!-- Question Card -->
+        <div class="question-section">
+          <div class="question-card">
+            <div class="question-header">
+              <span class="question-number">Pregunta #{{ questionCount() }}</span>
+              <div [class]="'timer ' + getTimerColor()">
+                <i class="ki-duotone ki-electronic-clock text-primary me-1"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></i>
+                <span class="timer-value">{{ questionTimer() }}s</span>
+              </div>
+            </div>
+            <div class="question-statement">
+              {{ currentQuestion()!.statement }}
             </div>
           </div>
-          <div class="question-statement">
-            {{ currentQuestion()!.statement }}
+        </div>
+
+        <!-- Options Grid -->
+        <div class="options-section">
+          <div class="options-grid">
+            @for (option of currentQuestion()!.options; track option.id) {
+              <button
+                class="btn btn-lg border border-2 w-100 py-4 d-flex justify-content-between align-items-center"
+                [ngClass]="getOptionClass(option.id) ? (getOptionClass(option.id) === 'option-selected' ? 'btn-light-primary border-primary' : (getOptionClass(option.id) === 'option-correct' ? 'btn-light-success border-success' : 'btn-light-danger border-danger')) : 'btn-outline-secondary'"
+                (click)="selectOption(option.id)"
+                [disabled]="isAnswering()"
+              >
+                <span class="option-text">{{ option.text }}</span>
+                <span class="option-indicator"></span>
+              </button>
+            }
           </div>
         </div>
-      </div>
 
-      <!-- Options Grid -->
-      <div class="options-section">
-        <div class="options-grid">
+        <!-- Submit Button -->
+        <div class="action-section">
           <button
-            *ngFor="let option of currentQuestion()!.options"
-            class="option-button"
-            [ngClass]="getOptionClass(option.id)"
-            (click)="selectOption(option.id)"
-            [disabled]="isAnswering()"
+            class="btn btn-submit"
+            (click)="submitAnswer()"
+            [disabled]="selectedOptionId() === null || isAnswering()"
           >
-            <span class="option-text">{{ option.text }}</span>
-            <span class="option-indicator"></span>
+            <span *ngIf="!isAnswering()">Enviar Respuesta</span>
+            <span *ngIf="isAnswering()">
+              <span class="spinner-small"></span> Verificando...
+            </span>
           </button>
         </div>
       </div>
-
-      <!-- Submit Button -->
-      <div class="action-section">
-        <button
-          class="btn btn-submit"
-          (click)="submitAnswer()"
-          [disabled]="selectedOptionId() === null || isAnswering()"
-        >
-          <span *ngIf="!isAnswering()">Enviar Respuesta</span>
-          <span *ngIf="isAnswering()">
-            <span class="spinner-small"></span> Verificando...
-          </span>
-        </button>
-      </div>
-    </div>
+    }
 
     <!-- FEEDBACK STATE -->
-    <div *ngIf="gameState() === 'feedback' && feedbackData()" class="feedback-screen">
-      <!-- Feedback Card -->
-      <div class="feedback-card" [ngClass]="isAnswerCorrect() ? 'success' : 'error'">
-        <!-- Result Icon and Status -->
-        <div class="feedback-header">
-          <div class="result-icon" [ngClass]="isAnswerCorrect() ? 'correct' : 'incorrect'">
-            {{ isAnswerCorrect() ? '✅' : '❌' }}
+    @if (gameState() === 'feedback' && feedbackData()) {
+      <div class="feedback-screen">
+        <!-- Feedback Card -->
+        <div class="feedback-card" [ngClass]="isAnswerCorrect() ? 'success' : 'error'">
+          <!-- Result Icon and Status -->
+          <div class="feedback-header">
+            @if (isAnswerCorrect()) {
+              <i class="ki-duotone ki-verify fs-3x text-success"><span class="path1"></span><span class="path2"></span></i>
+            } @else {
+              <i class="ki-duotone ki-cross-circle fs-3x text-danger"><span class="path1"></span><span class="path2"></span></i>
+            }
+            <h2 class="result-title">
+              {{ isAnswerCorrect() ? '¡Correcto!' : 'Respuesta Incorrecta' }}
+            </h2>
           </div>
-          <h2 class="result-title">
-            {{ isAnswerCorrect() ? '¡Correcto!' : 'Respuesta Incorrecta' }}
-          </h2>
-        </div>
 
-        <!-- Score Delta -->
-        <div class="score-delta" [ngClass]="isAnswerCorrect() ? 'positive' : 'neutral'">
-          <span *ngIf="isAnswerCorrect()" class="delta-icon">+{{ feedbackData()?.score }}</span>
-          <span *ngIf="!isAnswerCorrect()" class="delta-icon">{{ feedbackData()?.score }}</span>
-        </div>
+          <!-- Score Delta -->
+          <div class="score-delta" [ngClass]="isAnswerCorrect() ? 'positive' : 'neutral'">
+            @if (isAnswerCorrect()) {
+              <span class="delta-icon">+{{ feedbackData()?.score }}</span>
+            } @else {
+              <span class="delta-icon">{{ feedbackData()?.score }}</span>
+            }
+          </div>
 
-        <!-- Explanation Section (CRÍTICO - Educativo) -->
-        <div class="explanation-section">
-          <div class="explanation-label">📚 Explicación Médica:</div>
-          <p class="explanation-text">
-            {{ feedbackData()?.explanation || 'No hay explicación disponible' }}
-          </p>
-        </div>
-
-        <!-- Correct Option Info -->
-        <div class="correct-answer-section">
-          <span class="correct-label">Respuesta Correcta:</span>
-          <div class="correct-option">
-            <span *ngFor="let option of currentQuestion()!.options">
-              <span *ngIf="option.id === feedbackData()?.correct_option_id">
-                {{ option.text }}
-              </span>
+          <!-- Explanation Section (CRÍTICO - Educativo) -->
+          <div class="explanation-section">
+            <span class="explanation-label">
+              <i class="ki-duotone ki-book text-primary me-1"><span class="path1"></span><span class="path2"></span></i>
+              Explicación Médica:
             </span>
+            <p class="explanation-text">
+              {{ feedbackData()?.explanation || 'No hay explicación disponible' }}
+            </p>
+          </div>
+
+          <!-- Correct Option Info -->
+          <div class="correct-answer-section">
+            <span class="correct-label">Respuesta Correcta:</span>
+            <div class="correct-option">
+              @for (option of currentQuestion()!.options; track option.id) {
+                @if (option.id === feedbackData()?.correct_option_id) {
+                  {{ option.text }}
+                }
+              }
+            </div>
+          </div>
+
+          <!-- Stats Update -->
+          <div class="stats-update">
+            <div class="stat-update-item">
+              <span class="stat-update-label">Puntuación Total:</span>
+              <span class="stat-update-value">{{ score() }}</span>
+            </div>
+            <div class="stat-update-item">
+              <span class="stat-update-label">Vidas Restantes:</span>
+              <span class="stat-update-value">{{ lives() }}/3</span>
+            </div>
+            <div class="stat-update-item">
+              <span class="stat-update-label">Nueva Dificultad:</span>
+              <span class="stat-update-value">{{ difficulty().toFixed(1) }}</span>
+            </div>
           </div>
         </div>
 
-        <!-- Stats Update -->
-        <div class="stats-update">
-          <div class="stat-update-item">
-            <span class="stat-update-label">Puntuación Total:</span>
-            <span class="stat-update-value">{{ score() }}</span>
-          </div>
-          <div class="stat-update-item">
-            <span class="stat-update-label">Vidas Restantes:</span>
-            <span class="stat-update-value">{{ lives() }}/3</span>
-          </div>
-          <div class="stat-update-item">
-            <span class="stat-update-label">Nueva Dificultad:</span>
-            <span class="stat-update-value">{{ difficulty().toFixed(1) }}</span>
-          </div>
+        <!-- Next Button -->
+        <div class="action-section">
+          <button class="btn btn-next" (click)="nextQuestion()">
+            Siguiente Pregunta →
+          </button>
         </div>
       </div>
-
-      <!-- Next Button -->
-      <div class="action-section">
-        <button class="btn btn-next" (click)="nextQuestion()">
-          Siguiente Pregunta →
-        </button>
-      </div>
-    </div>
+    }
 
     <!-- GAME OVER STATE -->
-    <div *ngIf="gameState() === 'gameover'" class="gameover-screen">
-      <div class="gameover-card">
-        <div class="gameover-icon">🎮</div>
-        <h2 class="gameover-title">¡Fin del Juego!</h2>
-        <p class="gameover-message">
-          Completaste {{ questionCount() }} preguntas con una puntuación de {{ score() }} puntos.
-        </p>
-        <p class="gameover-redirect">
-          Redirigiendo a tu perfil...
-        </p>
+    @if (gameState() === 'gameover') {
+      <div class="gameover-screen">
+        <div class="gameover-card">
+          <i class="ki-duotone ki-game-controller text-warning fs-3x mb-3"><span class="path1"></span><span class="path2"></span></i>
+          <h2 class="gameover-title">¡Fin del Juego!</h2>
+          <p class="gameover-message">
+            Completaste {{ questionCount() }} preguntas con una puntuación de {{ score() }} puntos.
+          </p>
+          <p class="gameover-redirect">
+            Redirigiendo a tu perfil...
+          </p>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>
