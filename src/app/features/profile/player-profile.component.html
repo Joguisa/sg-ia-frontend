@@ -1,0 +1,172 @@
+<div class="profile-container">
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p class="loading-text">Cargando perfil...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (errorMessage()) {
+    <div class="error-container">
+      <div class="alert alert-danger d-flex align-items-start gap-2">
+        <span class="ki-duotone ki-information-5 text-danger mt-1"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <div>
+          <strong>Error</strong>
+          <p>{{ errorMessage() }}</p>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Profile Content -->
+  @if (!isLoading() && !errorMessage() && playerStats()) {
+    <div class="profile-content">
+      <!-- Header Card -->
+      <div class="profile-header card">
+        <div class="card-body">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <span class="ki-duotone ki-user fs-3x text-primary"><span class="path1"></span><span class="path2"></span></span>
+            <div class="header-info">
+              <h1 class="profile-title">{{ playerName() }}</h1>
+              <p class="profile-subtitle">Perfil de Jugador</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <!-- Total Partidas -->
+        <div class="stat-card">
+          <div class="stat-icon">
+            <span class="ki-duotone ki-joystick fs-2x text-warning mb-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></span>
+          </div>
+          <div class="stat-content">
+            <p class="stat-label">Total Partidas</p>
+            <p class="stat-value">{{ playerStats()?.total_games || 0 }}</p>
+          </div>
+        </div>
+
+        <!-- Puntaje Alto -->
+        <div class="stat-card">
+          <div class="stat-icon">
+            <span class="ki-duotone ki-cup fs-2x text-success mb-2"><span class="path1"></span><span class="path2"></span></span>
+          </div>
+          <div class="stat-content">
+            <p class="stat-label">Puntaje Alto</p>
+            <p class="stat-value">{{ playerStats()?.high_score || 0 }}</p>
+          </div>
+        </div>
+
+        <!-- Precisión General -->
+        <div class="stat-card">
+          <div class="stat-icon">
+            <span class="ki-duotone ki-chart-pie-simple fs-2x text-info mb-2"><span class="path1"></span><span class="path2"></span></span>
+          </div>
+          <div class="stat-content">
+            <p class="stat-label">Precisión</p>
+            <p class="stat-value">{{ getOverallAccuracy() }}%</p>
+          </div>
+        </div>
+
+        <!-- Puntaje Total -->
+        <div class="stat-card">
+          <div class="stat-icon">
+            <span class="ki-duotone ki-graph-up fs-2x text-success mb-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          </div>
+          <div class="stat-content">
+            <p class="stat-label">Puntaje Total</p>
+            <p class="stat-value">{{ playerStats()?.total_score || 0 }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Difficulty Section -->
+      <div class="difficulty-section card">
+        <div class="card-header">
+          <h3 class="section-title">Dificultad Promedio</h3>
+        </div>
+        <div class="card-body">
+          <div class="difficulty-content">
+            <div class="difficulty-info">
+              <p class="difficulty-label">Nivel de Dificultad Actual</p>
+              <p class="difficulty-value">{{ (playerStats()?.avg_difficulty || 1).toFixed(2) }} / 5.00</p>
+            </div>
+            <div class="difficulty-bar">
+              <div
+                class="difficulty-progress"
+                [ngClass]="'progress-' + getDifficultyColor(playerStats()?.avg_difficulty || 1)"
+                [style.width.%]="((playerStats()?.avg_difficulty || 1) / 5) * 100">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Topics Section -->
+      <div class="topics-section card">
+        <div class="card-header">
+          <h3 class="section-title">Desempeño por Categoría</h3>
+        </div>
+        <div class="card-body">
+          @if (topicStats() && topicStats()!.length > 0) {
+            <div class="topics-grid">
+              @for (topic of topicStats(); track topic.category_id) {
+                <div class="topic-card">
+                  <div class="topic-header">
+                    <h4 class="topic-name">{{ topic.category_name }}</h4>
+                    <span class="topic-badge">{{ topic.answers }} preguntas</span>
+                  </div>
+
+                  <div class="topic-stats">
+                    <div class="stat-item">
+                      <span class="stat-key">Precisión</span>
+                      <span class="stat-val" [ngClass]="'accuracy-' + (topic.accuracy >= 75 ? 'high' : topic.accuracy >= 50 ? 'medium' : 'low')">
+                        {{ topic.accuracy.toFixed(1) }}%
+                      </span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-key">Tiempo Promedio</span>
+                      <span class="stat-val">{{ formatTime(topic.avg_time_sec) }}</span>
+                    </div>
+                  </div>
+
+                  <div class="accuracy-bar">
+                    <div
+                      class="accuracy-progress"
+                      [style.width.%]="topic.accuracy">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="no-data">Aún no tienes estadísticas en ninguna categoría. ¡Comienza a jugar!</p>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-primary btn-lg btn-play" (click)="playAgain()">
+          <span class="ki-duotone ki-game-controller"><span class="path1"></span><span class="path2"></span></span>
+          Jugar de Nuevo
+        </button>
+        <button class="btn btn-secondary btn-lg btn-home" (click)="goToHome()">
+          <span class="ki-duotone ki-home"><span class="path1"></span><span class="path2"></span></span>
+          Volver al Inicio
+        </button>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="profile-footer">
+        <p class="footer-text">
+          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          Estadísticas actualizadas en tiempo real
+        </p>
+      </div>
+    </div>
+  }
+</div>

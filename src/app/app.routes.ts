@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { GameStartComponent } from './features/game/start/game-start.component';
 import { GameBoardComponent } from './features/game/board/game-board.component';
 import { AdminLoginComponent } from './features/admin/login/admin-login.component';
+import { PlayerProfileComponent } from './features/profile/player-profile.component';
 import { AdminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
@@ -39,10 +40,10 @@ export const routes: Routes = [
     data: { title: 'Clasificación' }
   },
 
-  // Public - Player Profile (placeholder)
+  // Public - Player Profile
   {
     path: 'profile',
-    component: GameStartComponent,  // TODO: Replace with ProfileComponent
+    component: PlayerProfileComponent,
     data: { title: 'Mi Perfil' }
   },
 
