@@ -3,7 +3,7 @@
   <div class="settings-header">
     <div class="header-content">
       <div class="header-title">
-        <span class="ki-duotone ki-technology-4 fs-2x text-primary"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span><span class="path6"></span><span class="path7"></span></span>
+        <i class="fas fa-brain"></i>
         <div class="header-text">
           <h1>Configuración del Modelo IA</h1>
           <p class="header-subtitle">Ajusta el prompt del sistema y parámetros de Gemini</p>
@@ -11,11 +11,11 @@
       </div>
       <div class="header-actions">
         <button class="btn btn-sm btn-secondary" (click)="goToDashboard()">
-          <span class="ki-duotone ki-arrow-left"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-arrow-left"></i>
           Volver al Dashboard
         </button>
         <button class="btn btn-sm btn-danger" (click)="logout()">
-          <span class="ki-duotone ki-exit-right"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-sign-out-alt"></i>
           Logout
         </button>
       </div>
@@ -25,14 +25,14 @@
   <!-- Success & Error Messages -->
   @if (successMessage()) {
     <div class="alert alert-success">
-      <span class="ki-duotone ki-verify text-success"><span class="path1"></span><span class="path2"></span></span>
+      <i class="fas fa-check"></i>
       <span>{{ successMessage() }}</span>
     </div>
   }
 
   @if (errorMessage()) {
     <div class="alert alert-danger">
-      <span class="ki-duotone ki-information-5 text-danger"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+      <i class="fas fa-circle-info"></i>
       <span>{{ errorMessage() }}</span>
     </div>
   }
@@ -52,7 +52,7 @@
       <div class="settings-card">
         <div class="card-header">
           <h2 class="card-title">
-            <span class="ki-duotone ki-document-text fs-2x text-primary"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+            <i class="fas fa-file-text"></i>
             Instrucción del Sistema
           </h2>
           <p class="card-subtitle">Define la personalidad y reglas estrictas para la generación de preguntas con IA</p>
@@ -87,7 +87,7 @@
       <div class="settings-card">
         <div class="card-header">
           <h2 class="card-title">
-            <span class="ki-duotone ki-thermometer fs-2x text-warning"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-thermometer-half"></i>
             Creatividad (Temperatura)
           </h2>
           <p class="card-subtitle">Controla el nivel de variabilidad en las respuestas de la IA</p>
@@ -113,7 +113,7 @@
             <!-- Slider -->
             <div class="slider-container">
               <span class="slider-label slider-min">
-                <span class="ki-duotone ki-arrow-left-alt text-danger"><span class="path1"></span><span class="path2"></span></span>
+                <i class="fas fa-arrow-left"></i>
                 Preciso (0.0)
               </span>
 
@@ -130,7 +130,7 @@
 
               <span class="slider-label slider-max">
                 Creativo (1.0)
-                <span class="ki-duotone ki-arrow-right-alt text-success"><span class="path1"></span><span class="path2"></span></span>
+                <i class="fas fa-arrow-right"></i>
               </span>
             </div>
 
@@ -153,7 +153,7 @@
             class="btn btn-secondary btn-lg"
             (click)="discardChanges()"
             [disabled]="isSaving()">
-            <span class="ki-duotone ki-cross"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-times"></i>
             Descartar Cambios
           </button>
         }
@@ -163,7 +163,7 @@
           class="btn btn-warning btn-lg"
           (click)="resetToDefault()"
           [disabled]="isSaving()">
-          <span class="ki-duotone ki-reload"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-refresh"></i>
           Restaurar Predeterminado
         </button>
 
@@ -173,7 +173,7 @@
           (click)="saveChanges()"
           [disabled]="!hasChanges() || isSaving()">
           @if (!isSaving()) {
-            <span class="ki-duotone ki-save-2"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-save"></i>
             Guardar Cambios
           } @else {
             <span class="spinner-small"></span>
@@ -185,14 +185,14 @@
       <!-- Info Section -->
       <div class="info-section">
         <h3 class="info-title">
-          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          <i class="fas fa-circle-info"></i>
           Información Importante
         </h3>
 
         <div class="info-cards">
           <div class="info-item">
             <span class="info-icon">
-              <span class="ki-duotone ki-bulb-on fs-2x text-warning"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-lightbulb"></i>
             </span>
             <div class="info-text">
               <h4>Cambios Inmediatos</h4>
@@ -202,7 +202,7 @@
 
           <div class="info-item">
             <span class="info-icon">
-              <span class="ki-duotone ki-shield-tick fs-2x text-success"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-shield-check"></i>
             </span>
             <div class="info-text">
               <h4>Validación Estricta</h4>
@@ -212,7 +212,7 @@
 
           <div class="info-item">
             <span class="info-icon">
-              <span class="ki-duotone ki-flask fs-2x text-info"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-flask"></i>
             </span>
             <div class="info-text">
               <h4>Experimenta</h4>
@@ -225,10 +225,12 @@
       <!-- Footer -->
       <div class="settings-footer">
         <p class="footer-text">
-          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          <i class="fas fa-circle-info"></i>
           Última actualización: En tiempo real | Modelo: Gemini API
         </p>
       </div>
     </div>
   }
 </div>
+
+

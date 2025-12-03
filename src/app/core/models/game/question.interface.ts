@@ -12,3 +12,9 @@ export interface QuestionResponse {
   question?: Question;
   error?: string;
 }
+
+export interface QuestionsResponse {
+  ok: boolean;
+  questions: Question[];
+  error?: string;
+}

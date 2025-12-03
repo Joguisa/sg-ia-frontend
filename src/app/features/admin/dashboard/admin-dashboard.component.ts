@@ -3,20 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
-
-/**
- * Interface para la respuesta del dashboard
- */
-interface DashboardResponse {
-  ok: boolean;
-  total_players?: number;
-  total_sessions?: number;
-  total_questions?: number;
-  pending_verification?: number;
-  top_hardest?: Array<{ id: number; statement: string; success_rate: number }>;
-  top_easiest?: Array<{ id: number; statement: string; success_rate: number }>;
-  error?: string;
-}
+import { DashboardStatsResponse } from '../../../core/models/admin';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -57,19 +44,19 @@ export class AdminDashboardComponent implements OnInit {
     console.log('[AdminDashboard] Loading dashboard stats...');
 
     this.adminService.getDashboardStats().subscribe({
-      next: (response: DashboardResponse) => {
+      next: (response: DashboardStatsResponse) => {
         console.log('[AdminDashboard] Response:', response);
 
-        if (response.ok) {
+        if (response.summary) {
           // Actualizar KPIs
-          this.totalPlayers.set(response.total_players || 0);
-          this.totalSessions.set(response.total_sessions || 0);
-          this.totalQuestions.set(response.total_questions || 0);
-          this.pendingVerification.set(response.pending_verification || 0);
+          this.totalPlayers.set(response.summary.total_players || 0);
+          this.totalSessions.set(response.summary.total_sessions || 0);
+          this.totalQuestions.set(response.summary.total_questions || 0);
+          this.pendingVerification.set(response.summary.pending_verification || 0);
 
           // Actualizar listas
-          this.topHardest.set(response.top_hardest || []);
-          this.topEasiest.set(response.top_easiest || []);
+          this.topHardest.set(response.hardest_questions || []);
+          this.topEasiest.set(response.easiest_questions || []);
 
           console.log('[AdminDashboard] Dashboard loaded successfully');
           this.isLoading.set(false);
@@ -136,8 +123,8 @@ export class AdminDashboardComponent implements OnInit {
    * Obtiene la clase CSS para el color de la tasa de éxito
    */
   getSuccessRateClass(successRate: number): string {
-    if (successRate >= 75) return 'success-high';
-    if (successRate >= 50) return 'success-medium';
-    return 'success-low';
+    if (successRate >= 75) return 'success-rate-success-high';
+    if (successRate >= 50) return 'success-rate-success-medium';
+    return 'success-rate-success-low';
   }
 }

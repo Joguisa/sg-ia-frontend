@@ -11,7 +11,7 @@
       <!-- Header -->
       <div class="card-header">
         <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
-          <span class="ki-duotone ki-security-user fs-2x text-primary"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          <i class="fas fa-user-shield fs-2x text-primary"></i>
         </div>
         <h1 class="login-title">Panel de Control</h1>
         <p class="login-subtitle">Acceso administrativo</p>
@@ -23,7 +23,7 @@
         <div class="form-group">
           <label for="email" class="form-label">Correo Electrónico</label>
           <div class="input-wrapper">
-            <span class="ki-duotone ki-sms text-primary"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+            <i class="fas fa-envelope text-primary"></i>
             <input
               type="email"
               id="email"
@@ -43,7 +43,7 @@
         <div class="form-group">
           <label for="password" class="form-label">Contraseña</label>
           <div class="input-wrapper">
-            <span class="ki-duotone ki-lock text-primary"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-lock text-primary"></i>
             <input
               [type]="showPassword() ? 'text' : 'password'"
               id="password"
@@ -64,9 +64,9 @@
               title="Mostrar/Ocultar contraseña"
             >
               @if (showPassword()) {
-                <span class="ki-duotone ki-eye text-primary"><span class="path1"></span><span class="path2"></span></span>
+                <i class="fas fa-eye text-primary"></i>
               } @else {
-                <span class="ki-duotone ki-eye-off text-muted"><span class="path1"></span><span class="path2"></span></span>
+                <i class="fas fa-eye-slash text-muted"></i>
               }
             </button>
           </div>
@@ -74,7 +74,7 @@
 
         <!-- Error Message -->
         <div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-start gap-2">
-          <span class="ki-duotone ki-information-5 text-danger mt-1"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          <i class="fas fa-circle-info text-danger mt-1"></i>
           <span>{{ errorMessage() }}</span>
         </div>
 
@@ -112,17 +112,18 @@
     <!-- Info box -->
     <div class="info-box">
       <div class="info-item">
-        <span class="ki-duotone ki-chart-line-2 fs-2x text-info"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <i class="fas fa-chart-line fs-2x text-info"></i>
         <span class="info-text">Gestión de preguntas</span>
       </div>
       <div class="info-item">
-        <span class="ki-duotone ki-setting-3 fs-2x text-warning"><span class="path1"></span><span class="path2"></span></span>
+        <i class="fas fa-gear fs-2x text-warning"></i>
         <span class="info-text">Configuración de IA</span>
       </div>
       <div class="info-item">
-        <span class="ki-duotone ki-graph-up fs-2x text-success"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <i class="fas fa-arrow-up fs-2x text-success"></i>
         <span class="info-text">Análisis de datos</span>
       </div>
     </div>
   </div>
 </div>
+

@@ -11,7 +11,7 @@
   @if (errorMessage()) {
     <div class="error-container">
       <div class="alert alert-danger d-flex align-items-start gap-2">
-        <span class="ki-duotone ki-information-5 text-danger mt-1"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <i class="fas fa-circle-info text-danger mt-1"></i>
         <div>
           <strong>Error</strong>
           <p>{{ errorMessage() }}</p>
@@ -27,7 +27,7 @@
       <div class="profile-header card">
         <div class="card-body">
           <div class="d-flex align-items-center gap-3 mb-3">
-            <span class="ki-duotone ki-user fs-3x text-primary"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-user fs-3x text-primary"></i>
             <div class="header-info">
               <h1 class="profile-title">{{ playerName() }}</h1>
               <p class="profile-subtitle">Perfil de Jugador</p>
@@ -41,7 +41,7 @@
         <!-- Total Partidas -->
         <div class="stat-card">
           <div class="stat-icon">
-            <span class="ki-duotone ki-joystick fs-2x text-warning mb-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></span>
+            <i class="fas fa-gamepad fs-2x text-warning mb-2"></i>
           </div>
           <div class="stat-content">
             <p class="stat-label">Total Partidas</p>
@@ -52,7 +52,7 @@
         <!-- Puntaje Alto -->
         <div class="stat-card">
           <div class="stat-icon">
-            <span class="ki-duotone ki-cup fs-2x text-success mb-2"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-trophy fs-2x text-success mb-2"></i>
           </div>
           <div class="stat-content">
             <p class="stat-label">Puntaje Alto</p>
@@ -63,7 +63,7 @@
         <!-- Precisión General -->
         <div class="stat-card">
           <div class="stat-icon">
-            <span class="ki-duotone ki-chart-pie-simple fs-2x text-info mb-2"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-chart-pie fs-2x text-info mb-2"></i>
           </div>
           <div class="stat-content">
             <p class="stat-label">Precisión</p>
@@ -74,7 +74,7 @@
         <!-- Puntaje Total -->
         <div class="stat-card">
           <div class="stat-icon">
-            <span class="ki-duotone ki-graph-up fs-2x text-success mb-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+            <i class="fas fa-arrow-up fs-2x text-success mb-2"></i>
           </div>
           <div class="stat-content">
             <p class="stat-label">Puntaje Total</p>
@@ -151,11 +151,11 @@
       <!-- Action Buttons -->
       <div class="action-buttons">
         <button class="btn btn-primary btn-lg btn-play" (click)="playAgain()">
-          <span class="ki-duotone ki-game-controller"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-gamepad"></i>
           Jugar de Nuevo
         </button>
         <button class="btn btn-secondary btn-lg btn-home" (click)="goToHome()">
-          <span class="ki-duotone ki-home"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-home"></i>
           Volver al Inicio
         </button>
       </div>
@@ -163,10 +163,11 @@
       <!-- Footer Info -->
       <div class="profile-footer">
         <p class="footer-text">
-          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          <i class="fas fa-circle-info"></i>
           Estadísticas actualizadas en tiempo real
         </p>
       </div>
     </div>
   }
 </div>
+

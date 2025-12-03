@@ -3,7 +3,7 @@
   <div class="leaderboard-header">
     <div class="header-content">
       <div class="header-title">
-        <span class="ki-duotone ki-podium-2 fs-2x text-warning"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <i class="fas fa-podium fs-2x text-warning"></i>
         <div class="header-text">
           <h1>Clasificación Global</h1>
           <p class="header-subtitle">Top 10 Mejores Jugadores</p>
@@ -24,7 +24,7 @@
   @if (errorMessage()) {
     <div class="error-container">
       <div class="alert alert-danger">
-        <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <i class="fas fa-circle-info"></i>
         <div>
           <strong>Error</strong>
           <p>{{ errorMessage() }}</p>
@@ -41,11 +41,11 @@
         <div class="my-rank-card">
           <div class="rank-badge" [ngClass]="getRankColor(myRank()!)">
             @if (myRank() === 1) {
-              <span class="ki-duotone ki-crown text-white"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-crown text-white"></i>
             } @else if (myRank() === 2) {
-              <span class="ki-duotone ki-crown text-white"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-crown text-white"></i>
             } @else if (myRank() === 3) {
-              <span class="ki-duotone ki-crown text-white"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-crown text-white"></i>
             } @else {
               <span class="rank-number">{{ myRank() }}</span>
             }
@@ -64,16 +64,16 @@
             <thead>
               <tr class="table-header">
                 <th class="col-rank">
-                  <span class="ki-duotone ki-ranking fs-2"><span class="path1"></span><span class="path2"></span></span>
+                  <i class="fas fa-ranking fs-2"></i>
                 </th>
                 <th class="col-player">
-                  <span class="ki-duotone ki-user fs-2"><span class="path1"></span><span class="path2"></span></span>
+                  <i class="fas fa-user fs-2"></i>
                   Jugador
                 </th>
                 <th class="col-age">Edad</th>
                 <th class="col-games">Partidas</th>
                 <th class="col-high-score">
-                  <span class="ki-duotone ki-chart-simple fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></span>
+                  <i class="fas fa-chart-pie fs-2"></i>
                   Máx. Puntaje
                 </th>
                 <th class="col-total-score">Puntos Totales</th>
@@ -87,11 +87,11 @@
                   <td class="col-rank">
                     <div class="rank-cell" [ngClass]="getRankColor(player.rank)">
                       @if (player.rank === 1) {
-                        <span class="ki-duotone ki-crown fs-2x text-warning"><span class="path1"></span><span class="path2"></span></span>
+                        <i class="fas fa-crown fs-2x text-warning"></i>
                       } @else if (player.rank === 2) {
-                        <span class="ki-duotone ki-crown fs-2x text-gray-400"><span class="path1"></span><span class="path2"></span></span>
+                        <i class="fas fa-crown fs-2x text-gray-400"></i>
                       } @else if (player.rank === 3) {
-                        <span class="ki-duotone ki-crown fs-2x" style="color: #cd7f32;"><span class="path1"></span><span class="path2"></span></span>
+                        <i class="fas fa-crown fs-2x" style="color: #cd7f32;"></i>
                       } @else {
                         <span class="rank-number">{{ player.rank }}</span>
                       }
@@ -101,7 +101,7 @@
                   <!-- Player Name Column -->
                   <td class="col-player">
                     <div class="player-cell">
-                      <span class="ki-duotone ki-user text-gray-500"><span class="path1"></span><span class="path2"></span></span>
+                      <i class="fas fa-user text-gray-500"></i>
                       <span class="player-name">{{ player.player_name }}</span>
                       @if (isCurrentPlayer(player.player_id)) {
                         <span class="you-badge">Tú</span>
@@ -155,15 +155,15 @@
         <h3 class="legend-title">Información</h3>
         <div class="legend-items">
           <div class="legend-item">
-            <span class="ki-duotone ki-crown text-warning"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-crown text-warning"></i>
             <span class="legend-text">Oro - Primer lugar</span>
           </div>
           <div class="legend-item">
-            <span class="ki-duotone ki-crown text-gray-400"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-crown text-gray-400"></i>
             <span class="legend-text">Plata - Segundo lugar</span>
           </div>
           <div class="legend-item">
-            <span class="ki-duotone ki-crown" style="color: #cd7f32;"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-crown" style="color: #cd7f32;"></i>
             <span class="legend-text">Bronce - Tercer lugar</span>
           </div>
         </div>
@@ -172,11 +172,11 @@
       <!-- Action Buttons -->
       <div class="action-buttons">
         <button class="btn btn-primary btn-lg" (click)="goToGame()">
-          <span class="ki-duotone ki-game-controller"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-gamepad"></i>
           Jugar Ahora
         </button>
         <button class="btn btn-secondary btn-lg" (click)="goToPlay()">
-          <span class="ki-duotone ki-home"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-home"></i>
           Volver al Menú
         </button>
       </div>
@@ -184,10 +184,11 @@
       <!-- Footer Info -->
       <div class="leaderboard-footer">
         <p class="footer-text">
-          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          <i class="fas fa-circle-info"></i>
           Clasificación actualizada en tiempo real | {{ leaderboard().length }} jugadores en el ranking
         </p>
       </div>
     </div>
   }
 </div>
+

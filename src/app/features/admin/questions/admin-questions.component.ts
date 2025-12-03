@@ -4,38 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { AdminCategory, GenerationResponse } from '../../../core/models/admin';
+import { Question } from '../../../core/models/game';
 
-/**
- * Interface para una pregunta
- */
-interface Question {
-  id: number;
-  statement: string;
-  difficulty: number;
-  category_id: number;
-  category_name?: string;
-  is_ai_generated: boolean;
-  admin_verified: boolean;
-  created_at?: string;
-}
 
-/**
- * Interface para categoría
- */
-interface Category {
-  id: number;
-  name: string;
-  description?: string;
-}
-
-/**
- * Interface para respuesta de generación
- */
-interface GenerationResponse {
-  ok: boolean;
-  data?: any;
-  error?: string;
-}
 
 @Component({
   selector: 'app-admin-questions',
@@ -55,7 +27,7 @@ export class AdminQuestionsComponent implements OnInit {
   searchTerm = signal<string>('');
 
   // ========== CATEGORÍAS ==========
-  categories = signal<Category[]>([]);
+  categories = signal<AdminCategory[]>([]);
 
   // ========== GENERADOR IA ==========
   generatorCategoryId = signal<number | null>(null);
@@ -105,7 +77,7 @@ export class AdminQuestionsComponent implements OnInit {
     private adminService: AdminService,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadQuestions();
@@ -113,37 +85,48 @@ export class AdminQuestionsComponent implements OnInit {
   }
 
   /**
-   * Carga la lista de preguntas desde el backend
-   */
+ * Carga la lista de preguntas desde el backend
+ */
   private loadQuestions(): void {
     console.log('[AdminQuestions] Loading questions...');
+    this.isLoading.set(true);
 
-    // TODO: En un caso real, habría un endpoint para listar preguntas
-    // Por ahora, simulamos con datos vacíos
-    // Cuando el backend tenga GET /admin/questions o GET /questions, lo usamos
-
-    this.allQuestions.set([]);
-    this.questions.set([]);
-    this.isLoading.set(false);
-
-    // En futuro: this.adminService.getQuestions().subscribe(...)
+    this.adminService.getQuestions().subscribe({
+      next: (response) => {
+        this.allQuestions.set(response.questions || []);
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('[AdminQuestions] Error loading questions:', error);
+        this.errorMessage.set('Error al cargar preguntas');
+        this.isLoading.set(false);
+      }
+    });
   }
 
   /**
-   * Carga las categorías disponibles
-   */
+ * Carga las categorías disponibles
+ */
   private loadCategories(): void {
     console.log('[AdminQuestions] Loading categories...');
 
-    // TODO: Implementar endpoint para cargar categorías
-    // Por ahora, usamos categorías por defecto
-    this.categories.set([
-      { id: 1, name: 'Epidemiología y Generalidades', description: 'Datos epidemiológicos globales' },
-      { id: 2, name: 'Factores de Riesgo', description: 'Factores de riesgo modificables' },
-      { id: 3, name: 'Tamizaje y Detección', description: 'Métodos de diagnóstico' },
-      { id: 4, name: 'Prevención y Estilos de Vida', description: 'Hábitos de salud' }
-    ]);
+    this.adminService.getCategories().subscribe({
+      next: (response) => {
+        this.categories.set(response.categories || []);
+      },
+      error: (error) => {
+        console.error('[AdminQuestions] Error loading categories:', error);
+        // Fallback categorías por defecto
+        this.categories.set([
+          { id: 1, name: 'Epidemiología y Generalidades' },
+          { id: 2, name: 'Factores de Riesgo' },
+          { id: 3, name: 'Tamizaje y Detección' },
+          { id: 4, name: 'Prevención y Estilos de Vida' }
+        ]);
+      }
+    });
   }
+
 
   /**
    * Genera preguntas usando IA (Gemini)
@@ -232,7 +215,7 @@ export class AdminQuestionsComponent implements OnInit {
             this.allQuestions.set(updated);
           }
 
-          this.successMessage.set(!currentState ? '✅ Pregunta verificada' : '🔄 Verificación removida');
+          this.successMessage.set(!currentState ? 'Pregunta verificada' : 'Verificación removida');
           setTimeout(() => this.successMessage.set(''), 2000);
         } else {
           this.errorMessage.set(response.error || 'Error al cambiar estado de verificación');
@@ -259,21 +242,29 @@ export class AdminQuestionsComponent implements OnInit {
   }
 
   /**
-   * Confirma la eliminación de una pregunta
-   */
+ * Confirma la eliminación de una pregunta
+ */
   confirmDelete(questionId: number): void {
     console.log('[AdminQuestions] Confirming delete for question', questionId);
 
-    // Llamar al servicio (cuando esté implementado)
-    // this.adminService.deleteQuestion(questionId).subscribe(...)
-
-    // Por ahora, simular eliminación local
-    const questions = this.allQuestions().filter(q => q.id !== questionId);
-    this.allQuestions.set(questions);
-
-    this.successMessage.set('✅ Pregunta eliminada');
-    this.deleteConfirmId.set(null);
-    setTimeout(() => this.successMessage.set(''), 2000);
+    this.adminService.deleteQuestion(questionId).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          const questions = this.allQuestions().filter(q => q.id !== questionId);
+          this.allQuestions.set(questions);
+          this.successMessage.set('Pregunta eliminada');
+          this.deleteConfirmId.set(null);
+          setTimeout(() => this.successMessage.set(''), 2000);
+        } else {
+          this.errorMessage.set(response.error || 'Error al eliminar');
+        }
+      },
+      error: (error) => {
+        console.error('[AdminQuestions] Delete error:', error);
+        this.errorMessage.set('Error al eliminar pregunta');
+        this.deleteConfirmId.set(null);
+      }
+    });
   }
 
   /**

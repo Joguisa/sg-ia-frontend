@@ -3,7 +3,7 @@
   <div class="game-header">
     <div class="header-left">
       <div class="player-info d-flex align-items-center gap-2">
-        <span class="ki-duotone ki-profile-circle fs-2 text-primary"><span class="path1"></span><span class="path2"></span></span>
+        <i class="fas fa-user-circle fs-2 text-primary"></i>
         <span class="player-name">{{ playerName() }}</span>
       </div>
     </div>
@@ -21,11 +21,11 @@
     <div class="header-right">
       <div class="stats-group d-flex align-items-center gap-4">
         <div class="stat-item d-flex align-items-center gap-2">
-          <span class="ki-duotone ki-rescue fs-1 text-danger me-2"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-heart fs-1 text-danger me-2"></i>
           <span class="lives-value">{{ lives() }}/3</span>
         </div>
         <div class="stat-item d-flex align-items-center gap-2">
-          <span class="ki-duotone ki-cup fs-1 text-warning me-2"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-trophy fs-1 text-warning me-2"></i>
           <span class="score-value">{{ score() }}</span>
         </div>
       </div>
@@ -51,7 +51,7 @@
             <div class="question-header">
               <span class="question-number">Pregunta #{{ questionCount() }}</span>
               <div [class]="'timer ' + getTimerColor()" class="d-flex align-items-center gap-2">
-                <span class="ki-duotone ki-time fs-1 text-primary me-2"><span class="path1"></span><span class="path2"></span></span>
+                <i class="fas fa-clock fs-1 text-primary me-2"></i>
                 <span class="timer-value">{{ questionTimer() }}s</span>
               </div>
             </div>
@@ -102,9 +102,9 @@
           <!-- Result Icon and Status -->
           <div class="feedback-header d-flex flex-column align-items-center gap-3">
             @if (isAnswerCorrect()) {
-              <span class="ki-duotone ki-verify fs-2x text-success"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-check fs-2x text-success"></i>
             } @else {
-              <span class="ki-duotone ki-cross fs-2x text-danger"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-times fs-2x text-danger"></i>
             }
             <h2 class="result-title">
               {{ isAnswerCorrect() ? '¡Correcto!' : 'Respuesta Incorrecta' }}
@@ -123,7 +123,7 @@
           <!-- Explanation Section (CRÍTICO - Educativo) -->
           <div class="explanation-section">
             <span class="explanation-label d-flex align-items-center gap-2">
-              <span class="ki-duotone ki-book fs-1 text-primary"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-book fs-1 text-primary"></i>
               Explicación Médica:
             </span>
             <p class="explanation-text">
@@ -173,7 +173,7 @@
     @if (gameState() === 'gameover') {
       <div class="gameover-screen">
         <div class="gameover-card d-flex flex-column align-items-center text-center">
-          <span class="ki-duotone ki-game-controller fs-2x text-warning mb-3"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-gamepad fs-2x text-warning mb-3"></i>
           <h2 class="gameover-title">¡Fin del Juego!</h2>
           <p class="gameover-message">
             Completaste {{ questionCount() }} preguntas con una puntuación de {{ score() }} puntos.
@@ -186,3 +186,4 @@
     }
   </div>
 </div>
+

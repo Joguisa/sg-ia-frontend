@@ -3,7 +3,7 @@
   <div class="questions-header">
     <div class="header-content">
       <div class="header-title">
-        <span class="ki-duotone ki-file-text fs-2x text-primary"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <i class="fas fa-file-text"></i>
         <div class="header-text">
           <h1>Gestión de Preguntas</h1>
           <p class="header-subtitle">Administra la base de datos de preguntas y genera nuevas con IA</p>
@@ -11,11 +11,11 @@
       </div>
       <div class="header-actions">
         <button class="btn btn-sm btn-secondary" (click)="goToDashboard()">
-          <span class="ki-duotone ki-arrow-left"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-arrow-left"></i>
           Volver al Dashboard
         </button>
         <button class="btn btn-sm btn-danger" (click)="logout()">
-          <span class="ki-duotone ki-exit-right"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-sign-out-alt"></i>
           Logout
         </button>
       </div>
@@ -25,14 +25,14 @@
   <!-- Success & Error Messages -->
   @if (successMessage()) {
     <div class="alert alert-success">
-      <span class="ki-duotone ki-verify text-success"><span class="path1"></span><span class="path2"></span></span>
+      <i class="fas fa-check"></i>
       <span>{{ successMessage() }}</span>
     </div>
   }
 
   @if (errorMessage()) {
     <div class="alert alert-danger">
-      <span class="ki-duotone ki-information-5 text-danger"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+      <i class="fas fa-circle-info"></i>
       <span>{{ errorMessage() }}</span>
     </div>
   }
@@ -52,11 +52,11 @@
       <div class="generator-section">
         <div class="generator-header" (click)="toggleGenerator()">
           <div class="generator-title">
-            <span class="ki-duotone ki-spark fs-2x text-warning"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+            <i class="fas fa-lightbulb"></i>
             <h2>Generador Automático (Gemini AI)</h2>
           </div>
           <button class="btn-toggle" [ngClass]="{ 'open': isGeneratorOpen() }">
-            <span class="ki-duotone ki-arrow-down"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-chevron-down"></i>
           </button>
         </div>
 
@@ -121,7 +121,7 @@
               (click)="generateQuestionsWithAI()"
               [disabled]="isGenerating()">
               @if (!isGenerating()) {
-                <span class="ki-duotone ki-spark"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                <i class="fas fa-lightbulb"></i>
                 Generar con IA
               } @else {
                 <span class="spinner-small"></span>
@@ -140,7 +140,7 @@
           <div class="filter-item">
             <label>Búsqueda</label>
             <div class="search-input">
-              <span class="ki-duotone ki-magnifier"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-search"></i>
               <input
                 type="text"
                 placeholder="Buscar por ID o texto..."
@@ -166,11 +166,11 @@
             <select [(ngModel)]="selectedStatus" class="form-control">
               <option value="all">Todas</option>
               <option value="verified">
-                <span class="ki-duotone ki-verify"><span class="path1"></span><span class="path2"></span></span>
+                <i class="fas fa-check"></i>
                 Verificadas
               </option>
               <option value="pending">
-                <span class="ki-duotone ki-time"><span class="path1"></span><span class="path2"></span></span>
+                <i class="fas fa-clock"></i>
                 Pendientes
               </option>
             </select>
@@ -201,7 +201,7 @@
               </thead>
               <tbody>
                 @for (question of filteredQuestions(); track question.id) {
-                  <tr class="table-row" [ngClass]="{ 'pending-verify': !question.admin_verified }">
+                  <tr class="table-row" [ngClass]="{ 'pending-verify': !(question.admin_verified ?? false) }">
                     <!-- ID -->
                     <td class="col-id">
                       <code>{{ question.id }}</code>
@@ -230,14 +230,14 @@
 
                     <!-- Status -->
                     <td class="col-status">
-                      @if (question.admin_verified) {
+                      @if (question.admin_verified ?? false) {
                         <span class="status-badge status-verified">
-                          <span class="ki-duotone ki-verify fs-2 text-success"><span class="path1"></span><span class="path2"></span></span>
+                          <i class="fas fa-check"></i>
                           Verificada
                         </span>
                       } @else {
                         <span class="status-badge status-pending">
-                          <span class="ki-duotone ki-time fs-2 text-warning"><span class="path1"></span><span class="path2"></span></span>
+                          <i class="fas fa-clock"></i>
                           Pendiente
                         </span>
                       }
@@ -247,7 +247,7 @@
                     <td class="col-ai">
                       @if (question.is_ai_generated) {
                         <span class="ai-badge">
-                          <span class="ki-duotone ki-spark text-info"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                          <i class="fas fa-lightbulb"></i>
                           IA
                         </span>
                       } @else {
@@ -261,9 +261,9 @@
                         <!-- Verify/Unverify -->
                         <button
                           class="btn-action btn-verify"
-                          (click)="toggleVerifyQuestion(question.id, question.admin_verified)"
+                          (click)="toggleVerifyQuestion(question.id, question.admin_verified ?? false)"
                           [title]="question.admin_verified ? 'Desverificar' : 'Verificar'">
-                          <span class="ki-duotone ki-verify fs-3"><span class="path1"></span><span class="path2"></span></span>
+                          <i class="fas fa-check"></i>
                         </button>
 
                         <!-- Delete with Confirmation -->
@@ -272,7 +272,7 @@
                             class="btn-action btn-delete"
                             (click)="deleteQuestion(question.id)"
                             title="Eliminar">
-                            <span class="ki-duotone ki-trash fs-3"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></span>
+                            <i class="fas fa-trash"></i>
                           </button>
                         } @else {
                           <div class="confirm-buttons">
@@ -280,13 +280,13 @@
                               class="btn-confirm confirm-yes"
                               (click)="confirmDelete(question.id)"
                               title="Confirmar eliminación">
-                              <span class="ki-duotone ki-check fs-2"><span class="path1"></span><span class="path2"></span></span>
+                              <i class="fas fa-check"></i>
                             </button>
                             <button
                               class="btn-confirm confirm-no"
                               (click)="cancelDelete()"
                               title="Cancelar">
-                              <span class="ki-duotone ki-cross fs-2"><span class="path1"></span><span class="path2"></span></span>
+                              <i class="fas fa-times"></i>
                             </button>
                           </div>
                         }
@@ -299,7 +299,7 @@
           </div>
         } @else {
           <div class="no-data">
-            <span class="ki-duotone ki-document fs-3x text-muted"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+            <i class="fas fa-file"></i>
             <p>No hay preguntas disponibles. ¡Crea algunas con el generador IA!</p>
           </div>
         }
@@ -308,10 +308,12 @@
       <!-- Footer Info -->
       <div class="questions-footer">
         <p class="footer-text">
-          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          <i class="fas fa-circle-info"></i>
           Total: {{ allQuestions().length }} preguntas en base de datos
         </p>
       </div>
     </div>
   }
 </div>
+
+

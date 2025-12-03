@@ -3,15 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-
-/**
- * Interfaz para la respuesta del login
- */
-interface LoginResponse {
-  ok: boolean;
-  token?: string;
-  error?: string;
-}
+import { AuthResponse } from '../../../core/models/auth';
 
 @Component({
   selector: 'app-admin-login',
@@ -57,7 +49,7 @@ export class AdminLoginComponent {
 
     // Llamar al servicio de login
     this.authService.login(this.email().trim(), this.password()).subscribe({
-      next: (response: LoginResponse) => {
+      next: (response: AuthResponse) => {
         // DEBUG: Log del response
         console.log('[AdminLogin] Response del servidor:', response);
 
@@ -71,13 +63,7 @@ export class AdminLoginComponent {
             console.log('[AdminLogin] Token establecido, iniciando navegación...');
 
             // PASO 2: Navegar al dashboard - El AdminGuard esperará el observable
-            this.router.navigate(['/admin/dashboard']).then((success) => {
-              if (success) {
-                console.log('[AdminLogin] ✅ Redirección a /admin/dashboard completada');
-              } else {
-                console.error('[AdminLogin] ❌ Error: No se pudo redirigir a /admin/dashboard');
-              }
-            });
+            this.goToDashboard();
 
             this.isLoading.set(false);
           }, 50);
@@ -121,6 +107,19 @@ export class AdminLoginComponent {
    */
   goToPlay(): void {
     this.router.navigate(['/play']);
+  }
+
+  /**
+   * Navega al dashboard
+   */
+  goToDashboard(): void {
+    this.router.navigate(['/admin/dashboard']).then((success) => {
+      if (success) {
+        console.log('[AdminLogin] ✅ Redirección a /admin/dashboard completada');
+      } else {
+        console.error('[AdminLogin] ❌ Error: No se pudo redirigir a /admin/dashboard');
+      }
+    });
   }
 
   /**

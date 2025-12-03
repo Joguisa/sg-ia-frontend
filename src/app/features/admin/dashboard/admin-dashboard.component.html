@@ -3,13 +3,13 @@
   <div class="dashboard-header">
     <div class="header-content">
       <div class="header-title">
-        <span class="ki-duotone ki-shield-tick fs-2x text-white"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <i class="fas fa-shield-check"></i>
         <h1>Centro de Comando</h1>
         <p class="header-subtitle">Sistema de Gestión Administrativo SG-IA</p>
       </div>
       <div class="header-actions">
         <button class="btn btn-logout" (click)="logout()">
-          <span class="ki-duotone ki-exit-right"><span class="path1"></span><span class="path2"></span></span>
+          <i class="fas fa-sign-out-alt"></i>
           Cerrar Sesión
         </button>
       </div>
@@ -28,7 +28,7 @@
   @if (errorMessage()) {
     <div class="error-container">
       <div class="alert alert-danger">
-        <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <i class="fas fa-circle-info"></i>
         <div>
           <strong>Error</strong>
           <p>{{ errorMessage() }}</p>
@@ -48,7 +48,7 @@
           <!-- Total Jugadores -->
           <div class="kpi-card kpi-players">
             <div class="kpi-icon">
-              <span class="ki-duotone ki-people fs-2x text-white"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></span>
+              <i class="fas fa-users"></i>
             </div>
             <div class="kpi-content">
               <p class="kpi-label">Jugadores Registrados</p>
@@ -60,7 +60,7 @@
           <!-- Total Sesiones -->
           <div class="kpi-card kpi-sessions">
             <div class="kpi-icon">
-              <span class="ki-duotone ki-joystick fs-2x text-white"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></span>
+              <i class="fas fa-gamepad"></i>
             </div>
             <div class="kpi-content">
               <p class="kpi-label">Sesiones de Juego</p>
@@ -72,7 +72,7 @@
           <!-- Total Preguntas -->
           <div class="kpi-card kpi-questions">
             <div class="kpi-icon">
-              <span class="ki-duotone ki-file fs-2x text-white"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-file"></i>
             </div>
             <div class="kpi-content">
               <p class="kpi-label">Preguntas en Base de Datos</p>
@@ -84,7 +84,7 @@
           <!-- Verificación Pendiente -->
           <div class="kpi-card kpi-pending">
             <div class="kpi-icon">
-              <span class="ki-duotone ki-verify fs-2x text-white"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-check"></i>
             </div>
             <div class="kpi-content">
               <p class="kpi-label">Pendientes de Verificación</p>
@@ -103,7 +103,7 @@
           <!-- Manage Questions -->
           <div class="action-card">
             <div class="action-icon">
-              <span class="ki-duotone ki-pencil fs-3x text-primary"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-pen"></i>
             </div>
             <div class="action-content">
               <h3 class="action-title">Gestión de Preguntas</h3>
@@ -111,7 +111,7 @@
                 Editar, verificar y generar preguntas usando IA. Gestiona categorías y dificultades.
               </p>
               <button class="btn btn-action" (click)="goToQuestions()">
-                <span class="ki-duotone ki-arrow-right"><span class="path1"></span><span class="path2"></span></span>
+                <i class="fas fa-arrow-right"></i>
                 Ir a Preguntas
               </button>
             </div>
@@ -120,7 +120,7 @@
           <!-- System Settings -->
           <div class="action-card">
             <div class="action-icon">
-              <span class="ki-duotone ki-setting-3 fs-3x text-warning"><span class="path1"></span><span class="path2"></span></span>
+              <i class="fas fa-gear"></i>
             </div>
             <div class="action-content">
               <h3 class="action-title">Configuración del Sistema</h3>
@@ -128,7 +128,7 @@
                 Ajusta el prompt de IA, temperatura y parámetros del sistema de dificultad adaptativa.
               </p>
               <button class="btn btn-action" (click)="goToSettings()">
-                <span class="ki-duotone ki-arrow-right"><span class="path1"></span><span class="path2"></span></span>
+                <i class="fas fa-arrow-right"></i>
                 Ir a Configuración
               </button>
             </div>
@@ -145,26 +145,28 @@
           <div class="analytics-card">
             <div class="analytics-header">
               <h3 class="analytics-title">
-                <span class="ki-duotone ki-graph-down text-danger"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                <i class="fas fa-arrow-down"></i>
                 Top 5 Preguntas Difíciles
               </h3>
               <p class="analytics-subtitle">Menor tasa de éxito</p>
             </div>
 
             <div class="analytics-content">
-              @if (topHardest() && topHardest()!.length > 0) {
+              @let hardestQuestions = topHardest();
+              @if (topHardest()!.length > 0) {
                 <div class="questions-list">
-                  @for (question of topHardest(); track question.id; let idx = $index) {
+                  <!-- @for (question of topHardest(); track question.id; let idx = $index) { -->
+                  @for (question of hardestQuestions; track question.id; let idx = $index) {
                     <div class="question-item">
                       <div class="question-rank">{{ idx + 1 }}</div>
                       <div class="question-info">
                         <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
                         <p class="question-meta">
-                          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                          <i class="fas fa-circle-info"></i>
                           ID: {{ question.id }}
                         </p>
                       </div>
-                      <div class="question-rate" [ngClass]="'success-rate-' + getSuccessRateClass(question.success_rate)">
+                      <div class="question-rate" [ngClass]="getSuccessRateClass(question.success_rate)">
                         <p class="rate-value">{{ question.success_rate.toFixed(1) }}%</p>
                         <p class="rate-label">Éxito</p>
                       </div>
@@ -181,14 +183,14 @@
           <div class="analytics-card">
             <div class="analytics-header">
               <h3 class="analytics-title">
-                <span class="ki-duotone ki-graph-up text-success"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                <i class="fas fa-arrow-up"></i>
                 Top 5 Preguntas Fáciles
               </h3>
               <p class="analytics-subtitle">Mayor tasa de éxito</p>
             </div>
 
             <div class="analytics-content">
-              @if (topEasiest() && topEasiest()!.length > 0) {
+              @if (topEasiest()!.length > 0) {
                 <div class="questions-list">
                   @for (question of topEasiest(); track question.id; let idx = $index) {
                     <div class="question-item">
@@ -196,11 +198,11 @@
                       <div class="question-info">
                         <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
                         <p class="question-meta">
-                          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                          <i class="fas fa-circle-info"></i>
                           ID: {{ question.id }}
                         </p>
                       </div>
-                      <div class="question-rate" [ngClass]="'success-rate-' + getSuccessRateClass(question.success_rate)">
+                      <div class="question-rate" [ngClass]="getSuccessRateClass(question.success_rate)">
                         <p class="rate-value">{{ question.success_rate.toFixed(1) }}%</p>
                         <p class="rate-label">Éxito</p>
                       </div>
@@ -218,10 +220,12 @@
       <!-- Footer Info -->
       <div class="dashboard-footer">
         <p class="footer-text">
-          <span class="ki-duotone ki-information-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          <i class="fas fa-circle-info"></i>
           Estadísticas actualizadas en tiempo real | Última carga: {{ (isLoading() ? 'Cargando...' : 'Actualizado') }}
         </p>
       </div>
     </div>
   }
 </div>
+
+

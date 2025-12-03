@@ -8,7 +8,7 @@
       <!-- Header -->
       <div class="card-header text-center">
         <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
-          <span class="ki-duotone ki-hospital-window fs-2x text-danger"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+          <i class="fas fa-hospital fs-2x text-danger"></i>
         </div>
         <h1 class="game-title">Bienvenido al Reto de Salud</h1>
         <p class="game-subtitle">Pon a prueba tus conocimientos sobre salud e inteligencia artificial</p>
@@ -62,7 +62,7 @@
           [disabled]="isLoading()"
         >
           <span *ngIf="!isLoading()" class="btn-text d-flex align-items-center justify-content-center gap-2">
-            <span class="ki-duotone ki-game-controller text-white"><span class="path1"></span><span class="path2"></span></span>
+            <i class="fas fa-gamepad text-white"></i>
             ¡Jugar Ahora!
           </span>
           <span *ngIf="isLoading()" class="btn-text">
@@ -90,17 +90,18 @@
     <!-- Features section -->
     <div class="features-section">
       <div class="feature-item">
-        <span class="ki-duotone ki-flash fs-2x text-warning"><span class="path1"></span><span class="path2"></span></span>
+        <i class="fas fa-bolt fs-2x text-warning"></i>
         <p class="feature-text">Preguntas dinámicas</p>
       </div>
       <div class="feature-item">
-        <span class="ki-duotone ki-graph-up fs-2x text-info"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+        <i class="fas fa-arrow-up fs-2x text-info"></i>
         <p class="feature-text">Dificultad adaptativa</p>
       </div>
       <div class="feature-item">
-        <span class="ki-duotone ki-cup fs-4x text-success"><span class="path1"></span><span class="path2"></span></span>
+        <i class="fas fa-trophy fs-4x text-success"></i>
         <p class="feature-text">Compite en el ranking</p>
       </div>
     </div>
   </div>
 </div>
+

@@ -10,3 +10,9 @@ export interface CategoryResponse {
   message?: string;
   error?: string;
 }
+
+export interface CategoriesResponse {
+  ok: boolean;
+  categories: AdminCategory[];
+  error?: string;
+}

@@ -36,7 +36,8 @@ export const environment = {
       createCategory: '/admin/categories',
       deleteCategory: (id: number) => `/admin/categories/${id}`,
       generateBatch: '/admin/generate-batch',
-      dashboardStats: '/admin/dashboard'
-    }
+      dashboardStats: '/admin/dashboard',
+      deleteQuestion: (id: number) => `/admin/questions/${id}`,
+    },
   }
 };

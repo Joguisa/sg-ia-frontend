@@ -8,7 +8,8 @@
       "Bash(timeout 15 npm start)",
       "Bash(tree:*)",
       "Bash(dir:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(powershell -Command:*)"
     ],
     "deny": [],
     "ask": []

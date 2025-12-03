@@ -21,3 +21,4 @@ export interface DashboardStatsResponse {
   easiest_questions?: QuestionDifficulty[];
   error?: string;
 }
+

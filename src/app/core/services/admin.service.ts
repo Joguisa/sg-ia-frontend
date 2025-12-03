@@ -3,13 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
-  AdminPrompt,
   PromptConfigResponse,
   CategoryResponse,
   DashboardStatsResponse,
-  AdminCategory
-} from '../models/admin';
-import { QuestionResponse } from '../models/game';
+  AdminCategory} from '../models/admin';
+import { Question, QuestionResponse } from '../models/game';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +74,33 @@ export class AdminService {
       body
     );
   }
+
+  /**
+ * Obtiene todas las preguntas
+ */
+getQuestions(): Observable<{ ok: boolean; questions: Question[] }> {
+  return this.http.get<{ ok: boolean; questions: Question[] }>(
+    `${environment.apiBaseUrl}/admin/questions`
+  );
+}
+
+/**
+ * Obtiene categorías
+ */
+getCategories(): Observable<{ ok: boolean; categories: AdminCategory[] }> {
+  return this.http.get<{ ok: boolean; categories: AdminCategory[] }>(
+    `${environment.apiBaseUrl}/admin/categories`
+  );
+}
+
+/**
+ * Elimina una pregunta
+ */
+deleteQuestion(questionId: number): Observable<QuestionResponse> {
+  return this.http.delete<QuestionResponse>(
+    `${environment.apiBaseUrl}${environment.apiEndpoints.admin.deleteQuestion(questionId)}`
+  );
+}
 
   // Dashboard Analytics
   getDashboardStats(): Observable<DashboardStatsResponse> {

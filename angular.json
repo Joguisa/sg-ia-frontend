@@ -27,8 +27,7 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "src/assets/keenicons/duotone/style.css"
+              "src/styles.css"
             ],
             "scripts": []
           },

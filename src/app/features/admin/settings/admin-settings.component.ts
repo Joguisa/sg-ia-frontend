@@ -4,25 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
-
-/**
- * Interface para la configuración del prompt
- */
-interface PromptConfig {
-  id?: number;
-  prompt_text: string;
-  temperature: number;
-  is_active?: boolean;
-}
-
-/**
- * Interface para la respuesta de configuración
- */
-interface ConfigResponse {
-  ok: boolean;
-  data?: PromptConfig;
-  error?: string;
-}
+import { PromptConfigResponse, AdminPrompt } from '../../../core/models/admin';
 
 @Component({
   selector: 'app-admin-settings',
@@ -64,11 +46,11 @@ export class AdminSettingsComponent implements OnInit {
     console.log('[AdminSettings] Loading system prompt...');
 
     this.adminService.getPromptConfig().subscribe({
-      next: (response: ConfigResponse) => {
+      next: (response: PromptConfigResponse) => {
         console.log('[AdminSettings] Prompt config response:', response);
 
-        if (response.ok && response.data) {
-          const config = response.data;
+        if (response.ok && response.prompt) {
+          const config = response.prompt;
 
           // Establecer valores
           this.promptText.set(config.prompt_text);
@@ -145,13 +127,16 @@ export class AdminSettingsComponent implements OnInit {
     this.errorMessage.set('');
 
     // Preparar datos
-    const data: PromptConfig = {
-      prompt_text: this.promptText().trim(),
-      temperature: Number(this.temperature().toFixed(1)) // Redondear a 1 decimal
-    };
+    // const data: Partial<AdminPrompt> = {
+    //   prompt_text: this.promptText().trim(),
+    //   temperature: Number(this.temperature().toFixed(1)) // Redondear a 1 decimal
+    // };
+    
+    const cleanPrompt = this.promptText().trim();
+    const cleanTemp = Number(this.temperature().toFixed(1));
 
     // Llamar al servicio
-    this.adminService.updatePromptConfig(data.prompt_text, data.temperature).subscribe({
+    this.adminService.updatePromptConfig(cleanPrompt, cleanTemp).subscribe({
       next: (response: any) => {
         console.log('[AdminSettings] Save response:', response);
 
@@ -161,7 +146,7 @@ export class AdminSettingsComponent implements OnInit {
           this.originalTemperature.set(this.temperature());
           this.hasChanges.set(false);
 
-          this.successMessage.set('✅ Configuración actualizada exitosamente');
+          this.successMessage.set('Configuración actualizada exitosamente');
           this.isSaving.set(false);
 
           // Limpiar mensaje después de 3 segundos
