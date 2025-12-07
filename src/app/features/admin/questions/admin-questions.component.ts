@@ -4,8 +4,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractContro
 import { Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { AdminCategory, GenerationResponse } from '../../../core/models/admin';
 import { Question } from '../../../core/models/game';
+import { HttpStatus } from '../../../core/constants/http-status.const';
+import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 
 @Component({
   selector: 'app-admin-questions',
@@ -28,11 +31,8 @@ export class AdminQuestionsComponent implements OnInit {
 
   // ========== UI STATE ==========
   isLoading = signal<boolean>(true);
-  errorMessage = signal<string>('');
-  successMessage = signal<string>('');
   isGeneratorOpen = signal<boolean>(false);
   isGenerating = signal<boolean>(false);
-  generationMessage = signal<string>('');
 
   // ========== CONFIRMACIÓN DE BORRADO ==========
   deleteConfirmId = signal<number | null>(null);
@@ -83,6 +83,7 @@ export class AdminQuestionsComponent implements OnInit {
     private fb: FormBuilder,
     private adminService: AdminService,
     private authService: AuthService,
+    private notification: NotificationService,
     private router: Router
   ) {
     // Inicializar formulario del generador
@@ -139,7 +140,7 @@ export class AdminQuestionsComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (error) => {
-        this.errorMessage.set('Error al cargar preguntas');
+        this.notification.error('Error al cargar preguntas', NOTIFICATION_DURATION.DEFAULT);
         this.isLoading.set(false);
       }
     });
@@ -154,6 +155,7 @@ export class AdminQuestionsComponent implements OnInit {
         this.categories.set(response.categories || []);
       },
       error: (error) => {
+        this.notification.warning('No se pudieron cargar categorías, usando valores por defecto', NOTIFICATION_DURATION.SHORT);
         // Fallback categorías por defecto
         this.categories.set([
           { id: 1, name: 'Epidemiología y Generalidades' },
@@ -176,19 +178,19 @@ export class AdminQuestionsComponent implements OnInit {
     // Validar el formulario
     if (this.generatorForm.invalid) {
       if (this.generatorForm.get('categoryId')?.hasError('required')) {
-        this.generationMessage.set('Por favor selecciona una categoría');
+        this.notification.warning('Por favor selecciona una categoría', NOTIFICATION_DURATION.DEFAULT);
       } else if (this.generatorForm.get('quantity')?.hasError('required')) {
-        this.generationMessage.set('Por favor ingresa la cantidad');
+        this.notification.warning('Por favor ingresa la cantidad', NOTIFICATION_DURATION.DEFAULT);
       } else if (this.generatorForm.get('quantity')?.hasError('invalidQuantity')) {
-        this.generationMessage.set('Cantidad debe ser entre 1 y 50');
+        this.notification.warning('Cantidad debe ser entre 1 y 50', NOTIFICATION_DURATION.DEFAULT);
       } else if (this.generatorForm.get('difficulty')?.hasError('min') || this.generatorForm.get('difficulty')?.hasError('max')) {
-        this.generationMessage.set('Dificultad debe ser entre 1 y 5');
+        this.notification.warning('Dificultad debe ser entre 1 y 5', NOTIFICATION_DURATION.DEFAULT);
       }
       return;
     }
 
     this.isGenerating.set(true);
-    this.generationMessage.set('Generando preguntas con IA...');
+    this.notification.info('Generando preguntas con IA...', NOTIFICATION_DURATION.LONG);
     this.generatorForm.disable();
 
     const formValues = this.generatorForm.getRawValue();
@@ -204,9 +206,11 @@ export class AdminQuestionsComponent implements OnInit {
 
         if (response.ok && generatedCount > 0) {
           // Éxito: se generaron preguntas
-          this.successMessage.set(`${generatedCount} pregunta${generatedCount !== 1 ? 's' : ''} generada${generatedCount !== 1 ? 's' : ''} exitosamente con IA`);
+          this.notification.success(
+            `${generatedCount} pregunta${generatedCount !== 1 ? 's' : ''} generada${generatedCount !== 1 ? 's' : ''} exitosamente con IA`,
+            NOTIFICATION_DURATION.DEFAULT
+          );
           this.isGenerating.set(false);
-          this.generationMessage.set('');
 
           // Resetear formulario
           this.generatorForm.reset({
@@ -218,55 +222,33 @@ export class AdminQuestionsComponent implements OnInit {
           this.isGeneratorOpen.set(false);
 
           // Recargar preguntas
-          setTimeout(() => {
-            this.loadQuestions();
-            this.successMessage.set('');
-          }, 3000);
+          this.loadQuestions();
         } else if (response.ok && generatedCount === 0) {
           // Respuesta OK pero no se generaron preguntas
           const failedCount = response.failed ?? 0;
           const errorMsg = response.message || response.error || `No se pudieron generar preguntas. ${failedCount} fallaron.`;
-          this.generationMessage.set(errorMsg);
-          this.errorMessage.set('Error al generar preguntas. Por favor intenta de nuevo.');
+          this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
           this.isGenerating.set(false);
           this.generatorForm.enable();
-
-          // Limpiar error después de 5 segundos
-          setTimeout(() => {
-            this.errorMessage.set('');
-            this.generationMessage.set('');
-          }, 5000);
         } else {
           // Error general
-          this.generationMessage.set(response.error || 'Error al generar preguntas');
-          this.errorMessage.set(response.error || 'Error al generar preguntas');
+          this.notification.error(response.error || 'Error al generar preguntas', NOTIFICATION_DURATION.DEFAULT);
           this.isGenerating.set(false);
           this.generatorForm.enable();
-
-          setTimeout(() => {
-            this.errorMessage.set('');
-            this.generationMessage.set('');
-          }, 5000);
         }
       },
       error: (error) => {
         let errorMsg = 'Error al generar preguntas con IA';
 
-        if (error.status === 401) {
+        if (error.status === HttpStatus.UNAUTHORIZED) {
           errorMsg = 'No autorizado. Token expirado.';
-        } else if (error.status === 400) {
+        } else if (error.status === HttpStatus.BAD_REQUEST) {
           errorMsg = 'Parámetros inválidos para la generación';
         }
 
-        this.generationMessage.set(errorMsg);
-        this.errorMessage.set(errorMsg);
+        this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
         this.isGenerating.set(false);
         this.generatorForm.enable();
-
-        setTimeout(() => {
-          this.errorMessage.set('');
-          this.generationMessage.set('');
-        }, 5000);
       }
     });
   }
@@ -287,14 +269,16 @@ export class AdminQuestionsComponent implements OnInit {
             this.allQuestions.set(updated);
           }
 
-          this.successMessage.set(!currentState ? 'Pregunta verificada' : 'Verificación removida');
-          setTimeout(() => this.successMessage.set(''), 2000);
+          this.notification.success(
+            !currentState ? 'Pregunta verificada' : 'Verificación removida',
+            NOTIFICATION_DURATION.SHORT
+          );
         } else {
-          this.errorMessage.set(response.error || 'Error al cambiar estado de verificación');
+          this.notification.error(response.error || 'Error al cambiar estado de verificación', NOTIFICATION_DURATION.DEFAULT);
         }
       },
       error: (error) => {
-        this.errorMessage.set('Error al cambiar estado de verificación');
+        this.notification.error('Error al cambiar estado de verificación', NOTIFICATION_DURATION.DEFAULT);
       }
     });
   }
@@ -319,25 +303,16 @@ export class AdminQuestionsComponent implements OnInit {
         if (response.ok) {
           const questions = this.allQuestions().filter(q => q.id !== questionId);
           this.allQuestions.set(questions);
-          this.successMessage.set('Pregunta eliminada correctamente');
+          this.notification.success('Pregunta eliminada correctamente', NOTIFICATION_DURATION.SHORT);
           this.deleteConfirmId.set(null);
-          setTimeout(() => this.successMessage.set(''), 2000);
         } else {
-          this.errorMessage.set(response.error || 'Error al eliminar la pregunta');
-        this.deleteConfirmId.set(null);
-        
-        setTimeout(() => {
-          this.errorMessage.set('');
-        }, 3000);
+          this.notification.error(response.error || 'Error al eliminar la pregunta', NOTIFICATION_DURATION.DEFAULT);
+          this.deleteConfirmId.set(null);
         }
       },
       error: (error) => {
-        this.errorMessage.set('Error al eliminar pregunta');
+        this.notification.error('Error al eliminar pregunta', NOTIFICATION_DURATION.DEFAULT);
         this.deleteConfirmId.set(null);
-        // Limpiar error después de 3 segundos
-        setTimeout(() => {
-          this.errorMessage.set('');
-        }, 3000);
       }
     });
   }

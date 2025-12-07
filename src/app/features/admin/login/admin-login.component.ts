@@ -3,7 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { AuthResponse } from '../../../core/models/auth';
+import { HttpStatus } from '../../../core/constants/http-status.const';
+import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 
 @Component({
   selector: 'app-admin-login',
@@ -15,12 +18,13 @@ import { AuthResponse } from '../../../core/models/auth';
 export class AdminLoginComponent {
   loginForm: FormGroup;
   isLoading = signal<boolean>(false);
-  errorMessage = signal<string>('');
+  errorMessage = signal<string>(''); // Solo para validaciones inline del formulario
   showPassword = signal<boolean>(false);
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private notification: NotificationService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -86,13 +90,15 @@ export class AdminLoginComponent {
           // Establecer token
           this.authService.setToken(response.token);
 
+          // Notificar éxito
+          this.notification.success('Inicio de sesión exitoso', NOTIFICATION_DURATION.SHORT);
+
           // Esperar un momento para que el token se propague
           setTimeout(() => {
             // Navegar al dashboard
             this.router.navigate(['/admin/dashboard']).then((success) => {
-              if (success) {
-              } else {
-                this.errorMessage.set('Error al acceder al panel de administración');
+              if (!success) {
+                this.notification.error('Error al acceder al panel de administración', NOTIFICATION_DURATION.DEFAULT);
                 this.loginForm.enable();
               }
               this.isLoading.set(false);
@@ -101,7 +107,7 @@ export class AdminLoginComponent {
         } else {
           // Mostrar error si response.ok es false
           const errorMsg = response.error || 'Credenciales inválidas. Intenta de nuevo.';
-          this.errorMessage.set(errorMsg);
+          this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
           this.isLoading.set(false);
           this.loginForm.enable();
         }
@@ -110,7 +116,7 @@ export class AdminLoginComponent {
         // Mensaje de error más específico según el tipo de error
         let errorMsg = 'Hubo un problema al conectar con el servidor. Intenta de nuevo.';
 
-        if (error.status === 401) {
+        if (error.status === HttpStatus.UNAUTHORIZED) {
           errorMsg = 'Credenciales inválidas. Verifica tu correo y contraseña.';
         } else if (error.status === 0) {
           errorMsg = 'No se puede conectar al servidor. Verifica tu conexión a internet.';
@@ -118,7 +124,7 @@ export class AdminLoginComponent {
           errorMsg = error.error.error;
         }
 
-        this.errorMessage.set(errorMsg);
+        this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
         this.isLoading.set(false);
         this.loginForm.enable();
       }

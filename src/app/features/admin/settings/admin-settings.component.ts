@@ -4,7 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { PromptConfigResponse, AdminPrompt } from '../../../core/models/admin';
+import { HttpStatus } from '../../../core/constants/http-status.const';
+import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 
 @Component({
   selector: 'app-admin-settings',
@@ -32,6 +35,7 @@ export class AdminSettingsComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private authService: AuthService,
+    private notification: NotificationService,
     private router: Router
   ) {}
 
@@ -65,17 +69,17 @@ export class AdminSettingsComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('[AdminSettings] Error loading system prompt:', error);
         let errorMsg = 'Hubo un problema al cargar la configuración.';
 
-        if (error.status === 401) {
+        if (error.status === HttpStatus.UNAUTHORIZED) {
           errorMsg = 'No autorizado. Token expirado.';
-        } else if (error.status === 404) {
+        } else if (error.status === HttpStatus.NOT_FOUND) {
           errorMsg = 'Configuración no encontrada.';
         } else if (error.status === 0) {
           errorMsg = 'No se puede conectar al servidor.';
         }
 
+        this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
         this.errorMessage.set(errorMsg);
         this.isLoading.set(false);
       }
@@ -148,14 +152,15 @@ export class AdminSettingsComponent implements OnInit {
       error: (error) => {
         let errorMsg = 'Error al guardar la configuración.';
 
-        if (error.status === 401) {
+        if (error.status === HttpStatus.UNAUTHORIZED) {
           errorMsg = 'No autorizado. Por favor, inicia sesión nuevamente.';
-        } else if (error.status === 400) {
+        } else if (error.status === HttpStatus.BAD_REQUEST) {
           errorMsg = 'Datos inválidos. Verifica los valores.';
-        } else if (error.status === 500) {
+        } else if (error.status === HttpStatus.INTERNAL_SERVER_ERROR) {
           errorMsg = 'Error del servidor. Intenta más tarde.';
         }
 
+        this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
         this.errorMessage.set(errorMsg);
         this.isSaving.set(false);
       }

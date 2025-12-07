@@ -2,13 +2,15 @@ import { Component, OnInit, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { GameService } from '../../../core/services/game.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import {
   QuestionFull,
   AnswerSubmitResponse,
-  GameSession
+  GameSession,
+  GameState
 } from '../../../core/models/game/game-flow.interface';
-
-type GameState = 'loading' | 'playing' | 'feedback' | 'gameover';
+import { HttpStatus } from '../../../core/constants/http-status.const';
+import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 
 @Component({
   selector: 'app-game-board',
@@ -63,6 +65,7 @@ export class GameBoardComponent implements OnInit {
 
   constructor(
     private gameService: GameService,
+    private notification: NotificationService,
     private router: Router
   ) {
     // Watch for game over state
@@ -102,8 +105,7 @@ export class GameBoardComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error al iniciar sesión:', error);
-        alert('Error al iniciar el juego. Intenta de nuevo.');
+        this.notification.error('Error al iniciar el juego. Intenta de nuevo.', NOTIFICATION_DURATION.LONG);
         this.router.navigate(['/play']);
       }
     });
@@ -136,7 +138,7 @@ export class GameBoardComponent implements OnInit {
       },
       error: (error) => {
         // Detectar si es un 404 (no hay preguntas) o un error real de conexión
-        if (error.status === 404) {
+        if (error.status === HttpStatus.NOT_FOUND) {
           this.handleNoQuestionsAvailable(error.error?.error || 'No hay más preguntas disponibles para tu nivel');
         } else {
           this.showErrorMessage('Error de conexión. Por favor, verifica tu conexión a internet.');
@@ -155,8 +157,7 @@ export class GameBoardComponent implements OnInit {
   }
 
   private showErrorMessage(message: string): void {
-    // Aquí usamos alert temporalmente, pero se podría reemplazar con un modal o toast
-    alert(message);
+    this.notification.error(message, NOTIFICATION_DURATION.LONG);
   }
 
   selectOption(optionId: number): void {
@@ -173,7 +174,7 @@ export class GameBoardComponent implements OnInit {
     const selectedId = this.selectedOptionId();
 
     if (!sessionId || !question || selectedId === null) {
-      alert('Por favor selecciona una opción');
+      this.notification.warning('Por favor selecciona una opción', NOTIFICATION_DURATION.DEFAULT);
       return;
     }
 
@@ -220,14 +221,14 @@ export class GameBoardComponent implements OnInit {
             }, 3000);
           }
         } else {
-          alert(response.error || 'Error al enviar respuesta');
+          this.notification.error(response.error || 'Error al enviar respuesta', NOTIFICATION_DURATION.DEFAULT);
           this.isAnswering.set(false);
           this.gameState.set('playing');
           this.startTimer();
         }
       },
       error: (error) => {
-        alert('Error al procesar tu respuesta');
+        this.notification.error('Error al procesar tu respuesta', NOTIFICATION_DURATION.DEFAULT);
         this.isAnswering.set(false);
         this.gameState.set('playing');
         this.startTimer();

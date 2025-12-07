@@ -3,7 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { DashboardStatsResponse } from '../../../core/models/admin';
+import { HttpStatus } from '../../../core/constants/http-status.const';
+import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -30,6 +33,7 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private authService: AuthService,
+    private notification: NotificationService,
     private router: Router
   ) {}
 
@@ -63,14 +67,15 @@ export class AdminDashboardComponent implements OnInit {
       error: (error) => {
         let errorMsg = 'Hubo un problema al cargar el dashboard.';
 
-        if (error.status === 401) {
+        if (error.status === HttpStatus.UNAUTHORIZED) {
           errorMsg = 'No autorizado. Por favor, inicia sesión nuevamente.';
-        } else if (error.status === 403) {
+        } else if (error.status === HttpStatus.FORBIDDEN) {
           errorMsg = 'Acceso denegado. No tienes permisos de administrador.';
         } else if (error.status === 0) {
           errorMsg = 'No se puede conectar al servidor.';
         }
 
+        this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
         this.errorMessage.set(errorMsg);
         this.isLoading.set(false);
       }

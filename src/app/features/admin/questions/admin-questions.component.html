@@ -22,20 +22,7 @@
     </div>
   </div>
 
-  <!-- Success & Error Messages -->
-  @if (successMessage()) {
-    <div class="alert alert-success">
-      <i class="fas fa-check"></i>
-      <span>{{ successMessage() }}</span>
-    </div>
-  }
-
-  @if (errorMessage()) {
-    <div class="alert alert-danger">
-      <i class="fas fa-circle-info"></i>
-      <span>{{ errorMessage() }}</span>
-    </div>
-  }
+  <!-- Success & Error Messages handled by NotificationService (top banner) -->
 
   <!-- Loading State -->
   @if (isLoading()) {
@@ -116,12 +103,7 @@
               </div>
             </form>
 
-            <!-- Mensaje de estado -->
-            @if (generationMessage()) {
-              <div class="generation-message">
-                <span>{{ generationMessage() }}</span>
-              </div>
-            }
+            <!-- Mensaje de estado handled by NotificationService -->
 
             <!-- Botón Generar -->
             <button

@@ -2,29 +2,14 @@ import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PlayerService } from '../../core/services/player.service';
-
-/**
- * Interface para la respuesta de estadísticas del jugador
- */
-interface PlayerProfileResponse {
-  ok: boolean;
-  player_id?: number;
-  global?: {
-    total_games: number;
-    high_score: number;
-    total_score: number;
-    avg_score: number;
-    avg_difficulty: number;
-  };
-  topics?: Array<{
-    category_id: number;
-    category_name: string;
-    answers: number;
-    accuracy: number;
-    avg_time_sec: number;
-  }>;
-  error?: string;
-}
+import { NotificationService } from '../../core/services/notification.service';
+import {
+  PlayerProfileResponse,
+  PlayerGlobalStats,
+  PlayerTopicStats
+} from '../../core/models/player';
+import { HttpStatus } from '../../core/constants/http-status.const';
+import { NOTIFICATION_DURATION } from '../../core/constants/notification-config.const';
 
 @Component({
   selector: 'app-player-profile',
@@ -36,27 +21,15 @@ interface PlayerProfileResponse {
 export class PlayerProfileComponent implements OnInit {
   // Estado reactivo con Signals
   playerName = signal<string>('Jugador');
-  playerStats = signal<{
-    total_games: number;
-    high_score: number;
-    total_score: number;
-    avg_score: number;
-    avg_difficulty: number;
-  } | null>(null);
-
-  topicStats = signal<Array<{
-    category_id: number;
-    category_name: string;
-    answers: number;
-    accuracy: number;
-    avg_time_sec: number;
-  }> | null>(null);
+  playerStats = signal<PlayerGlobalStats | null>(null);
+  topicStats = signal<PlayerTopicStats[] | null>(null);
 
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
 
   constructor(
     private playerService: PlayerService,
+    private notification: NotificationService,
     private router: Router
   ) {}
 
@@ -100,21 +73,21 @@ export class PlayerProfileComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.error('[PlayerProfile] Error:', error);
           let errorMsg = 'Hubo un problema al cargar las estadísticas.';
 
-          if (error.status === 404) {
+          if (error.status === HttpStatus.NOT_FOUND) {
             errorMsg = 'Jugador no encontrado.';
           } else if (error.status === 0) {
             errorMsg = 'No se puede conectar al servidor.';
           }
 
+          this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
           this.errorMessage.set(errorMsg);
           this.isLoading.set(false);
         }
       });
     } catch (error) {
-      console.error('[PlayerProfile] Exception:', error);
+      this.notification.error('Error inesperado al cargar el perfil.', NOTIFICATION_DURATION.LONG);
       this.errorMessage.set('Error inesperado al cargar el perfil.');
       this.isLoading.set(false);
     }

@@ -2,29 +2,10 @@ import { Component, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { GameService } from '../../core/services/game.service';
-
-/**
- * Interface para un jugador en el leaderboard
- */
-interface LeaderboardEntry {
-  rank: number;
-  player_id: number;
-  player_name: string;
-  age: number;
-  high_score: number;
-  total_games: number;
-  total_score: number;
-  overall_accuracy: number;
-}
-
-/**
- * Interface para la respuesta del leaderboard
- */
-interface LeaderboardResponse {
-  ok: boolean;
-  leaderboard?: LeaderboardEntry[];
-  error?: string;
-}
+import { NotificationService } from '../../core/services/notification.service';
+import { LeaderboardEntry, LeaderboardResponse } from '../../core/models/player';
+import { HttpStatus } from '../../core/constants/http-status.const';
+import { NOTIFICATION_DURATION } from '../../core/constants/notification-config.const';
 
 @Component({
   selector: 'app-leaderboard',
@@ -50,6 +31,7 @@ export class LeaderboardComponent implements OnInit {
 
   constructor(
     private gameService: GameService,
+    private notification: NotificationService,
     private router: Router
   ) {}
 
@@ -87,12 +69,13 @@ export class LeaderboardComponent implements OnInit {
       error: (error) => {
         let errorMsg = 'Hubo un problema al cargar el leaderboard.';
 
-        if (error.status === 404) {
+        if (error.status === HttpStatus.NOT_FOUND) {
           errorMsg = 'No hay datos de leaderboard disponibles.';
         } else if (error.status === 0) {
           errorMsg = 'No se puede conectar al servidor.';
         }
 
+        this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
         this.errorMessage.set(errorMsg);
         this.isLoading.set(false);
       }

@@ -11,12 +11,13 @@ import { AuthService } from '../core/services/auth.service';
   styleUrls: ['./main-layout.component.css']
 })
 export class MainLayoutComponent implements OnInit {
-  isAuthenticated$ = this.authService.token$;
+  isAuthenticated$: any;
   sidebarOpen = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.isAuthenticated$ = this.authService.token$;
     // Initialize layout
   }
 

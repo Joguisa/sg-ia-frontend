@@ -39,3 +39,8 @@ export interface GameSession {
   score?: number;
   lives?: number;
 }
+
+/**
+ * States for the game UI component
+ */
+export type GameState = 'loading' | 'playing' | 'feedback' | 'gameover';
