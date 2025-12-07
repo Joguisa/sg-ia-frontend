@@ -1,0 +1,13 @@
+<div class="notification-container">
+    @for (notif of notificationService.notifications(); track notif.id) {
+    <div [class]="'alert alert-' + notif.type" role="alert">
+        <div class="alert-content">
+            <span>{{ notif.message }}</span>
+            <button type="button" class="btn-close" (click)="notificationService.remove(notif.id)" aria-label="Cerrar">
+                <!-- × -->
+                x
+            </button>
+        </div>
+    </div>
+    }
+</div>

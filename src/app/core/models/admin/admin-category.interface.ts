@@ -1,7 +1,11 @@
+/**
+ * Categoría de preguntas (usado en admin)
+ * Backend: AdminController::getCategories()
+ */
 export interface AdminCategory {
   id?: number;
   name: string;
-  description?: string;
+  description?: string | null;
 }
 
 export interface CategoryResponse {

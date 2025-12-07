@@ -2,31 +2,22 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpStatus } from '../constants/http-status.const';
+import { ErrorHandlerService } from '../services/error-handler.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
+  const errorHandler = inject(ErrorHandlerService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      console.error('HTTP Error:', error);
+      const isLoginRequest = req.url.includes('/auth/login');
 
-      if (error.status === 401) {
-        // Si es un error en la ruta de login, no redirigir
-        // Solo permitir que el componente maneje el error
-        const isLoginRequest = req.url.includes('/auth/login');
-
-        if (!isLoginRequest) {
-          // Token inválido o expirado en otras rutas
-          localStorage.removeItem('token');
-          router.navigate(['/admin/login']);
-        }
-      } else if (error.status === 403) {
-        // No autorizado
-        console.error('Acceso denegado');
-      } else if (error.status === 404) {
-        console.error('Recurso no encontrado');
-      } else if (error.status >= 500) {
-        console.error('Error del servidor');
+      if (error.status === HttpStatus.UNAUTHORIZED && !isLoginRequest) {
+        localStorage.removeItem('token');
+        router.navigate(['/admin/login']);
+      } else if (!isLoginRequest) {
+        errorHandler.handle(error);
       }
 
       return throwError(() => error);

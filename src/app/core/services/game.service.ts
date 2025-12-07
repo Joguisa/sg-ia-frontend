@@ -16,14 +16,32 @@ import {
   AnswerSubmitResponse
 } from '../models/game/game-flow.interface';
 
+/**
+ * GameService
+ *
+ * Servicio para gestionar sesiones de juego, preguntas y respuestas.
+ * NO requiere autenticación JWT (endpoints públicos).
+ *
+ * @see GameController Backend controller for API contract
+ * @see StatisticsController Backend controller for stats endpoints
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
-  constructor(private http: HttpClient) {}
+  private readonly apiUrl: string;
+
+  constructor(private http: HttpClient) {
+    this.apiUrl = environment.apiBaseUrl;
+  }
 
   /**
-   * Inicia una nueva sesión de juego
+   * Inicia una nueva sesión de juego para un jugador
+   *
+   * Backend: POST /games/start
+   * @param playerId ID del jugador (debe existir en DB)
+   * @param startDifficulty Dificultad inicial (default: 1.0)
+   * @returns Observable con session_id y current_difficulty
    */
   startSession(playerId: number, startDifficulty: number = 1.0): Observable<GameSession> {
     const body = {
@@ -31,14 +49,20 @@ export class GameService {
       start_difficulty: startDifficulty
     };
     return this.http.post<GameSession>(
-      `${environment.apiBaseUrl}${environment.apiEndpoints.games.start}`,
+      `${this.apiUrl}${environment.apiEndpoints.games.start}`,
       body
     );
   }
 
   /**
    * Obtiene la siguiente pregunta con todas sus opciones
+   *
+   * Backend: GET /games/next?category_id={id}&difficulty={float}&session_id={id}
    * Excluye preguntas ya respondidas en la sesión actual
+   * @param sessionId ID de la sesión activa
+   * @param difficulty Nivel de dificultad (se redondea al entero más cercano en backend)
+   * @param categoryId ID de categoría (default: 1)
+   * @returns Observable con pregunta completa y opciones de respuesta
    */
   getNextQuestion(
     sessionId: number,
@@ -47,13 +71,20 @@ export class GameService {
   ): Observable<QuestionFullResponse> {
     const params = `category_id=${categoryId}&difficulty=${difficulty}&session_id=${sessionId}`;
     return this.http.get<QuestionFullResponse>(
-      `${environment.apiBaseUrl}${environment.apiEndpoints.games.next}?${params}`
+      `${this.apiUrl}${environment.apiEndpoints.games.next}?${params}`
     );
   }
 
   /**
    * Envía la respuesta del jugador y recibe feedback educativo
-   * SEGURIDAD: No envía is_correct, el backend lo calcula
+   *
+   * Backend: POST /games/{sessionId}/answer
+   * SEGURIDAD: No envía is_correct, el backend lo calcula en base a selected_option_id
+   * @param sessionId ID de la sesión activa
+   * @param questionId ID de la pregunta respondida
+   * @param selectedOptionId ID de opción seleccionada (null si timeout)
+   * @param timeTaken Tiempo tomado en segundos
+   * @returns Observable con feedback, score actualizado, vidas restantes y dificultad adaptativa
    */
   submitAnswer(
     sessionId: number,
@@ -67,20 +98,33 @@ export class GameService {
       selected_option_id: selectedOptionId
     };
     return this.http.post<AnswerSubmitResponse>(
-      `${environment.apiBaseUrl}${environment.apiEndpoints.games.answer(sessionId)}`,
+      `${this.apiUrl}${environment.apiEndpoints.games.answer(sessionId)}`,
       body
     );
   }
 
+  /**
+   * Obtiene estadísticas de una sesión específica
+   *
+   * Backend: GET /stats/session/{id}
+   * @param sessionId ID de la sesión
+   * @returns Observable con estadísticas de la sesión
+   */
   getSessionStats(sessionId: number): Observable<SessionStatsResponse> {
     return this.http.get<SessionStatsResponse>(
-      `${environment.apiBaseUrl}${environment.apiEndpoints.stats.session(sessionId)}`
+      `${this.apiUrl}${environment.apiEndpoints.stats.session(sessionId)}`
     );
   }
 
+  /**
+   * Obtiene el top 10 de jugadores (leaderboard)
+   *
+   * Backend: GET /stats/leaderboard
+   * @returns Observable con ranking de jugadores por high_score
+   */
   getLeaderboard(): Observable<LeaderboardResponse> {
     return this.http.get<LeaderboardResponse>(
-      `${environment.apiBaseUrl}${environment.apiEndpoints.stats.leaderboard}`
+      `${this.apiUrl}${environment.apiEndpoints.stats.leaderboard}`
     );
   }
 }
