@@ -8,14 +8,14 @@
       <!-- Header -->
       <div class="card-header text-center">
         <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
-          <i class="fas fa-hospital fs-2x text-danger"></i>
+          <i class="fas fa-hospital fs-3x text-danger"></i>
         </div>
-        <h1 class="game-title">Bienvenido al Reto de Salud</h1>
-        <p class="game-subtitle">Pon a prueba tus conocimientos sobre salud e inteligencia artificial</p>
+        <h1 class="game-title">Sistema Gamificado de Aprendizaje en Salud</h1>
+        <p class="game-subtitle">Evaluación del conocimiento sobre detección y prevención de cáncer mediante IA adaptativa</p>
       </div>
 
       <!-- Form -->
-      <form (ngSubmit)="onSubmit()" class="game-form">
+      <form [formGroup]="playerForm" (ngSubmit)="onSubmit()" class="game-form">
         <!-- Name Input -->
         <div class="form-group">
           <label for="name" class="form-label">¿Cuál es tu nombre?</label>
@@ -23,31 +23,36 @@
             type="text"
             id="name"
             class="form-control"
-            [(ngModel)]="name"
-            [ngModelOptions]="{ updateOn: 'blur' }"
-            name="name"
+            formControlName="name"
             placeholder="Ej: Juan Pérez"
-            [disabled]="isLoading()"
-            required
+            maxlength="50"
+            [class.is-invalid]="playerForm.get('name')?.invalid && playerForm.get('name')?.touched"
           />
+          <div class="invalid-feedback" *ngIf="playerForm.get('name')?.invalid && playerForm.get('name')?.touched">
+            <small *ngIf="playerForm.get('name')?.hasError('required')">El nombre es requerido</small>
+            <small *ngIf="playerForm.get('name')?.hasError('minlength')">El nombre debe tener al menos 2 caracteres</small>
+            <small *ngIf="playerForm.get('name')?.hasError('maxlength')">El nombre no puede exceder los 50 caracteres</small>
+          </div>
         </div>
 
         <!-- Age Input -->
         <div class="form-group">
           <label for="age" class="form-label">¿Cuántos años tienes?</label>
           <input
-            type="number"
+            type="text"
             id="age"
             class="form-control"
-            [(ngModel)]="age"
-            [ngModelOptions]="{ updateOn: 'blur' }"
-            name="age"
+            formControlName="age"
+            (input)="onAgeInput($event)"
             placeholder="Ej: 25"
-            min="1"
-            max="120"
-            [disabled]="isLoading()"
-            required
+            maxlength="3"
+            [class.is-invalid]="playerForm.get('age')?.invalid && playerForm.get('age')?.touched"
           />
+          <div class="invalid-feedback" *ngIf="playerForm.get('age')?.invalid && playerForm.get('age')?.touched">
+            <small *ngIf="playerForm.get('age')?.hasError('required')">La edad es requerida</small>
+            <small *ngIf="playerForm.get('age')?.hasError('invalidFormat')">La edad debe contener solo números</small>
+            <small *ngIf="playerForm.get('age')?.hasError('outOfRange')">Ingresa una edad válida (1-120)</small>
+          </div>
         </div>
 
         <!-- Error Message -->

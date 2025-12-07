@@ -18,7 +18,7 @@
       </div>
 
       <!-- Form -->
-      <form (ngSubmit)="onSubmit()" class="login-form">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
         <!-- Email Input -->
         <div class="form-group">
           <label for="email" class="form-label">Correo Electrónico</label>
@@ -28,14 +28,17 @@
               type="email"
               id="email"
               class="form-control"
-              [(ngModel)]="email"
-              [ngModelOptions]="{ updateOn: 'blur' }"
-              name="email"
+              formControlName="email"
               placeholder="admin@sg-ia.com"
-              [disabled]="isLoading()"
-              required
+              maxlength="100"
+              [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
               autocomplete="email"
             />
+          </div>
+          <div class="invalid-feedback" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            <small *ngIf="loginForm.get('email')?.hasError('required')">El correo electrónico es requerido</small>
+            <small *ngIf="loginForm.get('email')?.hasError('invalidEmail')">Ingresa un correo electrónico válido</small>
+            <small *ngIf="loginForm.get('email')?.hasError('maxlength')">El correo no puede exceder los 100 caracteres</small>
           </div>
         </div>
 
@@ -48,12 +51,10 @@
               [type]="showPassword() ? 'text' : 'password'"
               id="password"
               class="form-control"
-              [(ngModel)]="password"
-              [ngModelOptions]="{ updateOn: 'blur' }"
-              name="password"
+              formControlName="password"
               placeholder="••••••••"
-              [disabled]="isLoading()"
-              required
+              maxlength="50"
+              [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
               autocomplete="current-password"
             />
             <button
@@ -69,6 +70,11 @@
                 <i class="fas fa-eye-slash text-muted"></i>
               }
             </button>
+          </div>
+          <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <small *ngIf="loginForm.get('password')?.hasError('required')">La contraseña es requerida</small>
+            <small *ngIf="loginForm.get('password')?.hasError('minlength')">La contraseña debe tener al menos 6 caracteres</small>
+            <small *ngIf="loginForm.get('password')?.hasError('maxlength')">La contraseña no puede exceder los 50 caracteres</small>
           </div>
         </div>
 

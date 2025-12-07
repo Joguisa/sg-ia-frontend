@@ -4,4 +4,5 @@ export interface GenerationResponse {
     failed?: number;
     questions?: any[];
     error?: string;
+    message?: string;
 }

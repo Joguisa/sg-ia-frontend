@@ -38,13 +38,14 @@ export class GameService {
 
   /**
    * Obtiene la siguiente pregunta con todas sus opciones
+   * Excluye preguntas ya respondidas en la sesión actual
    */
   getNextQuestion(
     sessionId: number,
     difficulty: number,
     categoryId: number = 1
   ): Observable<QuestionFullResponse> {
-    const params = `category_id=${categoryId}&difficulty=${difficulty}`;
+    const params = `category_id=${categoryId}&difficulty=${difficulty}&session_id=${sessionId}`;
     return this.http.get<QuestionFullResponse>(
       `${environment.apiBaseUrl}${environment.apiEndpoints.games.next}?${params}`
     );
@@ -52,17 +53,16 @@ export class GameService {
 
   /**
    * Envía la respuesta del jugador y recibe feedback educativo
+   * SEGURIDAD: No envía is_correct, el backend lo calcula
    */
   submitAnswer(
     sessionId: number,
     questionId: number,
     selectedOptionId: number | null,
-    isCorrect: boolean,
     timeTaken: number
   ): Observable<AnswerSubmitResponse> {
     const body = {
       question_id: questionId,
-      is_correct: isCorrect,
       time_taken: timeTaken,
       selected_option_id: selectedOptionId
     };

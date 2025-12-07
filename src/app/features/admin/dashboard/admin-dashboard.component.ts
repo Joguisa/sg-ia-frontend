@@ -41,12 +41,8 @@ export class AdminDashboardComponent implements OnInit {
    * Carga las estadísticas del dashboard desde la API
    */
   private loadDashboardStats(): void {
-    console.log('[AdminDashboard] Loading dashboard stats...');
-
     this.adminService.getDashboardStats().subscribe({
       next: (response: DashboardStatsResponse) => {
-        console.log('[AdminDashboard] Response:', response);
-
         if (response.summary) {
           // Actualizar KPIs
           this.totalPlayers.set(response.summary.total_players || 0);
@@ -58,7 +54,6 @@ export class AdminDashboardComponent implements OnInit {
           this.topHardest.set(response.hardest_questions || []);
           this.topEasiest.set(response.easiest_questions || []);
 
-          console.log('[AdminDashboard] Dashboard loaded successfully');
           this.isLoading.set(false);
         } else {
           this.errorMessage.set(response.error || 'Error al cargar el dashboard.');
@@ -66,7 +61,6 @@ export class AdminDashboardComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('[AdminDashboard] Error:', error);
         let errorMsg = 'Hubo un problema al cargar el dashboard.';
 
         if (error.status === 401) {
@@ -101,15 +95,8 @@ export class AdminDashboardComponent implements OnInit {
    * Cierra sesión y redirige al login
    */
   logout(): void {
-    console.log('[AdminDashboard] Logging out...');
     this.authService.logout();
-    this.router.navigate(['/admin/login']).then((success) => {
-      if (success) {
-        console.log('[AdminDashboard] Logout successful');
-      } else {
-        console.error('[AdminDashboard] Logout navigation failed');
-      }
-    });
+    this.router.navigate(['/admin/login']).then((success) => {});
   }
 
   /**

@@ -61,8 +61,6 @@ export class LeaderboardComponent implements OnInit {
    * Carga el leaderboard desde la API
    */
   private loadLeaderboard(): void {
-    console.log('[Leaderboard] Loading leaderboard...');
-
     // Obtener mi playerId del localStorage
     const playerIdStr = localStorage.getItem('playerId');
     if (playerIdStr) {
@@ -72,8 +70,6 @@ export class LeaderboardComponent implements OnInit {
     // Llamar al servicio para obtener el leaderboard
     this.gameService.getLeaderboard().subscribe({
       next: (response: LeaderboardResponse) => {
-        console.log('[Leaderboard] Response:', response);
-
         if (response.ok && response.leaderboard) {
           // Asignar rankings (el backend retorna rank: 0, así que asignamos nosotros)
           const leaderboardWithRanks = response.leaderboard.map((entry, index) => ({
@@ -82,7 +78,6 @@ export class LeaderboardComponent implements OnInit {
           }));
 
           this.leaderboard.set(leaderboardWithRanks);
-          console.log('[Leaderboard] Leaderboard loaded successfully');
           this.isLoading.set(false);
         } else {
           this.errorMessage.set(response.error || 'Error al cargar el leaderboard.');
@@ -90,7 +85,6 @@ export class LeaderboardComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('[Leaderboard] Error:', error);
         let errorMsg = 'Hubo un problema al cargar el leaderboard.';
 
         if (error.status === 404) {

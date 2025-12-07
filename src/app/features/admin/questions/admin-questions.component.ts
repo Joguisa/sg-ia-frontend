@@ -1,69 +1,75 @@
 import { Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { AdminCategory, GenerationResponse } from '../../../core/models/admin';
 import { Question } from '../../../core/models/game';
 
-
-
 @Component({
   selector: 'app-admin-questions',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-questions.component.html',
   styleUrls: ['./admin-questions.component.css']
 })
 export class AdminQuestionsComponent implements OnInit {
+  // ========== FORMULARIOS REACTIVOS ==========
+  generatorForm: FormGroup;
+  filterForm: FormGroup;
+
   // ========== LISTA DE PREGUNTAS ==========
   allQuestions = signal<Question[]>([]);
   questions = signal<Question[]>([]);
 
-  // ========== FILTROS ==========
-  selectedCategory = signal<number | null>(null);
-  selectedStatus = signal<string>('all'); // 'all', 'verified', 'pending'
-  searchTerm = signal<string>('');
-
   // ========== CATEGORÍAS ==========
   categories = signal<AdminCategory[]>([]);
-
-  // ========== GENERADOR IA ==========
-  generatorCategoryId = signal<number | null>(null);
-  generatorDifficulty = signal<number>(2);
-  generatorQuantity = signal<number>(5);
-  isGenerating = signal<boolean>(false);
-  generationMessage = signal<string>('');
 
   // ========== UI STATE ==========
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
   successMessage = signal<string>('');
   isGeneratorOpen = signal<boolean>(false);
+  isGenerating = signal<boolean>(false);
+  generationMessage = signal<string>('');
 
   // ========== CONFIRMACIÓN DE BORRADO ==========
   deleteConfirmId = signal<number | null>(null);
 
+  // ========== SIGNALS PARA FILTROS ==========
+  private filterTrigger = signal<number>(0);
+
   // ========== COMPUTED SIGNALS (Filtrado) ==========
   filteredQuestions = computed(() => {
+    // Forzar recomputo cuando cambia el trigger
+    this.filterTrigger();
+
     let result = [...this.allQuestions()];
 
+    if (!this.filterForm) {
+      return result;
+    }
+
+    const categoryValue = this.filterForm.get('category')?.value;
+    const statusValue = this.filterForm.get('status')?.value;
+    const searchValue = this.filterForm.get('search')?.value;
+
     // Filtrar por categoría
-    if (this.selectedCategory() !== null) {
-      result = result.filter(q => q.category_id === this.selectedCategory());
+    if (categoryValue !== null && categoryValue !== '' && categoryValue !== 'null') {
+      result = result.filter(q => q.category_id === Number(categoryValue));
     }
 
     // Filtrar por estado (verificada/pendiente)
-    if (this.selectedStatus() === 'verified') {
+    if (statusValue === 'verified') {
       result = result.filter(q => q.admin_verified);
-    } else if (this.selectedStatus() === 'pending') {
+    } else if (statusValue === 'pending') {
       result = result.filter(q => !q.admin_verified);
     }
 
     // Filtrar por búsqueda
-    if (this.searchTerm()) {
-      const term = this.searchTerm().toLowerCase();
+    if (searchValue && searchValue.trim()) {
+      const term = searchValue.toLowerCase().trim();
       result = result.filter(q =>
         q.statement.toLowerCase().includes(term) ||
         q.id.toString().includes(term)
@@ -74,10 +80,47 @@ export class AdminQuestionsComponent implements OnInit {
   });
 
   constructor(
+    private fb: FormBuilder,
     private adminService: AdminService,
     private authService: AuthService,
     private router: Router
-  ) { }
+  ) {
+    // Inicializar formulario del generador
+    this.generatorForm = this.fb.group({
+      categoryId: [null, [Validators.required]],
+      difficulty: [2, [Validators.required, Validators.min(1), Validators.max(5)]],
+      quantity: [5, [Validators.required, this.quantityValidator]]
+    });
+
+    // Inicializar formulario de filtros
+    this.filterForm = this.fb.group({
+      search: ['', [Validators.maxLength(200)]],
+      category: [null],
+      status: ['all']
+    });
+
+    // Suscribirse a cambios en los filtros para activar el recomputo
+    this.filterForm.valueChanges.subscribe(() => {
+      this.filterTrigger.set(this.filterTrigger() + 1);
+    });
+  }
+
+  // Validador personalizado para cantidad
+  quantityValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+
+    if (!value) {
+      return null;
+    }
+
+    const quantity = parseInt(value, 10);
+
+    if (isNaN(quantity) || quantity < 1 || quantity > 50) {
+      return { invalidQuantity: true };
+    }
+
+    return null;
+  }
 
   ngOnInit(): void {
     this.loadQuestions();
@@ -88,7 +131,6 @@ export class AdminQuestionsComponent implements OnInit {
  * Carga la lista de preguntas desde el backend
  */
   private loadQuestions(): void {
-    console.log('[AdminQuestions] Loading questions...');
     this.isLoading.set(true);
 
     this.adminService.getQuestions().subscribe({
@@ -97,7 +139,6 @@ export class AdminQuestionsComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (error) => {
-        console.error('[AdminQuestions] Error loading questions:', error);
         this.errorMessage.set('Error al cargar preguntas');
         this.isLoading.set(false);
       }
@@ -108,14 +149,11 @@ export class AdminQuestionsComponent implements OnInit {
  * Carga las categorías disponibles
  */
   private loadCategories(): void {
-    console.log('[AdminQuestions] Loading categories...');
-
     this.adminService.getCategories().subscribe({
       next: (response) => {
         this.categories.set(response.categories || []);
       },
       error: (error) => {
-        console.error('[AdminQuestions] Error loading categories:', error);
         // Fallback categorías por defecto
         this.categories.set([
           { id: 1, name: 'Epidemiología y Generalidades' },
@@ -132,41 +170,51 @@ export class AdminQuestionsComponent implements OnInit {
    * Genera preguntas usando IA (Gemini)
    */
   generateQuestionsWithAI(): void {
-    console.log('[AdminQuestions] Generating questions with AI...');
+    // Marcar todos los campos como touched
+    this.generatorForm.markAllAsTouched();
 
-    // Validaciones
-    if (this.generatorCategoryId() === null) {
-      this.generationMessage.set('Por favor selecciona una categoría');
-      return;
-    }
-
-    if (this.generatorQuantity() < 1 || this.generatorQuantity() > 50) {
-      this.generationMessage.set('Cantidad debe ser entre 1 y 50');
+    // Validar el formulario
+    if (this.generatorForm.invalid) {
+      if (this.generatorForm.get('categoryId')?.hasError('required')) {
+        this.generationMessage.set('Por favor selecciona una categoría');
+      } else if (this.generatorForm.get('quantity')?.hasError('required')) {
+        this.generationMessage.set('Por favor ingresa la cantidad');
+      } else if (this.generatorForm.get('quantity')?.hasError('invalidQuantity')) {
+        this.generationMessage.set('Cantidad debe ser entre 1 y 50');
+      } else if (this.generatorForm.get('difficulty')?.hasError('min') || this.generatorForm.get('difficulty')?.hasError('max')) {
+        this.generationMessage.set('Dificultad debe ser entre 1 y 5');
+      }
       return;
     }
 
     this.isGenerating.set(true);
     this.generationMessage.set('Generando preguntas con IA...');
+    this.generatorForm.disable();
+
+    const formValues = this.generatorForm.getRawValue();
 
     // Llamar al servicio
     this.adminService.generateBatch(
-      this.generatorQuantity(),
-      this.generatorCategoryId()!,
-      this.generatorDifficulty()
+      formValues.quantity,
+      formValues.categoryId,
+      formValues.difficulty
     ).subscribe({
       next: (response: GenerationResponse) => {
-        console.log('[AdminQuestions] Generation response:', response);
+        const generatedCount = response.generated ?? 0;
 
-        if (response.ok) {
-          const count = this.generatorQuantity();
-          this.successMessage.set(`✅ ${count} preguntas generadas exitosamente con IA`);
+        if (response.ok && generatedCount > 0) {
+          // Éxito: se generaron preguntas
+          this.successMessage.set(`${generatedCount} pregunta${generatedCount !== 1 ? 's' : ''} generada${generatedCount !== 1 ? 's' : ''} exitosamente con IA`);
           this.isGenerating.set(false);
           this.generationMessage.set('');
 
           // Resetear formulario
-          this.generatorCategoryId.set(null);
-          this.generatorQuantity.set(5);
-          this.generatorDifficulty.set(2);
+          this.generatorForm.reset({
+            categoryId: null,
+            difficulty: 2,
+            quantity: 5
+          });
+          this.generatorForm.enable();
           this.isGeneratorOpen.set(false);
 
           // Recargar preguntas
@@ -174,13 +222,34 @@ export class AdminQuestionsComponent implements OnInit {
             this.loadQuestions();
             this.successMessage.set('');
           }, 3000);
-        } else {
-          this.generationMessage.set(response.error || 'Error al generar preguntas');
+        } else if (response.ok && generatedCount === 0) {
+          // Respuesta OK pero no se generaron preguntas
+          const failedCount = response.failed ?? 0;
+          const errorMsg = response.message || response.error || `No se pudieron generar preguntas. ${failedCount} fallaron.`;
+          this.generationMessage.set(errorMsg);
+          this.errorMessage.set('Error al generar preguntas. Por favor intenta de nuevo.');
           this.isGenerating.set(false);
+          this.generatorForm.enable();
+
+          // Limpiar error después de 5 segundos
+          setTimeout(() => {
+            this.errorMessage.set('');
+            this.generationMessage.set('');
+          }, 5000);
+        } else {
+          // Error general
+          this.generationMessage.set(response.error || 'Error al generar preguntas');
+          this.errorMessage.set(response.error || 'Error al generar preguntas');
+          this.isGenerating.set(false);
+          this.generatorForm.enable();
+
+          setTimeout(() => {
+            this.errorMessage.set('');
+            this.generationMessage.set('');
+          }, 5000);
         }
       },
       error: (error) => {
-        console.error('[AdminQuestions] Generation error:', error);
         let errorMsg = 'Error al generar preguntas con IA';
 
         if (error.status === 401) {
@@ -190,7 +259,14 @@ export class AdminQuestionsComponent implements OnInit {
         }
 
         this.generationMessage.set(errorMsg);
+        this.errorMessage.set(errorMsg);
         this.isGenerating.set(false);
+        this.generatorForm.enable();
+
+        setTimeout(() => {
+          this.errorMessage.set('');
+          this.generationMessage.set('');
+        }, 5000);
       }
     });
   }
@@ -199,12 +275,8 @@ export class AdminQuestionsComponent implements OnInit {
    * Verifica o desverifica una pregunta
    */
   toggleVerifyQuestion(questionId: number, currentState: boolean): void {
-    console.log('[AdminQuestions] Toggling verify status for question', questionId);
-
     this.adminService.verifyQuestion(questionId, !currentState).subscribe({
       next: (response: any) => {
-        console.log('[AdminQuestions] Verify response:', response);
-
         if (response.ok) {
           // Actualizar estado local
           const questions = this.allQuestions();
@@ -222,7 +294,6 @@ export class AdminQuestionsComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('[AdminQuestions] Verify error:', error);
         this.errorMessage.set('Error al cambiar estado de verificación');
       }
     });
@@ -232,8 +303,6 @@ export class AdminQuestionsComponent implements OnInit {
    * Solicita confirmación y borra una pregunta
    */
   deleteQuestion(questionId: number): void {
-    console.log('[AdminQuestions] Deleting question', questionId);
-
     const question = this.allQuestions().find(q => q.id === questionId);
     if (!question) return;
 
@@ -245,24 +314,30 @@ export class AdminQuestionsComponent implements OnInit {
  * Confirma la eliminación de una pregunta
  */
   confirmDelete(questionId: number): void {
-    console.log('[AdminQuestions] Confirming delete for question', questionId);
-
     this.adminService.deleteQuestion(questionId).subscribe({
       next: (response) => {
         if (response.ok) {
           const questions = this.allQuestions().filter(q => q.id !== questionId);
           this.allQuestions.set(questions);
-          this.successMessage.set('Pregunta eliminada');
+          this.successMessage.set('Pregunta eliminada correctamente');
           this.deleteConfirmId.set(null);
           setTimeout(() => this.successMessage.set(''), 2000);
         } else {
-          this.errorMessage.set(response.error || 'Error al eliminar');
+          this.errorMessage.set(response.error || 'Error al eliminar la pregunta');
+        this.deleteConfirmId.set(null);
+        
+        setTimeout(() => {
+          this.errorMessage.set('');
+        }, 3000);
         }
       },
       error: (error) => {
-        console.error('[AdminQuestions] Delete error:', error);
         this.errorMessage.set('Error al eliminar pregunta');
         this.deleteConfirmId.set(null);
+        // Limpiar error después de 3 segundos
+        setTimeout(() => {
+          this.errorMessage.set('');
+        }, 3000);
       }
     });
   }
@@ -285,7 +360,6 @@ export class AdminQuestionsComponent implements OnInit {
    * Cierra sesión y redirige al login
    */
   logout(): void {
-    console.log('[AdminQuestions] Logging out...');
     this.authService.logout();
     this.router.navigate(['/admin/login']);
   }

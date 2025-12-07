@@ -1,8 +1,3 @@
-/**
- * Game Flow Interfaces
- * Completa respuesta del flujo de juego con opciones y explicaciones
- */
-
 export interface QuestionOption {
   id: number;
   text: string;

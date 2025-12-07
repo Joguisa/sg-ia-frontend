@@ -43,11 +43,9 @@ export class AdminSettingsComponent implements OnInit {
    * Carga la configuración del sistema desde el backend
    */
   private loadSystemPrompt(): void {
-    console.log('[AdminSettings] Loading system prompt...');
 
     this.adminService.getPromptConfig().subscribe({
       next: (response: PromptConfigResponse) => {
-        console.log('[AdminSettings] Prompt config response:', response);
 
         if (response.ok && response.prompt) {
           const config = response.prompt;
@@ -61,7 +59,6 @@ export class AdminSettingsComponent implements OnInit {
           this.originalTemperature.set(config.temperature);
 
           this.isLoading.set(false);
-          console.log('[AdminSettings] System prompt loaded successfully');
         } else {
           this.errorMessage.set(response.error || 'Error al cargar la configuración');
           this.isLoading.set(false);
@@ -110,8 +107,6 @@ export class AdminSettingsComponent implements OnInit {
    * Guarda los cambios en el backend
    */
   saveChanges(): void {
-    console.log('[AdminSettings] Saving changes...');
-
     // Validación
     if (!this.promptText().trim()) {
       this.errorMessage.set('El prompt del sistema no puede estar vacío');
@@ -126,19 +121,12 @@ export class AdminSettingsComponent implements OnInit {
     this.isSaving.set(true);
     this.errorMessage.set('');
 
-    // Preparar datos
-    // const data: Partial<AdminPrompt> = {
-    //   prompt_text: this.promptText().trim(),
-    //   temperature: Number(this.temperature().toFixed(1)) // Redondear a 1 decimal
-    // };
-    
     const cleanPrompt = this.promptText().trim();
     const cleanTemp = Number(this.temperature().toFixed(1));
 
     // Llamar al servicio
     this.adminService.updatePromptConfig(cleanPrompt, cleanTemp).subscribe({
       next: (response: any) => {
-        console.log('[AdminSettings] Save response:', response);
 
         if (response.ok) {
           // Actualizar originals para resincronizar
@@ -152,14 +140,12 @@ export class AdminSettingsComponent implements OnInit {
           // Limpiar mensaje después de 3 segundos
           setTimeout(() => this.successMessage.set(''), 3000);
 
-          console.log('[AdminSettings] Configuration saved successfully');
         } else {
           this.errorMessage.set(response.error || 'Error al guardar la configuración');
           this.isSaving.set(false);
         }
       },
       error: (error) => {
-        console.error('[AdminSettings] Error saving changes:', error);
         let errorMsg = 'Error al guardar la configuración.';
 
         if (error.status === 401) {
@@ -180,8 +166,6 @@ export class AdminSettingsComponent implements OnInit {
    * Descarta los cambios sin guardar
    */
   discardChanges(): void {
-    console.log('[AdminSettings] Discarding changes...');
-
     this.promptText.set(this.originalPromptText());
     this.temperature.set(this.originalTemperature());
     this.hasChanges.set(false);
@@ -192,8 +176,6 @@ export class AdminSettingsComponent implements OnInit {
    * Restaura el prompt por defecto (confirmación)
    */
   resetToDefault(): void {
-    console.log('[AdminSettings] Resetting to default...');
-
     const defaultPrompt = `Eres un experto en medicina y salud pública. Tu tarea es generar preguntas de opción múltiple educativas sobre temas médicos.
 
 INSTRUCCIONES ESTRICTAS:
@@ -226,7 +208,6 @@ RESTRICCIONES:
    * Cierra sesión
    */
   logout(): void {
-    console.log('[AdminSettings] Logging out...');
     this.authService.logout();
     this.router.navigate(['/admin/login']);
   }

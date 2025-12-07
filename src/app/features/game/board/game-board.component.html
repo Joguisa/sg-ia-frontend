@@ -66,8 +66,8 @@
           <div class="options-grid">
             @for (option of currentQuestion()!.options; track option.id) {
               <button
-                class="btn btn-lg border border-2 w-100 py-4 d-flex justify-content-between align-items-center"
-                [ngClass]="getOptionClass(option.id) ? (getOptionClass(option.id) === 'option-selected' ? 'btn-light-primary border-primary' : (getOptionClass(option.id) === 'option-correct' ? 'btn-light-success border-success' : 'btn-light-danger border-danger')) : 'btn-outline-secondary'"
+                class="option-button" 
+                [ngClass]="getOptionClass(option.id)"
                 (click)="selectOption(option.id)"
                 [disabled]="isAnswering()"
               >
@@ -162,9 +162,16 @@
 
         <!-- Next Button -->
         <div class="action-section">
-          <button class="btn btn-next" (click)="nextQuestion()">
-            Siguiente Pregunta →
-          </button>
+          @if (lives() === 0) {
+            <button class="btn btn-next" disabled>
+              <i class="fas fa-heart-broken"></i>
+              Juego Terminado - Redirigiendo...
+            </button>
+          } @else {
+            <button class="btn btn-next" (click)="nextQuestion()">
+              Siguiente Pregunta →
+            </button>
+          }
         </div>
       </div>
     }
@@ -173,11 +180,22 @@
     @if (gameState() === 'gameover') {
       <div class="gameover-screen">
         <div class="gameover-card d-flex flex-column align-items-center text-center">
-          <i class="fas fa-gamepad fs-2x text-warning mb-3"></i>
-          <h2 class="gameover-title">¡Fin del Juego!</h2>
-          <p class="gameover-message">
-            Completaste {{ questionCount() }} preguntas con una puntuación de {{ score() }} puntos.
-          </p>
+          @if (lives() === 0) {
+            <i class="fas fa-heart-broken fs-2x text-danger mb-3"></i>
+            <h2 class="gameover-title">¡Fin del Juego!</h2>
+            <p class="gameover-message">
+              Te has quedado sin vidas. Completaste {{ questionCount() }} preguntas con una puntuación de {{ score() }} puntos.
+            </p>
+          } @else {
+            <i class="fas fa-trophy fs-2x text-success mb-3"></i>
+            <h2 class="gameover-title">¡Felicitaciones!</h2>
+            <p class="gameover-message">
+              Has completado todas las preguntas disponibles para tu nivel de dificultad.
+            </p>
+            <p class="gameover-stats">
+              Respondiste {{ questionCount() }} preguntas y obtuviste {{ score() }} puntos.
+            </p>
+          }
           <p class="gameover-redirect">
             Redirigiendo a tu perfil...
           </p>

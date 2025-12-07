@@ -62,51 +62,59 @@
 
         @if (isGeneratorOpen()) {
           <div class="generator-content">
-            <div class="form-grid">
-              <!-- Categoría -->
-              <div class="form-group">
-                <label for="gen-category">Categoría</label>
-                <select
-                  id="gen-category"
-                  class="form-control"
-                  [(ngModel)]="generatorCategoryId"
-                  [disabled]="isGenerating()">
-                  <option [value]="null">Selecciona una categoría...</option>
-                  @for (cat of categories(); track cat.id) {
-                    <option [value]="cat.id">{{ cat.name }}</option>
-                  }
-                </select>
-              </div>
+            <form [formGroup]="generatorForm">
+              <div class="form-grid">
+                <!-- Categoría -->
+                <div class="form-group">
+                  <label for="gen-category">Categoría</label>
+                  <select
+                    id="gen-category"
+                    class="form-control"
+                    formControlName="categoryId"
+                    [class.is-invalid]="generatorForm.get('categoryId')?.invalid && generatorForm.get('categoryId')?.touched">
+                    <option [value]="null">Selecciona una categoría...</option>
+                    @for (cat of categories(); track cat.id) {
+                      <option [value]="cat.id">{{ cat.name }}</option>
+                    }
+                  </select>
+                  <div class="invalid-feedback" *ngIf="generatorForm.get('categoryId')?.invalid && generatorForm.get('categoryId')?.touched">
+                    <small *ngIf="generatorForm.get('categoryId')?.hasError('required')">La categoría es requerida</small>
+                  </div>
+                </div>
 
-              <!-- Dificultad -->
-              <div class="form-group">
-                <label for="gen-difficulty">Dificultad (1-5)</label>
-                <div class="difficulty-input">
+                <!-- Dificultad -->
+                <div class="form-group">
+                  <label for="gen-difficulty">Dificultad (1-5)</label>
+                  <div class="difficulty-input">
+                    <input
+                      id="gen-difficulty"
+                      type="range"
+                      min="1"
+                      max="5"
+                      formControlName="difficulty"
+                      class="form-range">
+                    <span class="difficulty-value">{{ generatorForm.get('difficulty')?.value }}</span>
+                  </div>
+                </div>
+
+                <!-- Cantidad -->
+                <div class="form-group">
+                  <label for="gen-quantity">Cantidad (1-50)</label>
                   <input
-                    id="gen-difficulty"
-                    type="range"
+                    id="gen-quantity"
+                    type="number"
                     min="1"
-                    max="5"
-                    [(ngModel)]="generatorDifficulty"
-                    [disabled]="isGenerating()"
-                    class="form-range">
-                  <span class="difficulty-value">{{ generatorDifficulty() }}</span>
+                    max="50"
+                    formControlName="quantity"
+                    [class.is-invalid]="generatorForm.get('quantity')?.invalid && generatorForm.get('quantity')?.touched"
+                    class="form-control">
+                  <div class="invalid-feedback" *ngIf="generatorForm.get('quantity')?.invalid && generatorForm.get('quantity')?.touched">
+                    <small *ngIf="generatorForm.get('quantity')?.hasError('required')">La cantidad es requerida</small>
+                    <small *ngIf="generatorForm.get('quantity')?.hasError('invalidQuantity')">Cantidad debe ser entre 1 y 50</small>
+                  </div>
                 </div>
               </div>
-
-              <!-- Cantidad -->
-              <div class="form-group">
-                <label for="gen-quantity">Cantidad (1-50)</label>
-                <input
-                  id="gen-quantity"
-                  type="number"
-                  min="1"
-                  max="50"
-                  [(ngModel)]="generatorQuantity"
-                  [disabled]="isGenerating()"
-                  class="form-control">
-              </div>
-            </div>
+            </form>
 
             <!-- Mensaje de estado -->
             @if (generationMessage()) {
@@ -135,52 +143,49 @@
       <!-- Filters Section -->
       <div class="filters-section">
         <h3 class="filters-title">Filtros y Búsqueda</h3>
-        <div class="filters-grid">
-          <!-- Search -->
-          <div class="filter-item">
-            <label>Búsqueda</label>
-            <div class="search-input">
-              <i class="fas fa-search"></i>
-              <input
-                type="text"
-                placeholder="Buscar por ID o texto..."
-                [(ngModel)]="searchTerm"
-                class="form-control">
+        <form [formGroup]="filterForm">
+          <div class="filters-grid">
+            <!-- Search -->
+            <div class="filter-item">
+              <label>Búsqueda</label>
+              <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input
+                  type="text"
+                  placeholder="Buscar por ID o texto..."
+                  formControlName="search"
+                  maxlength="200"
+                  class="form-control">
+              </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="filter-item">
+              <label>Categoría</label>
+              <select formControlName="category" class="form-control">
+                <option [value]="null">Todas las categorías</option>
+                @for (cat of categories(); track cat.id) {
+                  <option [value]="cat.id">{{ cat.name }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="filter-item">
+              <label>Estado</label>
+              <select formControlName="status" class="form-control">
+                <option value="all">Todas</option>
+                <option value="verified">Verificadas</option>
+                <option value="pending">Pendientes</option>
+              </select>
+            </div>
+
+            <!-- Results Count -->
+            <div class="filter-item results-count">
+              <p>{{ filteredQuestions().length }} pregunta{{ filteredQuestions().length !== 1 ? 's' : '' }} encontrada{{ filteredQuestions().length !== 1 ? 's' : '' }}</p>
             </div>
           </div>
-
-          <!-- Category Filter -->
-          <div class="filter-item">
-            <label>Categoría</label>
-            <select [(ngModel)]="selectedCategory" class="form-control">
-              <option [value]="null">Todas las categorías</option>
-              @for (cat of categories(); track cat.id) {
-                <option [value]="cat.id">{{ cat.name }}</option>
-              }
-            </select>
-          </div>
-
-          <!-- Status Filter -->
-          <div class="filter-item">
-            <label>Estado</label>
-            <select [(ngModel)]="selectedStatus" class="form-control">
-              <option value="all">Todas</option>
-              <option value="verified">
-                <i class="fas fa-check"></i>
-                Verificadas
-              </option>
-              <option value="pending">
-                <i class="fas fa-clock"></i>
-                Pendientes
-              </option>
-            </select>
-          </div>
-
-          <!-- Results Count -->
-          <div class="filter-item results-count">
-            <p>{{ filteredQuestions().length }} pregunta{{ filteredQuestions().length !== 1 ? 's' : '' }} encontrada{{ filteredQuestions().length !== 1 ? 's' : '' }}</p>
-          </div>
-        </div>
+        </form>
       </div>
 
       <!-- Questions Table -->
@@ -263,7 +268,11 @@
                           class="btn-action btn-verify"
                           (click)="toggleVerifyQuestion(question.id, question.admin_verified ?? false)"
                           [title]="question.admin_verified ? 'Desverificar' : 'Verificar'">
-                          <i class="fas fa-check"></i>
+                          @if (question.admin_verified ?? false) {
+                            <i class="fas fa-ban text-danger"></i>
+                          } @else {
+                            <i class="fas fa-certificate"></i>
+                          }
                         </button>
 
                         <!-- Delete with Confirmation -->

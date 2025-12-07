@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy, signal, computed, effect } from '@angular/core';
+import { Component, OnInit, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { GameService } from '../../../core/services/game.service';
 import {
   QuestionFull,
-  QuestionOption,
   AnswerSubmitResponse,
   GameSession
 } from '../../../core/models/game/game-flow.interface';
@@ -115,29 +114,49 @@ export class GameBoardComponent implements OnInit {
     const difficulty = this.difficulty();
 
     if (!sessionId) {
-      alert('Error: Sesión inválida');
+      this.showErrorMessage('Error: Sesión inválida');
       return;
     }
 
     this.gameState.set('loading');
     this.selectedOptionId.set(null);
+    this.feedbackData.set(null); // Limpiar feedback anterior
     this.questionCount.update((c) => c + 1);
 
     this.gameService.getNextQuestion(sessionId, difficulty, this.categoryId()).subscribe({
       next: (response) => {
+
         if (response.ok && response.question) {
           this.currentQuestion.set(response.question);
           this.gameState.set('playing');
           this.startTimer();
         } else {
-          alert(response.error || 'Error al cargar la pregunta');
+          this.handleNoQuestionsAvailable(response.error);
         }
       },
       error: (error) => {
-        console.error('Error al cargar pregunta:', error);
-        alert('Error al cargar la pregunta. Intenta de nuevo.');
+        // Detectar si es un 404 (no hay preguntas) o un error real de conexión
+        if (error.status === 404) {
+          this.handleNoQuestionsAvailable(error.error?.error || 'No hay más preguntas disponibles para tu nivel');
+        } else {
+          this.showErrorMessage('Error de conexión. Por favor, verifica tu conexión a internet.');
+        }
       }
     });
+  }
+
+  private handleNoQuestionsAvailable(errorMessage?: string): void {
+    this.stopTimer();
+    this.gameState.set('gameover');
+    // Redirigir al perfil después de mostrar el mensaje
+    setTimeout(() => {
+      this.router.navigate(['/profile']);
+    }, 5000);
+  }
+
+  private showErrorMessage(message: string): void {
+    // Aquí usamos alert temporalmente, pero se podría reemplazar con un modal o toast
+    alert(message);
   }
 
   selectOption(optionId: number): void {
@@ -162,17 +181,19 @@ export class GameBoardComponent implements OnInit {
     this.gameState.set('loading');
     this.stopTimer();
 
-    // Determinar si la respuesta es correcta
-    const selectedOption = question.options?.find((opt) => opt.id === selectedId);
-    const isCorrect = selectedOption?.is_correct || false;
+    // Calcular tiempo tomado
     const timeTaken = 30 - this.questionTimer(); // 30s - tiempo restante
 
-    // Enviar respuesta
-    this.gameService.submitAnswer(sessionId, question.id, selectedId, isCorrect, timeTaken).subscribe({
+
+    // Enviar respuesta (el backend calculará is_correct)
+    this.gameService.submitAnswer(sessionId, question.id, selectedId, timeTaken).subscribe({
       next: (response) => {
         if (response.ok) {
+          // Confiar en el backend: is_correct viene calculado del servidor
+          const isAnswerCorrect = response.is_correct || false;
+
           this.feedbackData.set(response);
-          this.isAnswerCorrect.set(response.is_correct || false);
+          this.isAnswerCorrect.set(isAnswerCorrect);
 
           // Actualizar estado del juego
           if (response.score !== undefined) {
@@ -185,9 +206,19 @@ export class GameBoardComponent implements OnInit {
             this.difficulty.set(response.next_difficulty);
           }
 
-          // Mostrar feedback
+          // IMPORTANTE: Si lives = 0, el effect() activará endGame() automáticamente
+          // Pero mostramos el feedback brevemente antes de game over
           this.gameState.set('feedback');
           this.isAnswering.set(false);
+
+          // Si lives = 0, después de mostrar feedback por 3 segundos, forzar game over
+          if (response.lives === 0) {
+            setTimeout(() => {
+              if (this.lives() === 0 && this.gameState() !== 'gameover') {
+                this.endGame();
+              }
+            }, 3000);
+          }
         } else {
           alert(response.error || 'Error al enviar respuesta');
           this.isAnswering.set(false);
@@ -196,7 +227,6 @@ export class GameBoardComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error:', error);
         alert('Error al procesar tu respuesta');
         this.isAnswering.set(false);
         this.gameState.set('playing');
@@ -206,6 +236,13 @@ export class GameBoardComponent implements OnInit {
   }
 
   nextQuestion(): void {
+    if (this.lives() === 0) {
+      if (this.gameState() !== 'gameover') {
+        this.endGame();
+      }
+      return;
+    }
+
     this.loadNextQuestion();
   }
 
@@ -239,7 +276,7 @@ export class GameBoardComponent implements OnInit {
     // Redirigir a resumen después de 2 segundos
     setTimeout(() => {
       this.router.navigate(['/profile']);
-    }, 2000);
+    }, 5000);
   }
 
   getOptionClass(optionId: number): string {

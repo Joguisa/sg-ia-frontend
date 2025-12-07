@@ -89,7 +89,6 @@ export class PlayerProfileComponent implements OnInit {
       // Llamar al servicio para obtener estadísticas
       this.playerService.getPlayerStats(parseInt(playerId)).subscribe({
         next: (response: PlayerProfileResponse) => {
-          console.log('[PlayerProfile] Response:', response);
 
           if (response.ok && response.global && response.topics) {
             this.playerStats.set(response.global);
