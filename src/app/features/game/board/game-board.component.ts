@@ -133,13 +133,14 @@ export class GameBoardComponent implements OnInit {
           this.gameState.set('playing');
           this.startTimer();
         } else {
-          this.handleNoQuestionsAvailable(response.error);
+          // No hay más preguntas disponibles - fin del juego por completar todas
+          this.handleNoQuestionsAvailable('¡Felicitaciones! Has completado todas las preguntas disponibles.');
         }
       },
       error: (error) => {
-        // Detectar si es un 404 (no hay preguntas) o un error real de conexión
+        // Detectar si es un 404 (no hay preguntas verificadas disponibles)
         if (error.status === HttpStatus.NOT_FOUND) {
-          this.handleNoQuestionsAvailable(error.error?.error || 'No hay más preguntas disponibles para tu nivel');
+          this.handleNoQuestionsAvailable('¡Felicitaciones! Has respondido todas las preguntas verificadas disponibles.');
         } else {
           this.showErrorMessage('Error de conexión. Por favor, verifica tu conexión a internet.');
         }
@@ -147,9 +148,10 @@ export class GameBoardComponent implements OnInit {
     });
   }
 
-  private handleNoQuestionsAvailable(errorMessage?: string): void {
+  private handleNoQuestionsAvailable(message: string): void {
     this.stopTimer();
     this.gameState.set('gameover');
+    this.notification.success(message, NOTIFICATION_DURATION.LONG);
     // Redirigir al perfil después de mostrar el mensaje
     setTimeout(() => {
       this.router.navigate(['/profile']);

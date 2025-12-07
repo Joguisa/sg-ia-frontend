@@ -15,6 +15,13 @@ export const environment = {
       login: '/auth/login'
     },
 
+    // ========== LOGS (PUBLIC) ==========
+    // LogController - Registro de errores del frontend
+    logs: {
+      /** POST /logs/error - Registrar error del frontend */
+      error: '/logs/error'
+    },
+
     // ========== PLAYERS (PUBLIC) ==========
     // PlayerController - Gestión de jugadores
     players: {

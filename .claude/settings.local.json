@@ -18,7 +18,8 @@
       "Bash(chmod:*)",
       "Bash(FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch:*)",
       "Bash(git add:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(php -l:*)"
     ],
     "deny": [],
     "ask": []
