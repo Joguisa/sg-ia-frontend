@@ -18,214 +18,295 @@
 
   <!-- Loading State -->
   @if (isLoading()) {
-    <div class="loading-container">
-      <div class="spinner"></div>
-      <p class="loading-text">Cargando estadísticas...</p>
-    </div>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p class="loading-text">Cargando estadísticas...</p>
+  </div>
   }
 
   <!-- Error State -->
   @if (errorMessage()) {
-    <div class="error-container">
-      <div class="alert alert-danger">
-        <i class="fas fa-circle-info"></i>
-        <div>
-          <strong>Error</strong>
-          <p>{{ errorMessage() }}</p>
-        </div>
+  <div class="error-container">
+    <div class="alert alert-danger">
+      <i class="fas fa-circle-info"></i>
+      <div>
+        <strong>Error</strong>
+        <p>{{ errorMessage() }}</p>
       </div>
     </div>
+  </div>
   }
 
   <!-- Dashboard Content -->
   @if (!isLoading() && !errorMessage()) {
-    <div class="dashboard-content">
-      <!-- KPI Cards Section -->
-      <section class="kpi-section">
-        <h2 class="section-title">Estadísticas Principales</h2>
+  <div class="dashboard-content">
+    <!-- KPI Cards Section -->
+    <section class="kpi-section">
+      <h2 class="section-title">Estadísticas Principales</h2>
 
-        <div class="kpi-grid">
-          <!-- Total Jugadores -->
-          <div class="kpi-card kpi-players">
-            <div class="kpi-icon">
-              <i class="fas fa-users"></i>
-            </div>
-            <div class="kpi-content">
-              <p class="kpi-label">Jugadores Registrados</p>
-              <p class="kpi-value">{{ totalPlayers() }}</p>
-              <p class="kpi-trend">Total acumulado</p>
-            </div>
+      <div class="kpi-grid">
+        <!-- Total Jugadores -->
+        <div class="kpi-card kpi-players">
+          <div class="kpi-icon">
+            <i class="fas fa-users"></i>
           </div>
-
-          <!-- Total Sesiones -->
-          <div class="kpi-card kpi-sessions">
-            <div class="kpi-icon">
-              <i class="fas fa-gamepad"></i>
-            </div>
-            <div class="kpi-content">
-              <p class="kpi-label">Sesiones de Juego</p>
-              <p class="kpi-value">{{ totalSessions() }}</p>
-              <p class="kpi-trend">Partidas completadas</p>
-            </div>
-          </div>
-
-          <!-- Total Preguntas -->
-          <div class="kpi-card kpi-questions">
-            <div class="kpi-icon">
-              <i class="fas fa-file"></i>
-            </div>
-            <div class="kpi-content">
-              <p class="kpi-label">Preguntas en Base de Datos</p>
-              <p class="kpi-value">{{ totalQuestions() }}</p>
-              <p class="kpi-trend">Incluyendo IA generadas</p>
-            </div>
-          </div>
-
-          <!-- Verificación Pendiente -->
-          <div class="kpi-card kpi-pending">
-            <div class="kpi-icon">
-              <i class="fas fa-check"></i>
-            </div>
-            <div class="kpi-content">
-              <p class="kpi-label">Pendientes de Verificación</p>
-              <p class="kpi-value">{{ pendingVerification() }}</p>
-              <p class="kpi-trend">Requieren revisión</p>
-            </div>
+          <div class="kpi-content">
+            <p class="kpi-label">Jugadores Registrados</p>
+            <p class="kpi-value">{{ totalPlayers() }}</p>
+            <p class="kpi-trend">Total acumulado</p>
           </div>
         </div>
-      </section>
 
-      <!-- Quick Actions Section -->
-      <section class="quick-actions-section">
-        <h2 class="section-title">Acciones Rápidas</h2>
-
-        <div class="actions-grid">
-          <!-- Manage Questions -->
-          <div class="action-card">
-            <div class="action-icon">
-              <i class="fas fa-pen"></i>
-            </div>
-            <div class="action-content">
-              <h3 class="action-title">Gestión de Preguntas</h3>
-              <p class="action-description">
-                Editar, verificar y generar preguntas usando IA. Gestiona categorías y dificultades.
-              </p>
-              <button class="btn btn-action" (click)="goToQuestions()">
-                <i class="fas fa-arrow-right"></i>
-                Ir a Preguntas
-              </button>
-            </div>
+        <!-- Total Sesiones -->
+        <div class="kpi-card kpi-sessions">
+          <div class="kpi-icon">
+            <i class="fas fa-gamepad"></i>
           </div>
-
-          <!-- System Settings -->
-          <div class="action-card">
-            <div class="action-icon">
-              <i class="fas fa-gear"></i>
-            </div>
-            <div class="action-content">
-              <h3 class="action-title">Configuración del Sistema</h3>
-              <p class="action-description">
-                Ajusta el prompt de IA, temperatura y parámetros del sistema de dificultad adaptativa.
-              </p>
-              <button class="btn btn-action" (click)="goToSettings()">
-                <i class="fas fa-arrow-right"></i>
-                Ir a Configuración
-              </button>
-            </div>
+          <div class="kpi-content">
+            <p class="kpi-label">Sesiones de Juego</p>
+            <p class="kpi-value">{{ totalSessions() }}</p>
+            <p class="kpi-trend">Partidas completadas</p>
           </div>
         </div>
-      </section>
 
-      <!-- Analytics Section: Top Hardest Questions -->
-      <section class="analytics-section">
-        <h2 class="section-title">Análisis de Preguntas</h2>
-
-        <div class="analytics-grid">
-          <!-- Top Hardest -->
-          <div class="analytics-card">
-            <div class="analytics-header">
-              <h3 class="analytics-title">
-                <i class="fas fa-arrow-down"></i>
-                Top 5 Preguntas Difíciles
-              </h3>
-              <p class="analytics-subtitle">Menor tasa de éxito</p>
-            </div>
-
-            <div class="analytics-content">
-              @let hardestQuestions = topHardest();
-              @if (topHardest()!.length > 0) {
-                <div class="questions-list">
-                  <!-- @for (question of topHardest(); track question.id; let idx = $index) { -->
-                  @for (question of hardestQuestions; track question.id; let idx = $index) {
-                    <div class="question-item">
-                      <div class="question-rank">{{ idx + 1 }}</div>
-                      <div class="question-info">
-                        <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
-                        <p class="question-meta">
-                          <i class="fas fa-circle-info"></i>
-                          ID: {{ question.id }}
-                        </p>
-                      </div>
-                      <div class="question-rate" [ngClass]="getSuccessRateClass(question.success_rate)">
-                        <p class="rate-value">{{ question.success_rate.toFixed(1) }}%</p>
-                        <p class="rate-label">Éxito</p>
-                      </div>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="no-data">No hay datos disponibles</p>
-              }
-            </div>
+        <!-- Total Preguntas -->
+        <div class="kpi-card kpi-questions">
+          <div class="kpi-icon">
+            <i class="fas fa-file"></i>
           </div>
-
-          <!-- Top Easiest -->
-          <div class="analytics-card">
-            <div class="analytics-header">
-              <h3 class="analytics-title">
-                <i class="fas fa-arrow-up"></i>
-                Top 5 Preguntas Fáciles
-              </h3>
-              <p class="analytics-subtitle">Mayor tasa de éxito</p>
-            </div>
-
-            <div class="analytics-content">
-              @if (topEasiest()!.length > 0) {
-                <div class="questions-list">
-                  @for (question of topEasiest(); track question.id; let idx = $index) {
-                    <div class="question-item">
-                      <div class="question-rank">{{ idx + 1 }}</div>
-                      <div class="question-info">
-                        <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
-                        <p class="question-meta">
-                          <i class="fas fa-circle-info"></i>
-                          ID: {{ question.id }}
-                        </p>
-                      </div>
-                      <div class="question-rate" [ngClass]="getSuccessRateClass(question.success_rate)">
-                        <p class="rate-value">{{ question.success_rate.toFixed(1) }}%</p>
-                        <p class="rate-label">Éxito</p>
-                      </div>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="no-data">No hay datos disponibles</p>
-              }
-            </div>
+          <div class="kpi-content">
+            <p class="kpi-label">Preguntas en Base de Datos</p>
+            <p class="kpi-value">{{ totalQuestions() }}</p>
+            <p class="kpi-trend">Incluyendo IA generadas</p>
           </div>
         </div>
-      </section>
 
-      <!-- Footer Info -->
-      <div class="dashboard-footer">
-        <p class="footer-text">
-          <i class="fas fa-circle-info"></i>
-          Estadísticas actualizadas en tiempo real | Última carga: {{ (isLoading() ? 'Cargando...' : 'Actualizado') }}
-        </p>
+        <!-- Verificación Pendiente -->
+        <div class="kpi-card kpi-pending">
+          <div class="kpi-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <div class="kpi-content">
+            <p class="kpi-label">Pendientes de Verificación</p>
+            <p class="kpi-value">{{ pendingVerification() }}</p>
+            <p class="kpi-trend">Requieren revisión</p>
+          </div>
+        </div>
       </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="quick-actions-section">
+      <h2 class="section-title">Acciones Rápidas</h2>
+
+      <div class="actions-grid">
+        <!-- Manage Questions -->
+        <div class="action-card">
+          <div class="action-icon">
+            <i class="fas fa-pen"></i>
+          </div>
+          <div class="action-content">
+            <h3 class="action-title">Gestión de Preguntas</h3>
+            <p class="action-description">
+              Editar, verificar y generar preguntas usando IA. Gestiona categorías y dificultades.
+            </p>
+            <button class="btn btn-action" (click)="goToQuestions()">
+              <i class="fas fa-arrow-right"></i>
+              Ir a Preguntas
+            </button>
+          </div>
+        </div>
+
+        <!-- System Settings -->
+        <div class="action-card">
+          <div class="action-icon">
+            <i class="fas fa-gear"></i>
+          </div>
+          <div class="action-content">
+            <h3 class="action-title">Configuración del Sistema</h3>
+            <p class="action-description">
+              Ajusta el prompt de IA, temperatura y parámetros del sistema de dificultad adaptativa.
+            </p>
+            <button class="btn btn-action" (click)="goToSettings()">
+              <i class="fas fa-arrow-right"></i>
+              Ir a Configuración
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analytics Section: Top Hardest Questions -->
+    <section class="analytics-section">
+      <h2 class="section-title">Análisis de Preguntas</h2>
+
+      <div class="analytics-grid">
+        <!-- Top Hardest -->
+        <div class="analytics-card">
+          <div class="analytics-header">
+            <h3 class="analytics-title">
+              <i class="fas fa-arrow-down"></i>
+              Top 5 Preguntas Difíciles
+            </h3>
+            <p class="analytics-subtitle">Menor tasa de éxito</p>
+          </div>
+
+          <div class="analytics-content">
+            @let hardestQuestions = topHardest();
+            @if (topHardest()!.length > 0) {
+            <div class="questions-list">
+              <!-- @for (question of topHardest(); track question.id; let idx = $index) { -->
+              @for (question of hardestQuestions; track question.id; let idx = $index) {
+              <div class="question-item">
+                <div class="question-rank">{{ idx + 1 }}</div>
+                <div class="question-info">
+                  <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
+                  <p class="question-meta">
+                    <i class="fas fa-circle-info"></i>
+                    ID: {{ question.id }}
+                  </p>
+                </div>
+                <div class="question-rate" [ngClass]="getSuccessRateClass(question.success_rate)">
+                  <p class="rate-value">{{ question.success_rate.toFixed(1) }}%</p>
+                  <p class="rate-label">Éxito</p>
+                </div>
+              </div>
+              }
+            </div>
+            } @else {
+            <p class="no-data">No hay datos disponibles</p>
+            }
+          </div>
+        </div>
+
+        <!-- Top Easiest -->
+        <div class="analytics-card">
+          <div class="analytics-header">
+            <h3 class="analytics-title">
+              <i class="fas fa-arrow-up"></i>
+              Top 5 Preguntas Fáciles
+            </h3>
+            <p class="analytics-subtitle">Mayor tasa de éxito</p>
+          </div>
+
+          <div class="analytics-content">
+            @if (topEasiest()!.length > 0) {
+            <div class="questions-list">
+              @for (question of topEasiest(); track question.id; let idx = $index) {
+              <div class="question-item">
+                <div class="question-rank">{{ idx + 1 }}</div>
+                <div class="question-info">
+                  <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
+                  <p class="question-meta">
+                    <i class="fas fa-circle-info"></i>
+                    ID: {{ question.id }}
+                  </p>
+                </div>
+                <div class="question-rate" [ngClass]="getSuccessRateClass(question.success_rate)">
+                  <p class="rate-value">{{ question.success_rate.toFixed(1) }}%</p>
+                  <p class="rate-label">Éxito</p>
+                </div>
+              </div>
+              }
+            </div>
+            } @else {
+            <p class="no-data">No hay datos disponibles</p>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Batch Statistics Section -->
+    <section class="batch-section">
+      <div class="section-header">
+        <h2 class="section-title">Estadísticas de Batches</h2>
+        <button class="btn btn-sm btn-refresh" (click)="loadBatchStatistics()" [disabled]="isLoadingBatches()">
+          <i class="fas fa-sync-alt" [class.fa-spin]="isLoadingBatches()"></i>
+          Recargar
+        </button>
+      </div>
+
+      @if (isLoadingBatches()) {
+      <div class="loading-small">
+        <span class="spinner-small"></span>
+        <span>Cargando batches...</span>
+      </div>
+      }
+
+      @if (!isLoadingBatches() && batchStatistics().length > 0) {
+      <div class="batch-table-container">
+        <table class="batch-table">
+          <thead>
+            <tr>
+              <th>Nombre del Batch</th>
+              <th>Tipo</th>
+              <th>Total</th>
+              <th>Verificadas</th>
+              <th>Progreso</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (batch of batchStatistics(); track batch.id) {
+            <tr>
+              <td class="batch-name">{{ batch.batch_name }}</td>
+              <td>
+                <span class="batch-type" [ngClass]="'type-' + batch.batch_type">
+                  {{ batch.batch_type === 'ai_generated' ? 'IA' : batch.batch_type === 'csv_imported' ? 'CSV' : 'Manual'
+                  }}
+                </span>
+              </td>
+              <td class="text-center">{{ batch.total_questions }}</td>
+              <td class="text-center">{{ batch.verified_count }}</td>
+              <td>
+                <div class="progress-bar-container">
+                  <div class="progress-bar" [style.width.%]="batch.verification_percent || 0" [ngClass]="{
+                            'progress-complete': (batch.verification_percent || 0) >= 100,
+                            'progress-partial': (batch.verification_percent || 0) >= 50 && (batch.verification_percent || 0) < 100,
+                            'progress-low': (batch.verification_percent || 0) < 50
+                          }">
+                  </div>
+                  <span class="progress-text">{{ (batch.verification_percent || 0).toFixed(0) }}%</span>
+                </div>
+              </td>
+              <td>
+                <span class="batch-status" [ngClass]="getBatchStatusClass(batch.status)">
+                  {{ getBatchStatusText(batch.status) }}
+                </span>
+              </td>
+              <td class="batch-date">{{ formatDate(batch.imported_at) }}</td>
+              <td>
+                <button class="btn-action btn-view" (click)="goToQuestionsWithBatch(batch.id)"
+                  title="Ver preguntas del batch">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+
+      @if (!isLoadingBatches() && batchStatistics().length === 0) {
+      <div class="no-batches">
+        <i class="fas fa-box-open"></i>
+        <p>No hay batches registrados</p>
+        <span>Genera preguntas con IA o importa desde CSV para crear batches</span>
+      </div>
+      }
+    </section>
+
+    <!-- Footer Info -->
+    <div class="dashboard-footer">
+      <p class="footer-text">
+        <i class="fas fa-circle-info"></i>
+        Estadísticas actualizadas en tiempo real | Última carga: {{ (isLoading() ? 'Cargando...' : 'Actualizado') }}
+      </p>
     </div>
+  </div>
   }
 </div>
-
-

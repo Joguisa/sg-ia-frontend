@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { DashboardStatsResponse } from '../../../core/models/admin';
+import { DashboardStatsResponse, BatchStatistics } from '../../../core/models/admin';
 import { HttpStatus } from '../../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 
@@ -26,6 +26,10 @@ export class AdminDashboardComponent implements OnInit {
   topHardest = signal<Array<{ id: number; statement: string; success_rate: number }> | null>(null);
   topEasiest = signal<Array<{ id: number; statement: string; success_rate: number }> | null>(null);
 
+  // Batch Statistics Signals
+  batchStatistics = signal<BatchStatistics[]>([]);
+  isLoadingBatches = signal<boolean>(false);
+
   // UI State Signals
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
@@ -39,6 +43,7 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboardStats();
+    this.loadBatchStatistics();
   }
 
   /**
@@ -118,5 +123,75 @@ export class AdminDashboardComponent implements OnInit {
     if (successRate >= 75) return 'success-rate-success-high';
     if (successRate >= 50) return 'success-rate-success-medium';
     return 'success-rate-success-low';
+  }
+
+  // ========== BATCH STATISTICS METHODS ==========
+
+  /**
+   * Carga las estadísticas de batches desde la API
+   */
+  loadBatchStatistics(): void {
+    this.isLoadingBatches.set(true);
+
+    this.adminService.getBatchStatistics().subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.batchStatistics.set(response.batches || []);
+        }
+        this.isLoadingBatches.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading batch statistics:', error);
+        this.isLoadingBatches.set(false);
+      }
+    });
+  }
+
+  /**
+   * Navega a preguntas filtradas por batch
+   */
+  goToQuestionsWithBatch(batchId: number): void {
+    this.router.navigate(['/admin/questions'], { queryParams: { batchId } });
+  }
+
+  /**
+   * Obtiene la clase CSS para el estado del batch
+   */
+  getBatchStatusClass(status: string): string {
+    switch (status) {
+      case 'complete':
+        return 'batch-status-complete';
+      case 'partial':
+        return 'batch-status-partial';
+      default:
+        return 'batch-status-pending';
+    }
+  }
+
+  /**
+   * Obtiene el texto del estado del batch
+   */
+  getBatchStatusText(status: string): string {
+    switch (status) {
+      case 'complete':
+        return 'Completo';
+      case 'partial':
+        return 'Parcial';
+      default:
+        return 'Pendiente';
+    }
+  }
+
+  /**
+   * Formatea la fecha de importación
+   */
+  formatDate(dateString: string): string {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
   }
 }

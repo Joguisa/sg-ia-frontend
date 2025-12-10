@@ -97,6 +97,7 @@ export class GameBoardComponent implements OnInit {
     // Iniciar sesión de juego
     this.gameService.startSession(this.playerId, 1.0).subscribe({
       next: (session: GameSession) => {
+        console.log('next session', session)
         if (session.session_id) {
           this.sessionId.set(session.session_id);
           this.difficulty.set(session.current_difficulty);

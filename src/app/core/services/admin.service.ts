@@ -12,7 +12,15 @@ import {
   GenerateBatchResponse,
   GetQuestionsResponse,
   GetCategoriesResponse,
-  AdminCategory
+  AdminCategory,
+  BatchStatisticsResponse,
+  UnverifiedQuestionsResponse,
+  BatchVerificationResponse,
+  CsvImportResponse,
+  EditExplanationResponse,
+  QuestionFullResponse,
+  UpdateQuestionFullPayload,
+  UpdateQuestionFullResponse
 } from '../models/admin';
 import { Question, QuestionResponse, DeleteQuestionResponse } from '../models/game';
 
@@ -192,6 +200,111 @@ export class AdminService {
   getDashboardStats(): Observable<DashboardStatsResponse> {
     return this.http.get<DashboardStatsResponse>(
       `${this.apiUrl}${environment.apiEndpoints.admin.dashboardStats}`
+    );
+  }
+
+  // ========== BATCH MANAGEMENT METHODS ==========
+
+  /**
+   * Obtiene estadísticas de todos los batches de preguntas
+   *
+   * Backend: GET /admin/batch-statistics
+   * @returns Observable con listado de estadísticas de batches
+   */
+  getBatchStatistics(): Observable<BatchStatisticsResponse> {
+    return this.http.get<BatchStatisticsResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.batchStatistics}`
+    );
+  }
+
+  /**
+   * Obtiene preguntas sin verificar, opcionalmente filtradas por batch
+   *
+   * Backend: GET /admin/unverified?batchId={batchId}
+   * @param batchId ID del batch (opcional) para filtrar preguntas
+   * @returns Observable con listado de preguntas sin verificar
+   */
+  getUnverifiedQuestions(batchId?: number): Observable<UnverifiedQuestionsResponse> {
+    const url = batchId
+      ? `${this.apiUrl}${environment.apiEndpoints.admin.unverifiedQuestions}?batchId=${batchId}`
+      : `${this.apiUrl}${environment.apiEndpoints.admin.unverifiedQuestions}`;
+    return this.http.get<UnverifiedQuestionsResponse>(url);
+  }
+
+  /**
+   * Verifica todas las preguntas de un batch
+   *
+   * Backend: POST /admin/batch/{batchId}/verify
+   * @param batchId ID del batch a verificar
+   * @returns Observable con resultado de la verificación
+   */
+  verifyBatch(batchId: number): Observable<BatchVerificationResponse> {
+    return this.http.post<BatchVerificationResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.verifyBatch(batchId)}`,
+      {}
+    );
+  }
+
+  /**
+   * Importa preguntas desde un archivo CSV
+   *
+   * Backend: POST /admin/batch/import-csv
+   * Headers del CSV requeridos: statement, option_a, option_b, option_c, option_d,
+   * correct_option, category, difficulty
+   * @param file Archivo CSV a importar (máximo 5MB)
+   * @returns Observable con resultado de la importación
+   */
+  importCsv(file: File): Observable<CsvImportResponse> {
+    const formData = new FormData();
+    formData.append('csv_file', file);
+    return this.http.post<CsvImportResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.importCsv}`,
+      formData
+    );
+  }
+
+  /**
+   * Edita el texto de una explicación
+   *
+   * Backend: PUT /admin/explanation/{explanationId}
+   * @param explanationId ID de la explicación a editar
+   * @param text Nuevo texto de la explicación
+   * @returns Observable con resultado de la edición
+   */
+  editExplanation(explanationId: number, text: string): Observable<EditExplanationResponse> {
+    return this.http.put<EditExplanationResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.editExplanation(explanationId)}`,
+      { text }
+    );
+  }
+
+  // ========== QUESTION FULL EDIT METHODS ==========
+
+  /**
+   * Obtiene una pregunta completa con opciones y explicaciones
+   *
+   * Backend: GET /admin/questions/{id}/full
+   * @param questionId ID de la pregunta
+   * @returns Observable con la pregunta completa
+   */
+  getQuestionFull(questionId: number): Observable<QuestionFullResponse> {
+    return this.http.get<QuestionFullResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.getQuestionFull(questionId)}`
+    );
+  }
+
+  /**
+   * Actualiza una pregunta completa (enunciado, opciones, explicaciones)
+   *
+   * Backend: PUT /admin/questions/{id}/full
+   * @param questionId ID de la pregunta a actualizar
+   * @param data Datos de actualización
+   * @returns Observable con la pregunta actualizada
+   */
+  updateQuestionFull(questionId: number, data: UpdateQuestionFullPayload): Observable<UpdateQuestionFullResponse> {
+    return this.http.put<UpdateQuestionFullResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.updateQuestionFull(questionId)}`,
+      data
     );
   }
 }

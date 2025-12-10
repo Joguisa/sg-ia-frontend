@@ -86,7 +86,25 @@ export const environment = {
       /** POST /admin/generate-batch - Generar preguntas con IA (batch) */
       generateBatch: '/admin/generate-batch',
       /** GET /admin/dashboard - Estadísticas del dashboard admin */
-      dashboardStats: '/admin/dashboard'
+      dashboardStats: '/admin/dashboard',
+
+      // ========== BATCH MANAGEMENT ==========
+      /** GET /admin/batch-statistics - Estadísticas de todos los batches */
+      batchStatistics: '/admin/batch-statistics',
+      /** GET /admin/unverified - Preguntas sin verificar (opcional: ?batchId=X) */
+      unverifiedQuestions: '/admin/unverified',
+      /** POST /admin/batch/{batchId}/verify - Verificar todas las preguntas de un batch */
+      verifyBatch: (batchId: number) => `/admin/batch/${batchId}/verify`,
+      /** POST /admin/batch/import-csv - Importar preguntas desde CSV */
+      importCsv: '/admin/batch/import-csv',
+      /** PUT /admin/explanation/{explanationId} - Editar explicación */
+      editExplanation: (explanationId: number) => `/admin/explanation/${explanationId}`,
+
+      // ========== QUESTION FULL EDIT ==========
+      /** GET /admin/questions/{id}/full - Obtener pregunta completa con opciones y explicaciones */
+      getQuestionFull: (id: number) => `/admin/questions/${id}/full`,
+      /** PUT /admin/questions/{id}/full - Actualizar pregunta completa */
+      updateQuestionFull: (id: number) => `/admin/questions/${id}/full`
     }
   }
 };

@@ -122,6 +122,202 @@
         }
       </div>
 
+      <!-- CSV Import Section -->
+      <div class="generator-section csv-import-section">
+        <div class="generator-header" (click)="toggleCsvImportSection()">
+          <div class="generator-title">
+            <i class="fas fa-file-csv"></i>
+            <h2>Importar desde CSV</h2>
+          </div>
+          <button class="btn-toggle" [ngClass]="{ 'open': isCsvImportOpen() }">
+            <i class="fas fa-chevron-down"></i>
+          </button>
+        </div>
+
+        @if (isCsvImportOpen()) {
+          <div class="generator-content">
+            <div class="csv-info">
+              <p><strong>Formato requerido del CSV:</strong></p>
+              <code class="csv-headers">statement, option_a, option_b, option_c, option_d, correct_option, category, difficulty</code>
+              <p class="csv-note">
+                <i class="fas fa-info-circle"></i>
+                correct_option: 1-4 (a=1, b=2, c=3, d=4) | difficulty: 1-5 | Max 5MB
+              </p>
+            </div>
+
+            <div class="csv-upload-area">
+              <input
+                type="file"
+                id="csvFileInput"
+                accept=".csv"
+                (change)="onCsvFileSelected($event)"
+                [disabled]="isImportingCsv()"
+                class="csv-file-input">
+              <label for="csvFileInput" class="csv-upload-label" [class.disabled]="isImportingCsv()">
+                @if (!isImportingCsv()) {
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <span>Seleccionar archivo CSV</span>
+                } @else {
+                  <span class="spinner-small"></span>
+                  <span>Importando...</span>
+                }
+              </label>
+            </div>
+
+            <!-- Import Results -->
+            @if (lastImportResult()) {
+              <div class="import-results" [ngClass]="{'has-errors': lastImportResult()!.errors > 0}">
+                <div class="import-summary">
+                  <span class="import-stat success">
+                    <i class="fas fa-check-circle"></i>
+                    {{ lastImportResult()!.imported }} importadas
+                  </span>
+                  @if (lastImportResult()!.errors > 0) {
+                    <span class="import-stat error">
+                      <i class="fas fa-exclamation-circle"></i>
+                      {{ lastImportResult()!.errors }} errores
+                    </span>
+                  }
+                </div>
+
+                @if (lastImportResult()!.error_details && lastImportResult()!.error_details.length > 0) {
+                  <div class="error-details">
+                    <p><strong>Detalles de errores:</strong></p>
+                    <ul>
+                      @for (err of lastImportResult()!.error_details; track err) {
+                        <li>{{ err }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Unverified Questions Section -->
+      <div class="generator-section unverified-section">
+        <div class="generator-header" (click)="toggleUnverifiedSection()">
+          <div class="generator-title">
+            <i class="fas fa-clipboard-check"></i>
+            <h2>Preguntas Sin Verificar</h2>
+            @if (unverifiedQuestions().length > 0) {
+              <span class="badge badge-warning">{{ unverifiedQuestions().length }}</span>
+            }
+          </div>
+          <button class="btn-toggle" [ngClass]="{ 'open': isUnverifiedSectionOpen() }">
+            <i class="fas fa-chevron-down"></i>
+          </button>
+        </div>
+
+        @if (isUnverifiedSectionOpen()) {
+          <div class="generator-content">
+            <!-- Batch Filter -->
+            @if (batchStatistics().length > 0) {
+              <div class="batch-filter">
+                <label>Filtrar por batch:</label>
+                <select
+                  class="form-control"
+                  [value]="selectedBatchFilter()"
+                  (change)="filterUnverifiedByBatch($any($event.target).value ? +$any($event.target).value : null)">
+                  <option [value]="null">Todos los batches</option>
+                  @for (batch of batchStatistics(); track batch.id) {
+                    <option [value]="batch.id">{{ batch.batch_name }} ({{ batch.total_questions - batch.verified_count }} pendientes)</option>
+                  }
+                </select>
+                @if (selectedBatchFilter()) {
+                  <button
+                    class="btn btn-sm btn-primary"
+                    (click)="verifyBatch(selectedBatchFilter()!)"
+                    [disabled]="isVerifyingBatch()">
+                    @if (!isVerifyingBatch()) {
+                      <i class="fas fa-check-double"></i>
+                      Verificar Todo el Batch
+                    } @else {
+                      <span class="spinner-small"></span>
+                      Verificando...
+                    }
+                  </button>
+                }
+              </div>
+            }
+
+            <!-- Loading -->
+            @if (isLoadingUnverified()) {
+              <div class="loading-small">
+                <span class="spinner-small"></span>
+                <span>Cargando...</span>
+              </div>
+            }
+
+            <!-- Unverified Questions Table -->
+            @if (!isLoadingUnverified() && unverifiedQuestions().length > 0) {
+              <div class="table-responsive unverified-table-container">
+                <table class="questions-table unverified-table">
+                  <thead>
+                    <tr class="table-header">
+                      <th>ID</th>
+                      <th>Pregunta</th>
+                      <th>Categoría</th>
+                      <th>Dificultad</th>
+                      <th>Batch</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (q of unverifiedQuestions(); track q.id) {
+                      <tr class="table-row">
+                        <td><code>{{ q.id }}</code></td>
+                        <td>
+                          <span class="question-text" [title]="q.statement">
+                            {{ truncateText(q.statement, 50) }}
+                          </span>
+                        </td>
+                        <td>
+                          <span class="badge badge-primary">{{ q.category_name }}</span>
+                        </td>
+                        <td>
+                          <div class="difficulty-badge" [ngClass]="'difficulty-' + q.difficulty">
+                            {{ q.difficulty }}
+                          </div>
+                        </td>
+                        <td>
+                          <span class="batch-badge">{{ q.batch_name || 'N/A' }}</span>
+                        </td>
+                        <td>
+                          <div class="action-buttons">
+                            <button
+                              class="btn-action btn-edit"
+                              (click)="openEditExplanationModal(q)"
+                              title="Editar explicaciones">
+                              <i class="fas fa-edit"></i>
+                            </button>
+                            <button
+                              class="btn-action btn-verify"
+                              (click)="toggleVerifyQuestion(q.id, false)"
+                              title="Verificar pregunta">
+                              <i class="fas fa-check"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+
+            @if (!isLoadingUnverified() && unverifiedQuestions().length === 0) {
+              <div class="no-data-small">
+                <i class="fas fa-check-circle"></i>
+                <p>Todas las preguntas están verificadas</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
       <!-- Filters Section -->
       <div class="filters-section">
         <h3 class="filters-title">Filtros y Búsqueda</h3>
@@ -136,7 +332,7 @@
                   type="text"
                   placeholder="Buscar por ID o texto..."
                   formControlName="search"
-                  maxlength="200"
+                  maxlength="100"
                   class="form-control">
               </div>
             </div>
@@ -245,6 +441,14 @@
                     <!-- Actions -->
                     <td class="col-actions">
                       <div class="action-buttons">
+                        <!-- Edit Full Question -->
+                        <button
+                          class="btn-action btn-edit"
+                          (click)="openFullEditModal(question.id)"
+                          title="Editar pregunta completa">
+                          <i class="fas fa-pen-to-square"></i>
+                        </button>
+
                         <!-- Verify/Unverify -->
                         <button
                           class="btn-action btn-verify"
@@ -307,4 +511,281 @@
   }
 </div>
 
+<!-- Edit Explanation Modal -->
+@if (isEditExplanationOpen()) {
+  <div class="modal-overlay" (click)="closeEditExplanationModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          <i class="fas fa-edit"></i>
+          Editar Explicaciones
+        </h3>
+        <button class="btn-close" (click)="closeEditExplanationModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
 
+      <div class="modal-body">
+        @if (selectedQuestionForEdit()) {
+          <div class="question-preview">
+            <label>Pregunta:</label>
+            <p>{{ selectedQuestionForEdit()!.statement }}</p>
+          </div>
+
+          <form [formGroup]="editExplanationForm">
+            <div class="form-group">
+              <label for="correctExp">
+                <i class="fas fa-check-circle text-success"></i>
+                Explicación cuando es correcta:
+              </label>
+              <textarea
+                id="correctExp"
+                formControlName="correctExplanation"
+                class="form-control"
+                rows="4"
+                placeholder="Explica por qué esta es la respuesta correcta..."
+                [class.is-invalid]="editExplanationForm.get('correctExplanation')?.invalid && editExplanationForm.get('correctExplanation')?.touched">
+              </textarea>
+              @if (editExplanationForm.get('correctExplanation')?.invalid && editExplanationForm.get('correctExplanation')?.touched) {
+                <div class="invalid-feedback">Mínimo 10 caracteres requeridos</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="incorrectExp">
+                <i class="fas fa-times-circle text-danger"></i>
+                Explicación cuando es incorrecta:
+              </label>
+              <textarea
+                id="incorrectExp"
+                formControlName="incorrectExplanation"
+                class="form-control"
+                rows="4"
+                placeholder="Explica por qué esta respuesta es incorrecta..."
+                [class.is-invalid]="editExplanationForm.get('incorrectExplanation')?.invalid && editExplanationForm.get('incorrectExplanation')?.touched">
+              </textarea>
+              @if (editExplanationForm.get('incorrectExplanation')?.invalid && editExplanationForm.get('incorrectExplanation')?.touched) {
+                <div class="invalid-feedback">Mínimo 10 caracteres requeridos</div>
+              }
+            </div>
+          </form>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeEditExplanationModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-primary" (click)="saveExplanations()">
+          <i class="fas fa-save"></i>
+          Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Full Question Edit Modal -->
+@if (isFullEditModalOpen()) {
+  <div class="modal-overlay" (click)="closeFullEditModal()">
+    <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          <i class="fas fa-pen-to-square"></i>
+          Editar Pregunta Completa
+        </h3>
+        <button class="btn-close" (click)="closeFullEditModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        @if (isLoadingQuestion()) {
+          <div class="loading-small">
+            <span class="spinner-small"></span>
+            <span>Cargando pregunta...</span>
+          </div>
+        } @else if (questionToEdit()) {
+          <form [formGroup]="fullEditForm">
+            <!-- Question ID Badge -->
+            <div class="question-id-badge">
+              <span>ID: {{ questionToEdit()!.id }}</span>
+              @if (questionToEdit()!.is_ai_generated) {
+                <span class="ai-tag"><i class="fas fa-robot"></i> IA</span>
+              }
+            </div>
+
+            <!-- Statement -->
+            <div class="form-group">
+              <label for="statement">
+                <i class="fas fa-question-circle"></i>
+                Enunciado de la pregunta:
+              </label>
+              <textarea
+                id="statement"
+                formControlName="statement"
+                class="form-control"
+                rows="3"
+                placeholder="Escribe el enunciado de la pregunta..."
+                [class.is-invalid]="fullEditForm.get('statement')?.invalid && fullEditForm.get('statement')?.touched">
+              </textarea>
+              @if (fullEditForm.get('statement')?.invalid && fullEditForm.get('statement')?.touched) {
+                <div class="invalid-feedback">El enunciado debe tener entre 10 y 1000 caracteres</div>
+              }
+            </div>
+
+            <!-- Difficulty and Category Row -->
+            <div class="form-row">
+              <div class="form-group half">
+                <label for="difficulty">
+                  <i class="fas fa-signal"></i>
+                  Dificultad:
+                </label>
+                <select id="difficulty" formControlName="difficulty" class="form-control">
+                  <option [value]="1">1 - Muy Fácil</option>
+                  <option [value]="2">2 - Fácil</option>
+                  <option [value]="3">3 - Media</option>
+                  <option [value]="4">4 - Difícil</option>
+                  <option [value]="5">5 - Muy Difícil</option>
+                </select>
+              </div>
+
+              <div class="form-group half">
+                <label for="category_id">
+                  <i class="fas fa-folder"></i>
+                  Categoría:
+                </label>
+                <select id="category_id" formControlName="category_id" class="form-control">
+                  @for (cat of categories(); track cat.id) {
+                    <option [value]="cat.id">{{ cat.name }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <!-- Options Section -->
+            <div class="options-section">
+              <h4><i class="fas fa-list"></i> Opciones de Respuesta</h4>
+              <p class="options-hint">Selecciona la opción correcta con el radio button</p>
+
+              <div class="options-grid">
+                <!-- Option A -->
+                <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'a'">
+                  <div class="option-header">
+                    <input type="radio" formControlName="correct_option" value="a" id="correct_a">
+                    <label for="correct_a" class="option-label">A</label>
+                  </div>
+                  <input
+                    type="text"
+                    formControlName="option_a"
+                    class="form-control"
+                    placeholder="Opción A"
+                    [class.is-invalid]="fullEditForm.get('option_a')?.invalid && fullEditForm.get('option_a')?.touched">
+                </div>
+
+                <!-- Option B -->
+                <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'b'">
+                  <div class="option-header">
+                    <input type="radio" formControlName="correct_option" value="b" id="correct_b">
+                    <label for="correct_b" class="option-label">B</label>
+                  </div>
+                  <input
+                    type="text"
+                    formControlName="option_b"
+                    class="form-control"
+                    placeholder="Opción B"
+                    [class.is-invalid]="fullEditForm.get('option_b')?.invalid && fullEditForm.get('option_b')?.touched">
+                </div>
+
+                <!-- Option C -->
+                <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'c'">
+                  <div class="option-header">
+                    <input type="radio" formControlName="correct_option" value="c" id="correct_c">
+                    <label for="correct_c" class="option-label">C</label>
+                  </div>
+                  <input
+                    type="text"
+                    formControlName="option_c"
+                    class="form-control"
+                    placeholder="Opción C"
+                    [class.is-invalid]="fullEditForm.get('option_c')?.invalid && fullEditForm.get('option_c')?.touched">
+                </div>
+
+                <!-- Option D -->
+                <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'd'">
+                  <div class="option-header">
+                    <input type="radio" formControlName="correct_option" value="d" id="correct_d">
+                    <label for="correct_d" class="option-label">D</label>
+                  </div>
+                  <input
+                    type="text"
+                    formControlName="option_d"
+                    class="form-control"
+                    placeholder="Opción D"
+                    [class.is-invalid]="fullEditForm.get('option_d')?.invalid && fullEditForm.get('option_d')?.touched">
+                </div>
+              </div>
+            </div>
+
+            <!-- Explanations Section -->
+            <div class="explanations-section">
+              <h4><i class="fas fa-lightbulb"></i> Explicaciones (Opcionales)</h4>
+
+              <div class="form-group">
+                <label for="exp_correct">
+                  <i class="fas fa-check-circle text-success"></i>
+                  Cuando el jugador acierta:
+                </label>
+                <textarea
+                  id="exp_correct"
+                  formControlName="explanation_correct"
+                  class="form-control"
+                  rows="2"
+                  placeholder="Explicación que se muestra cuando responde correctamente...">
+                </textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="exp_incorrect">
+                  <i class="fas fa-times-circle text-danger"></i>
+                  Cuando el jugador falla:
+                </label>
+                <textarea
+                  id="exp_incorrect"
+                  formControlName="explanation_incorrect"
+                  class="form-control"
+                  rows="2"
+                  placeholder="Explicación que se muestra cuando responde incorrectamente...">
+                </textarea>
+              </div>
+            </div>
+
+            <!-- Warning -->
+            <div class="edit-warning">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>Al guardar, la pregunta quedará pendiente de verificación.</span>
+            </div>
+          </form>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeFullEditModal()" [disabled]="isSavingQuestion()">
+          Cancelar
+        </button>
+        <button
+          class="btn btn-primary"
+          (click)="saveFullQuestion()"
+          [disabled]="isSavingQuestion() || isLoadingQuestion()">
+          @if (!isSavingQuestion()) {
+            <i class="fas fa-save"></i>
+            Guardar Cambios
+          } @else {
+            <span class="spinner-small"></span>
+            Guardando...
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

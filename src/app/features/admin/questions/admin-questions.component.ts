@@ -5,7 +5,16 @@ import { Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { AdminCategory, GenerationResponse } from '../../../core/models/admin';
+import {
+  AdminCategory,
+  GenerationResponse,
+  UnverifiedQuestion,
+  BatchStatistics,
+  CsvImportResponse,
+  QuestionFull,
+  QuestionOption,
+  UpdateQuestionFullPayload
+} from '../../../core/models/admin';
 import { Question } from '../../../core/models/game';
 import { HttpStatus } from '../../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
@@ -36,6 +45,29 @@ export class AdminQuestionsComponent implements OnInit {
 
   // ========== CONFIRMACIÓN DE BORRADO ==========
   deleteConfirmId = signal<number | null>(null);
+
+  // ========== BATCH MANAGEMENT ==========
+  unverifiedQuestions = signal<UnverifiedQuestion[]>([]);
+  batchStatistics = signal<BatchStatistics[]>([]);
+  selectedBatchFilter = signal<number | null>(null);
+  isUnverifiedSectionOpen = signal<boolean>(false);
+  isCsvImportOpen = signal<boolean>(false);
+  isLoadingUnverified = signal<boolean>(false);
+  isImportingCsv = signal<boolean>(false);
+  isVerifyingBatch = signal<boolean>(false);
+  lastImportResult = signal<CsvImportResponse | null>(null);
+
+  // ========== EDIT EXPLANATION MODAL ==========
+  isEditExplanationOpen = signal<boolean>(false);
+  selectedQuestionForEdit = signal<UnverifiedQuestion | null>(null);
+  editExplanationForm: FormGroup;
+
+  // ========== FULL QUESTION EDIT MODAL ==========
+  isFullEditModalOpen = signal<boolean>(false);
+  questionToEdit = signal<QuestionFull | null>(null);
+  isLoadingQuestion = signal<boolean>(false);
+  isSavingQuestion = signal<boolean>(false);
+  fullEditForm: FormGroup;
 
   // ========== SIGNALS PARA FILTROS ==========
   private filterTrigger = signal<number>(0);
@@ -89,15 +121,35 @@ export class AdminQuestionsComponent implements OnInit {
     // Inicializar formulario del generador
     this.generatorForm = this.fb.group({
       categoryId: [null, [Validators.required]],
-      difficulty: [2, [Validators.required, Validators.min(1), Validators.max(5)]],
-      quantity: [5, [Validators.required, this.quantityValidator]]
+      difficulty: [1, [Validators.required, Validators.min(1), Validators.max(5)]],
+      quantity: [1, [Validators.required, this.quantityValidator]]
     });
 
     // Inicializar formulario de filtros
     this.filterForm = this.fb.group({
-      search: ['', [Validators.maxLength(200)]],
+      search: ['', [Validators.maxLength(100)]],
       category: [null],
       status: ['all']
+    });
+
+    // Inicializar formulario de edición de explicaciones
+    this.editExplanationForm = this.fb.group({
+      correctExplanation: ['', [Validators.required, Validators.minLength(10)]],
+      incorrectExplanation: ['', [Validators.required, Validators.minLength(10)]]
+    });
+
+    // Inicializar formulario de edición completa de pregunta
+    this.fullEditForm = this.fb.group({
+      statement: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+      difficulty: [1, [Validators.required, Validators.min(1), Validators.max(5)]],
+      category_id: [null, [Validators.required]],
+      option_a: ['', [Validators.required, Validators.minLength(1)]],
+      option_b: ['', [Validators.required, Validators.minLength(1)]],
+      option_c: ['', [Validators.required, Validators.minLength(1)]],
+      option_d: ['', [Validators.required, Validators.minLength(1)]],
+      correct_option: ['a', [Validators.required]],
+      explanation_correct: [''],
+      explanation_incorrect: ['']
     });
 
     // Suscribirse a cambios en los filtros para activar el recomputo
@@ -215,8 +267,8 @@ export class AdminQuestionsComponent implements OnInit {
           // Resetear formulario
           this.generatorForm.reset({
             categoryId: null,
-            difficulty: 2,
-            quantity: 5
+            difficulty: 1,
+            quantity: 1
           });
           this.generatorForm.enable();
           this.isGeneratorOpen.set(false);
@@ -359,5 +411,437 @@ export class AdminQuestionsComponent implements OnInit {
    */
   truncateText(text: string, maxLength: number = 80): string {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  }
+
+  // ========== BATCH MANAGEMENT METHODS ==========
+
+  /**
+   * Toggle de la sección de preguntas sin verificar
+   */
+  toggleUnverifiedSection(): void {
+    this.isUnverifiedSectionOpen.set(!this.isUnverifiedSectionOpen());
+    if (this.isUnverifiedSectionOpen() && this.unverifiedQuestions().length === 0) {
+      this.loadUnverifiedQuestions();
+    }
+  }
+
+  /**
+   * Toggle de la sección de importación CSV
+   */
+  toggleCsvImportSection(): void {
+    this.isCsvImportOpen.set(!this.isCsvImportOpen());
+    this.lastImportResult.set(null);
+  }
+
+  /**
+   * Carga las preguntas sin verificar desde el backend
+   */
+  loadUnverifiedQuestions(batchId?: number): void {
+    this.isLoadingUnverified.set(true);
+
+    this.adminService.getUnverifiedQuestions(batchId).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.unverifiedQuestions.set(response.questions || []);
+          this.selectedBatchFilter.set(batchId || null);
+        } else {
+          this.notification.error(response.error || 'Error al cargar preguntas sin verificar', NOTIFICATION_DURATION.DEFAULT);
+        }
+        this.isLoadingUnverified.set(false);
+      },
+      error: (error) => {
+        this.notification.error('Error al cargar preguntas sin verificar', NOTIFICATION_DURATION.DEFAULT);
+        this.isLoadingUnverified.set(false);
+      }
+    });
+  }
+
+  /**
+   * Carga las estadísticas de batches
+   */
+  loadBatchStatistics(): void {
+    this.adminService.getBatchStatistics().subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.batchStatistics.set(response.batches || []);
+        } else {
+          this.notification.error(response.error || 'Error al cargar estadísticas de batches', NOTIFICATION_DURATION.DEFAULT);
+        }
+      },
+      error: (error) => {
+        this.notification.error('Error al cargar estadísticas de batches', NOTIFICATION_DURATION.DEFAULT);
+      }
+    });
+  }
+
+  /**
+   * Verifica todas las preguntas de un batch
+   */
+  verifyBatch(batchId: number): void {
+    this.isVerifyingBatch.set(true);
+
+    this.adminService.verifyBatch(batchId).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.notification.success(
+            `${response.verified_count} preguntas verificadas exitosamente`,
+            NOTIFICATION_DURATION.DEFAULT
+          );
+          // Recargar preguntas sin verificar y estadísticas
+          this.loadUnverifiedQuestions(this.selectedBatchFilter() || undefined);
+          this.loadBatchStatistics();
+          this.loadQuestions();
+        } else {
+          this.notification.error(response.error || 'Error al verificar batch', NOTIFICATION_DURATION.DEFAULT);
+        }
+        this.isVerifyingBatch.set(false);
+      },
+      error: (error) => {
+        this.notification.error('Error al verificar batch', NOTIFICATION_DURATION.DEFAULT);
+        this.isVerifyingBatch.set(false);
+      }
+    });
+  }
+
+  /**
+   * Maneja la selección de archivo CSV
+   */
+  onCsvFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const file = input.files[0];
+
+    // Validar tipo de archivo
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      this.notification.warning('El archivo debe ser CSV', NOTIFICATION_DURATION.DEFAULT);
+      input.value = '';
+      return;
+    }
+
+    // Validar tamaño (máximo 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      this.notification.warning('El archivo no puede superar 5MB', NOTIFICATION_DURATION.DEFAULT);
+      input.value = '';
+      return;
+    }
+
+    this.importCsvFile(file);
+    input.value = '';
+  }
+
+  /**
+   * Importa un archivo CSV
+   */
+  importCsvFile(file: File): void {
+    this.isImportingCsv.set(true);
+    this.lastImportResult.set(null);
+    this.notification.info('Importando archivo CSV...', NOTIFICATION_DURATION.LONG);
+
+    this.adminService.importCsv(file).subscribe({
+      next: (response) => {
+        this.lastImportResult.set(response);
+
+        if (response.ok) {
+          if (response.errors > 0) {
+            this.notification.warning(
+              `Importación parcial: ${response.imported} importadas, ${response.errors} errores`,
+              NOTIFICATION_DURATION.LONG
+            );
+          } else {
+            this.notification.success(
+              `${response.imported} preguntas importadas exitosamente`,
+              NOTIFICATION_DURATION.DEFAULT
+            );
+          }
+          // Recargar datos
+          this.loadQuestions();
+          this.loadBatchStatistics();
+          // Abrir sección de sin verificar con el nuevo batch
+          this.isUnverifiedSectionOpen.set(true);
+          this.loadUnverifiedQuestions(response.batch_id);
+        } else {
+          this.notification.error(response.error || 'Error al importar CSV', NOTIFICATION_DURATION.LONG);
+        }
+        this.isImportingCsv.set(false);
+      },
+      error: (error) => {
+        let errorMsg = 'Error al importar CSV';
+        if (error.status === HttpStatus.BAD_REQUEST) {
+          errorMsg = error.error?.error || 'Archivo CSV inválido';
+        }
+        this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
+        this.isImportingCsv.set(false);
+      }
+    });
+  }
+
+  /**
+   * Abre el modal de edición de explicaciones
+   */
+  openEditExplanationModal(question: UnverifiedQuestion): void {
+    this.selectedQuestionForEdit.set(question);
+
+    // Prellenar formulario con explicaciones existentes
+    const correctExp = question.explanations?.find(e => e.explanation_type === 'correct');
+    const incorrectExp = question.explanations?.find(e => e.explanation_type === 'incorrect');
+
+    this.editExplanationForm.patchValue({
+      correctExplanation: correctExp?.text || '',
+      incorrectExplanation: incorrectExp?.text || ''
+    });
+
+    this.isEditExplanationOpen.set(true);
+  }
+
+  /**
+   * Cierra el modal de edición de explicaciones
+   */
+  closeEditExplanationModal(): void {
+    this.isEditExplanationOpen.set(false);
+    this.selectedQuestionForEdit.set(null);
+    this.editExplanationForm.reset();
+  }
+
+  /**
+   * Guarda las explicaciones editadas
+   */
+  saveExplanations(): void {
+    const question = this.selectedQuestionForEdit();
+    if (!question) return;
+
+    this.editExplanationForm.markAllAsTouched();
+
+    if (this.editExplanationForm.invalid) {
+      this.notification.warning('Por favor completa ambas explicaciones (mínimo 10 caracteres)', NOTIFICATION_DURATION.DEFAULT);
+      return;
+    }
+
+    const formValues = this.editExplanationForm.value;
+    const correctExp = question.explanations?.find(e => e.explanation_type === 'correct');
+    const incorrectExp = question.explanations?.find(e => e.explanation_type === 'incorrect');
+
+    // Contador de operaciones pendientes
+    let pendingOps = 0;
+    let successOps = 0;
+
+    const checkComplete = () => {
+      pendingOps--;
+      if (pendingOps === 0) {
+        if (successOps > 0) {
+          this.notification.success('Explicaciones actualizadas', NOTIFICATION_DURATION.SHORT);
+          this.loadUnverifiedQuestions(this.selectedBatchFilter() || undefined);
+        }
+        this.closeEditExplanationModal();
+      }
+    };
+
+    // Actualizar explicación correcta si existe y cambió
+    if (correctExp && formValues.correctExplanation !== correctExp.text) {
+      pendingOps++;
+      this.adminService.editExplanation(correctExp.id, formValues.correctExplanation).subscribe({
+        next: (res) => {
+          if (res.ok) successOps++;
+          checkComplete();
+        },
+        error: () => {
+          this.notification.error('Error al actualizar explicación correcta', NOTIFICATION_DURATION.DEFAULT);
+          checkComplete();
+        }
+      });
+    }
+
+    // Actualizar explicación incorrecta si existe y cambió
+    if (incorrectExp && formValues.incorrectExplanation !== incorrectExp.text) {
+      pendingOps++;
+      this.adminService.editExplanation(incorrectExp.id, formValues.incorrectExplanation).subscribe({
+        next: (res) => {
+          if (res.ok) successOps++;
+          checkComplete();
+        },
+        error: () => {
+          this.notification.error('Error al actualizar explicación incorrecta', NOTIFICATION_DURATION.DEFAULT);
+          checkComplete();
+        }
+      });
+    }
+
+    // Si no hay nada que actualizar
+    if (pendingOps === 0) {
+      this.notification.info('No hay cambios que guardar', NOTIFICATION_DURATION.SHORT);
+      this.closeEditExplanationModal();
+    }
+  }
+
+  /**
+   * Filtra preguntas sin verificar por batch
+   */
+  filterUnverifiedByBatch(batchId: number | null): void {
+    this.loadUnverifiedQuestions(batchId || undefined);
+  }
+
+  /**
+   * Obtiene el nombre del batch por ID
+   */
+  getBatchName(batchId: number | null): string {
+    if (!batchId) return 'Sin batch';
+    const batch = this.batchStatistics().find(b => b.id === batchId);
+    return batch?.batch_name || `Batch #${batchId}`;
+  }
+
+  // ========== FULL QUESTION EDIT METHODS ==========
+
+  /**
+   * Abre el modal de edición completa de pregunta
+   */
+  openFullEditModal(questionId: number): void {
+    this.isLoadingQuestion.set(true);
+    this.isFullEditModalOpen.set(true);
+
+    this.adminService.getQuestionFull(questionId).subscribe({
+      next: (response) => {
+        if (response.ok && response.question) {
+          this.questionToEdit.set(response.question);
+          this.populateFullEditForm(response.question);
+        } else {
+          this.notification.error(response.error || 'Error al cargar la pregunta', NOTIFICATION_DURATION.DEFAULT);
+          this.closeFullEditModal();
+        }
+        this.isLoadingQuestion.set(false);
+      },
+      error: (error) => {
+        this.notification.error('Error al cargar la pregunta', NOTIFICATION_DURATION.DEFAULT);
+        this.isLoadingQuestion.set(false);
+        this.closeFullEditModal();
+      }
+    });
+  }
+
+  /**
+   * Cierra el modal de edición completa
+   */
+  closeFullEditModal(): void {
+    this.isFullEditModalOpen.set(false);
+    this.questionToEdit.set(null);
+    this.fullEditForm.reset({
+      statement: '',
+      difficulty: 1,
+      category_id: null,
+      option_a: '',
+      option_b: '',
+      option_c: '',
+      option_d: '',
+      correct_option: 'a',
+      explanation_correct: '',
+      explanation_incorrect: ''
+    });
+  }
+
+  /**
+   * Pobla el formulario con los datos de la pregunta
+   */
+  private populateFullEditForm(question: QuestionFull): void {
+    // Mapear opciones a campos del formulario
+    const options = question.options || [];
+    const optionA = options[0]?.text || '';
+    const optionB = options[1]?.text || '';
+    const optionC = options[2]?.text || '';
+    const optionD = options[3]?.text || '';
+
+    // Determinar cuál es la correcta
+    let correctOption = 'a';
+    options.forEach((opt, index) => {
+      if (opt.is_correct) {
+        correctOption = ['a', 'b', 'c', 'd'][index] || 'a';
+      }
+    });
+
+    // Obtener explicaciones
+    const explanations = question.explanations || [];
+    const correctExp = explanations.find(e => e.type === 'correct')?.text || '';
+    const incorrectExp = explanations.find(e => e.type === 'incorrect')?.text || '';
+
+    this.fullEditForm.patchValue({
+      statement: question.statement,
+      difficulty: question.difficulty,
+      category_id: question.category_id,
+      option_a: optionA,
+      option_b: optionB,
+      option_c: optionC,
+      option_d: optionD,
+      correct_option: correctOption,
+      explanation_correct: correctExp,
+      explanation_incorrect: incorrectExp
+    });
+  }
+
+  /**
+   * Guarda los cambios de la pregunta
+   */
+  saveFullQuestion(): void {
+    const question = this.questionToEdit();
+    if (!question) return;
+
+    this.fullEditForm.markAllAsTouched();
+
+    if (this.fullEditForm.invalid) {
+      this.notification.warning('Por favor corrige los errores del formulario', NOTIFICATION_DURATION.DEFAULT);
+      return;
+    }
+
+    const formValues = this.fullEditForm.value;
+
+    // Construir array de opciones
+    const optionLetters = ['a', 'b', 'c', 'd'];
+    const options: QuestionOption[] = optionLetters.map((letter, index) => ({
+      text: formValues[`option_${letter}`],
+      is_correct: formValues.correct_option === letter
+    }));
+
+    // Construir payload
+    const payload: UpdateQuestionFullPayload = {
+      statement: formValues.statement,
+      difficulty: formValues.difficulty,
+      category_id: formValues.category_id,
+      options: options
+    };
+
+    // Agregar explicaciones si tienen contenido
+    if (formValues.explanation_correct?.trim()) {
+      payload.explanation_correct = formValues.explanation_correct.trim();
+    }
+    if (formValues.explanation_incorrect?.trim()) {
+      payload.explanation_incorrect = formValues.explanation_incorrect.trim();
+    }
+
+    this.isSavingQuestion.set(true);
+
+    this.adminService.updateQuestionFull(question.id, payload).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.notification.success('Pregunta actualizada exitosamente. Estado: Pendiente de verificación.', NOTIFICATION_DURATION.DEFAULT);
+          this.closeFullEditModal();
+          // Recargar datos
+          this.loadQuestions();
+          if (this.isUnverifiedSectionOpen()) {
+            this.loadUnverifiedQuestions(this.selectedBatchFilter() || undefined);
+          }
+        } else {
+          this.notification.error(response.error || 'Error al actualizar la pregunta', NOTIFICATION_DURATION.DEFAULT);
+        }
+        this.isSavingQuestion.set(false);
+      },
+      error: (error) => {
+        let errorMsg = 'Error al actualizar la pregunta';
+        if (error.error?.error) {
+          errorMsg = error.error.error;
+        }
+        this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
+        this.isSavingQuestion.set(false);
+      }
+    });
   }
 }

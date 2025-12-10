@@ -8,3 +8,12 @@ export * from './delete-category-response.interface';
 export * from './generate-batch-response.interface';
 export * from './get-questions-response.interface';
 export * from './get-categories-response.interface';
+
+// Batch management interfaces
+export * from './batch-statistics.interface';
+export * from './unverified-question.interface';
+export * from './csv-import-response.interface';
+export * from './batch-verification-response.interface';
+
+// Question full edit interfaces
+export * from './question-full.interface';
