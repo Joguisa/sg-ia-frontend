@@ -12,11 +12,18 @@ export interface QuestionFull {
   options?: QuestionOption[];
   is_ai_generated?: boolean;
   admin_verified?: boolean;
+  progress?: {
+    total_answered: number;
+    max_questions: number;
+    locked_levels: number[];
+  };
 }
 
 export interface QuestionFullResponse {
   ok: boolean;
   question?: QuestionFull;
+  completed?: boolean;
+  message?: string;
   error?: string;
 }
 
@@ -43,4 +50,4 @@ export interface GameSession {
 /**
  * States for the game UI component
  */
-export type GameState = 'loading' | 'playing' | 'feedback' | 'gameover';
+export type GameState = 'loading' | 'playing' | 'feedback' | 'gameover' | 'completed';

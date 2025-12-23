@@ -1,11 +1,24 @@
 <div class="notification-container">
-    @for (notif of notificationService.notifications(); track notif.id) {
-    <div [class]="'alert alert-' + notif.type" role="alert">
-        <div class="alert-content">
-            <span>{{ notif.message }}</span>
-            <button type="button" class="btn-close" (click)="notificationService.remove(notif.id)" aria-label="Cerrar">
-                <!-- × -->
-                x
+    @if (notificationService.currentNotification(); as notif) {
+    <div [class]="'notification-bar notification-' + notif.type" role="alert">
+        <div class="notification-content">
+            <div class="notification-icon">
+                @if (notif.type === 'success') {
+                    <i class="fas fa-check-circle"></i>
+                }
+                @if (notif.type === 'error') {
+                    <i class="fas fa-exclamation-circle"></i>
+                }
+                @if (notif.type === 'warning') {
+                    <i class="fas fa-exclamation-triangle"></i>
+                }
+                @if (notif.type === 'info') {
+                    <i class="fas fa-info-circle"></i>
+                }
+            </div>
+            <span class="notification-message">{{ notif.message }}</span>
+            <button type="button" class="btn-close" (click)="notificationService.clear()" aria-label="Cerrar">
+                <i class="fas fa-times"></i>
             </button>
         </div>
     </div>

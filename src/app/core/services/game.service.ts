@@ -56,20 +56,23 @@ export class GameService {
 
   /**
    * Obtiene la siguiente pregunta con todas sus opciones
+   * Por defecto busca preguntas de TODAS las categorías mezcladas
    *
-   * Backend: GET /games/next?category_id={id}&difficulty={float}&session_id={id}
+   * Backend: GET /games/next?difficulty={float}&session_id={id}
    * Excluye preguntas ya respondidas en la sesión actual
    * @param sessionId ID de la sesión activa
    * @param difficulty Nivel de dificultad (se redondea al entero más cercano en backend)
-   * @param categoryId ID de categoría (default: 1)
+   * @param categoryId ID de categoría (0 = todas las categorías, default: 0)
    * @returns Observable con pregunta completa y opciones de respuesta
    */
   getNextQuestion(
     sessionId: number,
     difficulty: number,
-    categoryId: number = 1
+    categoryId: number = 0
   ): Observable<QuestionFullResponse> {
-    const params = `category_id=${categoryId}&difficulty=${difficulty}&session_id=${sessionId}`;
+    // Solo incluir category_id en params si es mayor a 0 (para filtrar por categoría específica)
+    const categoryParam = categoryId > 0 ? `category_id=${categoryId}&` : '';
+    const params = `${categoryParam}difficulty=${difficulty}&session_id=${sessionId}`;
     return this.http.get<QuestionFullResponse>(
       `${this.apiUrl}${environment.apiEndpoints.games.next}?${params}`
     );

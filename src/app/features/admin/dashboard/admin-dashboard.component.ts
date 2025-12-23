@@ -194,4 +194,35 @@ export class AdminDashboardComponent implements OnInit {
       year: 'numeric'
     });
   }
+
+  /**
+   * Obtiene la clase CSS para el badge del proveedor de IA
+   */
+  getAIProviderClass(provider: string | null | undefined): string {
+    if (!provider) return 'ai-provider-none';
+
+    switch (provider.toLowerCase()) {
+      case 'gemini': return 'ai-provider-gemini';
+      case 'groq': return 'ai-provider-groq';
+      case 'deepseek': return 'ai-provider-deepseek';
+      case 'fireworks': return 'ai-provider-fireworks';
+      default: return 'ai-provider-other';
+    }
+  }
+
+  /**
+   * Obtiene el texto de visualización para el proveedor de IA
+   */
+  getAIProviderText(provider: string | null | undefined): string {
+    if (!provider) return 'N/A';
+
+    const labels: Record<string, string> = {
+      'gemini': 'Gemini',
+      'groq': 'Groq',
+      'deepseek': 'DeepSeek',
+      'fireworks': 'Fireworks'
+    };
+
+    return labels[provider.toLowerCase()] || provider;
+  }
 }

@@ -241,6 +241,7 @@
             <tr>
               <th>Nombre del Batch</th>
               <th>Tipo</th>
+              <th>Proveedor IA</th>
               <th>Total</th>
               <th>Verificadas</th>
               <th>Progreso</th>
@@ -258,6 +259,16 @@
                   {{ batch.batch_type === 'ai_generated' ? 'IA' : batch.batch_type === 'csv_imported' ? 'CSV' : 'Manual'
                   }}
                 </span>
+              </td>
+              <td>
+                @if (batch.ai_provider_used) {
+                  <span class="ai-provider-badge" [ngClass]="getAIProviderClass(batch.ai_provider_used)">
+                    <i class="fas fa-microchip"></i>
+                    {{ getAIProviderText(batch.ai_provider_used) }}
+                  </span>
+                } @else {
+                  <span class="ai-provider-badge ai-provider-none">N/A</span>
+                }
               </td>
               <td class="text-center">{{ batch.total_questions }}</td>
               <td class="text-center">{{ batch.verified_count }}</td>

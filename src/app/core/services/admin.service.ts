@@ -7,6 +7,7 @@ import {
   UpdatePromptConfigResponse,
   CategoryResponse,
   CreateCategoryResponse,
+  UpdateCategoryResponse,
   DeleteCategoryResponse,
   DashboardStatsResponse,
   GenerateBatchResponse,
@@ -20,7 +21,8 @@ import {
   EditExplanationResponse,
   QuestionFullResponse,
   UpdateQuestionFullPayload,
-  UpdateQuestionFullResponse
+  UpdateQuestionFullResponse,
+  AvailableProvidersResponse
 } from '../models/admin';
 import { Question, QuestionResponse, DeleteQuestionResponse } from '../models/game';
 
@@ -87,18 +89,44 @@ export class AdminService {
   }
 
   /**
-   * Actualiza la configuración del prompt de IA (Gemini)
+   * Actualiza la configuración del prompt de IA (Multi-AI)
    *
    * Backend: PUT /admin/config/prompt
    * @param promptText Texto del prompt del sistema
    * @param temperature Temperatura del modelo (0.0 - 1.0)
+   * @param preferredProvider Proveedor de IA preferido (opcional: auto, gemini, groq, deepseek, fireworks)
+   * @param maxQuestionsPerGame Máximo de preguntas por juego (5-100)
    * @returns Observable con confirmación de actualización
    */
-  updatePromptConfig(promptText: string, temperature: number): Observable<UpdatePromptConfigResponse> {
-    const body = { prompt_text: promptText, temperature };
+  updatePromptConfig(
+    promptText: string,
+    temperature: number,
+    preferredProvider?: string,
+    maxQuestionsPerGame?: number
+  ): Observable<UpdatePromptConfigResponse> {
+    const body: any = {
+      prompt_text: promptText,
+      temperature,
+      max_questions_per_game: maxQuestionsPerGame || 15
+    };
+    if (preferredProvider) {
+      body.preferred_ai_provider = preferredProvider;
+    }
     return this.http.put<UpdatePromptConfigResponse>(
       `${this.apiUrl}${environment.apiEndpoints.admin.updatePromptConfig}`,
       body
+    );
+  }
+
+  /**
+   * Obtiene los proveedores de IA disponibles y configurados
+   *
+   * Backend: GET /admin/available-providers
+   * @returns Observable con lista de proveedores disponibles
+   */
+  getAvailableProviders(): Observable<AvailableProvidersResponse> {
+    return this.http.get<AvailableProvidersResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.availableProviders}`
     );
   }
 
@@ -114,6 +142,23 @@ export class AdminService {
     const body = { name, ...(description && { description }) };
     return this.http.post<CreateCategoryResponse>(
       `${this.apiUrl}${environment.apiEndpoints.admin.createCategory}`,
+      body
+    );
+  }
+
+  /**
+   * Actualiza una categoría de preguntas
+   *
+   * Backend: PUT /admin/categories/{id}
+   * @param categoryId ID de la categoría a actualizar
+   * @param name Nuevo nombre de la categoría (requerido)
+   * @param description Nueva descripción opcional
+   * @returns Observable con confirmación de actualización
+   */
+  updateCategory(categoryId: number, name: string, description?: string): Observable<UpdateCategoryResponse> {
+    const body = { name, ...(description && { description }) };
+    return this.http.put<UpdateCategoryResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.updateCategory(categoryId)}`,
       body
     );
   }
@@ -249,8 +294,8 @@ export class AdminService {
    * Importa preguntas desde un archivo CSV
    *
    * Backend: POST /admin/batch/import-csv
-   * Headers del CSV requeridos: statement, option_a, option_b, option_c, option_d,
-   * correct_option, category, difficulty
+   * Headers del CSV requeridos: category_id, difficulty, statement, option_1, option_2,
+   * option_3, option_4, correct_option_index, explanation_correct, explanation_incorrect, source_citation
    * @param file Archivo CSV a importar (máximo 5MB)
    * @returns Observable con resultado de la importación
    */

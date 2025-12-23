@@ -34,6 +34,7 @@ export const environment = {
       getPromptConfig: '/admin/config/prompt',
       updatePromptConfig: '/admin/config/prompt',
       createCategory: '/admin/categories',
+      updateCategory: (id: number) => `/admin/categories/${id}`,
       deleteCategory: (id: number) => `/admin/categories/${id}`,
       generateBatch: '/admin/generate-batch',
       dashboardStats: '/admin/dashboard'

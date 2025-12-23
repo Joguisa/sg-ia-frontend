@@ -32,6 +32,47 @@
     </div>
   </div>
 
+  <!-- PROGRESS BAR -->
+  <div class="progress-container">
+    <div class="progress-header">
+      <span class="progress-label">
+        <i class="fas fa-list-check"></i>
+        Progreso del Cuestionario
+      </span>
+      <span class="progress-count">
+        {{ questionCount() }} / {{ maxQuestions() }} preguntas
+      </span>
+    </div>
+
+    <div class="progress-bar-wrapper">
+      <div
+        class="progress-bar-fill"
+        [style.width.%]="progressPercentage()"
+      ></div>
+    </div>
+
+    <div class="progress-info">
+      <span class="remaining-questions">
+        <i class="fas fa-hourglass-half"></i>
+        {{ remainingQuestions() }} restante(s)
+      </span>
+
+      @if (lockedLevels().length > 0) {
+        <div class="locked-levels">
+          <span class="locked-label">
+            <i class="fas fa-lock"></i>
+            Niveles completados:
+          </span>
+          @for (level of lockedLevels(); track level) {
+            <span class="level-badge">
+              Nivel {{ level }}
+            </span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
   <!-- MAIN CONTENT -->
   <div class="game-content">
     <!-- LOADING STATE -->
@@ -176,29 +217,83 @@
       </div>
     }
 
-    <!-- GAME OVER STATE -->
+    <!-- GAME OVER STATE (Lives = 0) -->
     @if (gameState() === 'gameover') {
       <div class="gameover-screen">
         <div class="gameover-card d-flex flex-column align-items-center text-center">
-          @if (lives() === 0) {
-            <i class="fas fa-heart-broken fs-2x text-danger mb-3"></i>
-            <h2 class="gameover-title">¡Fin del Juego!</h2>
-            <p class="gameover-message">
-              Te has quedado sin vidas. Completaste {{ questionCount() }} preguntas con una puntuación de {{ score() }} puntos.
-            </p>
-          } @else {
-            <i class="fas fa-trophy fs-2x text-success mb-3"></i>
-            <h2 class="gameover-title">¡Felicitaciones!</h2>
-            <p class="gameover-message">
-              Has completado todas las preguntas disponibles para tu nivel de dificultad.
-            </p>
-            <p class="gameover-stats">
-              Respondiste {{ questionCount() }} preguntas y obtuviste {{ score() }} puntos.
-            </p>
-          }
-          <p class="gameover-redirect">
-            Redirigiendo a tu perfil...
+          <i class="fas fa-heart-broken fs-2x text-danger mb-4"></i>
+          <h2 class="gameover-title">¡Fin del Juego!</h2>
+          <p class="gameover-message">
+            Te has quedado sin vidas. Completaste {{ questionCount() }} preguntas con una puntuación de {{ score() }} puntos.
           </p>
+          <div class="final-stats">
+            <div class="stat-item">
+              <i class="fas fa-trophy text-warning"></i>
+              <span class="stat-value">{{ score() }}</span>
+              <span class="stat-label">Puntos</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-question-circle text-info"></i>
+              <span class="stat-value">{{ questionCount() }}</span>
+              <span class="stat-label">Preguntas</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-chart-line text-success"></i>
+              <span class="stat-value">{{ difficulty().toFixed(1) }}</span>
+              <span class="stat-label">Dificultad</span>
+            </div>
+          </div>
+          <div class="action-section mt-4">
+            <button class="btn btn-profile" (click)="goToProfile()">
+              <i class="fas fa-user-circle"></i>
+              Ver Mi Perfil
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- COMPLETED STATE (Quiz Finished Successfully) -->
+    @if (gameState() === 'completed') {
+      <div class="gameover-screen">
+        <div class="gameover-card d-flex flex-column align-items-center text-center">
+          <i class="fas fa-trophy fs-2x text-success mb-4"></i>
+          <h2 class="gameover-title text-success">¡Felicitaciones!</h2>
+          <p class="gameover-message">
+            Has completado el cuestionario exitosamente.
+          </p>
+          <div class="completion-badge">
+            <i class="fas fa-medal"></i>
+            <span class="completion-text">Cuestionario Completado</span>
+          </div>
+          <div class="final-stats">
+            <div class="stat-item">
+              <i class="fas fa-trophy text-warning"></i>
+              <span class="stat-value">{{ score() }}</span>
+              <span class="stat-label">Puntos</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-check-circle text-success"></i>
+              <span class="stat-value">{{ questionCount() }}/{{ maxQuestions() }}</span>
+              <span class="stat-label">Preguntas</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-heart text-danger"></i>
+              <span class="stat-value">{{ lives() }}/3</span>
+              <span class="stat-label">Vidas</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-chart-line text-info"></i>
+              <span class="stat-value">{{ difficulty().toFixed(1) }}</span>
+              <span class="stat-label">Dificultad Final</span>
+            </div>
+          </div>
+          <div class="action-section mt-4">
+            <button class="btn btn-profile" (click)="goToProfile()">
+              <i class="fas fa-user-circle"></i>
+              Ver Mi Perfil
+            </button>
+          </div>
         </div>
       </div>
     }

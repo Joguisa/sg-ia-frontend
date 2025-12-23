@@ -16,7 +16,7 @@
         </button>
         <button class="btn btn-sm btn-danger" (click)="logout()">
           <i class="fas fa-sign-out-alt"></i>
-          Logout
+          Cerrar Sesión
         </button>
       </div>
     </div>
@@ -138,10 +138,10 @@
           <div class="generator-content">
             <div class="csv-info">
               <p><strong>Formato requerido del CSV:</strong></p>
-              <code class="csv-headers">statement, option_a, option_b, option_c, option_d, correct_option, category, difficulty</code>
+              <code class="csv-headers">category_id, difficulty, statement, option_1, option_2, option_3, option_4, correct_option_index, explanation_correct, explanation_incorrect, source_citation</code>
               <p class="csv-note">
                 <i class="fas fa-info-circle"></i>
-                correct_option: 1-4 (a=1, b=2, c=3, d=4) | difficulty: 1-5 | Max 5MB
+                category_id: ID existente | difficulty: 1-5 | correct_option_index: 0-3 (0=option_1) | Max 5MB
               </p>
             </div>
 
@@ -190,128 +190,6 @@
                     </ul>
                   </div>
                 }
-              </div>
-            }
-          </div>
-        }
-      </div>
-
-      <!-- Unverified Questions Section -->
-      <div class="generator-section unverified-section">
-        <div class="generator-header" (click)="toggleUnverifiedSection()">
-          <div class="generator-title">
-            <i class="fas fa-clipboard-check"></i>
-            <h2>Preguntas Sin Verificar</h2>
-            @if (unverifiedQuestions().length > 0) {
-              <span class="badge badge-warning">{{ unverifiedQuestions().length }}</span>
-            }
-          </div>
-          <button class="btn-toggle" [ngClass]="{ 'open': isUnverifiedSectionOpen() }">
-            <i class="fas fa-chevron-down"></i>
-          </button>
-        </div>
-
-        @if (isUnverifiedSectionOpen()) {
-          <div class="generator-content">
-            <!-- Batch Filter -->
-            @if (batchStatistics().length > 0) {
-              <div class="batch-filter">
-                <label>Filtrar por batch:</label>
-                <select
-                  class="form-control"
-                  [value]="selectedBatchFilter()"
-                  (change)="filterUnverifiedByBatch($any($event.target).value ? +$any($event.target).value : null)">
-                  <option [value]="null">Todos los batches</option>
-                  @for (batch of batchStatistics(); track batch.id) {
-                    <option [value]="batch.id">{{ batch.batch_name }} ({{ batch.total_questions - batch.verified_count }} pendientes)</option>
-                  }
-                </select>
-                @if (selectedBatchFilter()) {
-                  <button
-                    class="btn btn-sm btn-primary"
-                    (click)="verifyBatch(selectedBatchFilter()!)"
-                    [disabled]="isVerifyingBatch()">
-                    @if (!isVerifyingBatch()) {
-                      <i class="fas fa-check-double"></i>
-                      Verificar Todo el Batch
-                    } @else {
-                      <span class="spinner-small"></span>
-                      Verificando...
-                    }
-                  </button>
-                }
-              </div>
-            }
-
-            <!-- Loading -->
-            @if (isLoadingUnverified()) {
-              <div class="loading-small">
-                <span class="spinner-small"></span>
-                <span>Cargando...</span>
-              </div>
-            }
-
-            <!-- Unverified Questions Table -->
-            @if (!isLoadingUnverified() && unverifiedQuestions().length > 0) {
-              <div class="table-responsive unverified-table-container">
-                <table class="questions-table unverified-table">
-                  <thead>
-                    <tr class="table-header">
-                      <th>ID</th>
-                      <th>Pregunta</th>
-                      <th>Categoría</th>
-                      <th>Dificultad</th>
-                      <th>Batch</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (q of unverifiedQuestions(); track q.id) {
-                      <tr class="table-row">
-                        <td><code>{{ q.id }}</code></td>
-                        <td>
-                          <span class="question-text" [title]="q.statement">
-                            {{ truncateText(q.statement, 50) }}
-                          </span>
-                        </td>
-                        <td>
-                          <span class="badge badge-primary">{{ q.category_name }}</span>
-                        </td>
-                        <td>
-                          <div class="difficulty-badge" [ngClass]="'difficulty-' + q.difficulty">
-                            {{ q.difficulty }}
-                          </div>
-                        </td>
-                        <td>
-                          <span class="batch-badge">{{ q.batch_name || 'N/A' }}</span>
-                        </td>
-                        <td>
-                          <div class="action-buttons">
-                            <button
-                              class="btn-action btn-edit"
-                              (click)="openEditExplanationModal(q)"
-                              title="Editar explicaciones">
-                              <i class="fas fa-edit"></i>
-                            </button>
-                            <button
-                              class="btn-action btn-verify"
-                              (click)="toggleVerifyQuestion(q.id, false)"
-                              title="Verificar pregunta">
-                              <i class="fas fa-check"></i>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-            }
-
-            @if (!isLoadingUnverified() && unverifiedQuestions().length === 0) {
-              <div class="no-data-small">
-                <i class="fas fa-check-circle"></i>
-                <p>Todas las preguntas están verificadas</p>
               </div>
             }
           </div>
@@ -510,80 +388,6 @@
     </div>
   }
 </div>
-
-<!-- Edit Explanation Modal -->
-@if (isEditExplanationOpen()) {
-  <div class="modal-overlay" (click)="closeEditExplanationModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>
-          <i class="fas fa-edit"></i>
-          Editar Explicaciones
-        </h3>
-        <button class="btn-close" (click)="closeEditExplanationModal()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        @if (selectedQuestionForEdit()) {
-          <div class="question-preview">
-            <label>Pregunta:</label>
-            <p>{{ selectedQuestionForEdit()!.statement }}</p>
-          </div>
-
-          <form [formGroup]="editExplanationForm">
-            <div class="form-group">
-              <label for="correctExp">
-                <i class="fas fa-check-circle text-success"></i>
-                Explicación cuando es correcta:
-              </label>
-              <textarea
-                id="correctExp"
-                formControlName="correctExplanation"
-                class="form-control"
-                rows="4"
-                placeholder="Explica por qué esta es la respuesta correcta..."
-                [class.is-invalid]="editExplanationForm.get('correctExplanation')?.invalid && editExplanationForm.get('correctExplanation')?.touched">
-              </textarea>
-              @if (editExplanationForm.get('correctExplanation')?.invalid && editExplanationForm.get('correctExplanation')?.touched) {
-                <div class="invalid-feedback">Mínimo 10 caracteres requeridos</div>
-              }
-            </div>
-
-            <div class="form-group">
-              <label for="incorrectExp">
-                <i class="fas fa-times-circle text-danger"></i>
-                Explicación cuando es incorrecta:
-              </label>
-              <textarea
-                id="incorrectExp"
-                formControlName="incorrectExplanation"
-                class="form-control"
-                rows="4"
-                placeholder="Explica por qué esta respuesta es incorrecta..."
-                [class.is-invalid]="editExplanationForm.get('incorrectExplanation')?.invalid && editExplanationForm.get('incorrectExplanation')?.touched">
-              </textarea>
-              @if (editExplanationForm.get('incorrectExplanation')?.invalid && editExplanationForm.get('incorrectExplanation')?.touched) {
-                <div class="invalid-feedback">Mínimo 10 caracteres requeridos</div>
-              }
-            </div>
-          </form>
-        }
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeEditExplanationModal()">
-          Cancelar
-        </button>
-        <button class="btn btn-primary" (click)="saveExplanations()">
-          <i class="fas fa-save"></i>
-          Guardar Cambios
-        </button>
-      </div>
-    </div>
-  </div>
-}
 
 <!-- Full Question Edit Modal -->
 @if (isFullEditModalOpen()) {

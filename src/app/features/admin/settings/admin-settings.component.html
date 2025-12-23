@@ -6,7 +6,7 @@
         <i class="fas fa-brain"></i>
         <div class="header-text">
           <h1>Configuración del Modelo IA</h1>
-          <p class="header-subtitle">Ajusta el prompt del sistema y parámetros de Gemini</p>
+          <p class="header-subtitle">Ajusta el prompt del sistema, parámetros y proveedores Multi-AI</p>
         </div>
       </div>
       <div class="header-actions">
@@ -16,7 +16,7 @@
         </button>
         <button class="btn btn-sm btn-danger" (click)="logout()">
           <i class="fas fa-sign-out-alt"></i>
-          Logout
+          Cerrar Sesión
         </button>
       </div>
     </div>
@@ -59,27 +59,221 @@
         </div>
 
         <div class="card-body">
-          <div class="form-group">
-            <label for="prompt-textarea" class="form-label">
-              System Prompt
-              <span class="required">*</span>
-            </label>
-            <p class="form-help">Este texto guía a Gemini en cómo generar preguntas. Sé específico y detallado.</p>
+          <form [formGroup]="promptConfigForm">
+            <div class="form-group">
+              <label for="prompt-textarea" class="form-label">
+                System Prompt
+                <span class="required">*</span>
+              </label>
+              <p class="form-help">Este texto guía a Gemini en cómo generar preguntas. Sé específico y detallado.</p>
 
-            <textarea
-              id="prompt-textarea"
-              class="form-control form-textarea"
-              rows="12"
-              [(ngModel)]="promptText"
-              (change)="onPromptChange()"
-              [disabled]="isSaving()"
-              placeholder="Escribe el prompt del sistema aquí...">
-            </textarea>
+              <textarea
+                id="prompt-textarea"
+                class="form-control form-textarea"
+                rows="12"
+                formControlName="promptText"
+                
+                placeholder="Escribe el prompt del sistema aquí...">
+              </textarea>
 
-            <div class="textarea-footer">
-              <span class="char-count">{{ promptText().length }} caracteres</span>
+              <div class="textarea-footer">
+                <span class="char-count">{{ promptTextValue.length }} caracteres</span>
+              </div>
             </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- AI Provider Selection Section -->
+      <div class="settings-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <i class="fas fa-server"></i>
+            Proveedor de Inteligencia Artificial
+          </h2>
+          <p class="card-subtitle">Selecciona el proveedor de IA preferido para generar preguntas</p>
+        </div>
+
+        <div class="card-body">
+          <form [formGroup]="promptConfigForm">
+            <div class="form-group">
+              <label for="provider-select" class="form-label">
+                Proveedor Preferido <span class="required">*</span>
+              </label>
+              <p class="form-help">
+                Selecciona un proveedor específico o deja en 'Automático' para failover inteligente
+              </p>
+
+              @if (isLoadingProviders()) {
+                <div class="loading-small">
+                  <span class="spinner-small"></span>
+                  <span>Cargando proveedores...</span>
+                </div>
+              } @else {
+                <select
+                  id="provider-select"
+                  class="form-control form-select"
+                  formControlName="preferredProvider">
+                  @for (provider of availableProviders(); track provider) {
+                    <option [value]="provider">{{ getProviderLabel(provider) }}</option>
+                  }
+                </select>
+
+                <div class="provider-info-card">
+                  <div class="provider-icon">
+                    <i class="fas fa-circle-info"></i>
+                  </div>
+                  <div class="provider-description">
+                    <strong>{{ getProviderLabel(preferredProviderValue) }}</strong>
+                    <p>{{ getProviderDescription(preferredProviderValue) }}</p>
+                  </div>
+                </div>
+
+                <div class="provider-status-section">
+                  <p class="provider-status-label">Proveedores Disponibles:</p>
+                  <div class="provider-badges">
+                    @for (provider of availableProviders(); track provider) {
+                      @if (provider !== 'auto') {
+                        <span class="provider-badge" [class.active]="preferredProviderValue === provider">
+                          <i class="fas fa-check-circle"></i>
+                          {{ getProviderLabel(provider) }}
+                        </span>
+                      }
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Max Questions Per Game Configuration -->
+            <div class="form-group">
+              <label for="max-questions" class="form-label">
+                Preguntas Máximas por Cuestionario <span class="required">*</span>
+              </label>
+              <p class="form-help">
+                Define el número máximo de preguntas que un jugador responderá por sesión (5-100)
+              </p>
+
+              <div class="number-input-wrapper">
+                <input
+                  type="number"
+                  id="max-questions"
+                  class="form-control number-input"
+                  formControlName="maxQuestionsPerGame"
+                  min="5"
+                  max="100"
+                  step="5"
+                  [class.is-invalid]="promptConfigForm.get('maxQuestionsPerGame')?.invalid &&
+                                      promptConfigForm.get('maxQuestionsPerGame')?.touched">
+
+                <div class="input-group-append">
+                  <span class="input-group-text">preguntas</span>
+                </div>
+              </div>
+
+              <div class="config-info-card">
+                <div class="config-icon">
+                  <i class="fas fa-calculator"></i>
+                </div>
+                <div class="config-description">
+                  <strong>Distribución Automática</strong>
+                  <p>
+                    {{ Math.floor(maxQuestionsValue / 5) }} preguntas por nivel de dificultad
+                    (niveles 1, 2, 3, 4, 5)
+                  </p>
+                  <p class="text-muted">
+                    El jugador puede saltar niveles según su desempeño, pero cada nivel se bloquea
+                    después de completar su cuota.
+                  </p>
+                </div>
+              </div>
+
+              @if (promptConfigForm.get('maxQuestionsPerGame')?.invalid &&
+                   promptConfigForm.get('maxQuestionsPerGame')?.touched) {
+                <div class="invalid-feedback" style="display: block;">
+                  El valor debe estar entre 5 y 100
+                </div>
+              }
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Categories Management Section -->
+      <div class="settings-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <i class="fas fa-folder"></i>
+            Gestión de Categorías
+          </h2>
+          <p class="card-subtitle">Administra las categorías de preguntas del sistema</p>
+        </div>
+
+        <div class="card-body">
+          <!-- Create Button -->
+          <div class="category-actions">
+            <button
+              class="btn btn-primary"
+              (click)="openCreateCategoryModal()"
+              [disabled]="isLoadingCategories()">
+              <i class="fas fa-plus"></i>
+              Nueva Categoría
+            </button>
           </div>
+
+          <!-- Loading -->
+          @if (isLoadingCategories()) {
+            <div class="loading-small">
+              <span class="spinner-small"></span>
+              <span>Cargando categorías...</span>
+            </div>
+          }
+
+          <!-- Categories List -->
+          @if (!isLoadingCategories() && categories().length > 0) {
+            <div class="categories-list">
+              @for (category of categories(); track category.id) {
+                <div class="category-item">
+                  <div class="category-info">
+                    <div class="category-header">
+                      <h4 class="category-name">{{ category.name }}</h4>
+                      <span class="category-id">ID: {{ category.id }}</span>
+                    </div>
+                    @if (category.description) {
+                      <p class="category-description">{{ category.description }}</p>
+                    }
+                  </div>
+                  <div class="category-actions-buttons">
+                    <button
+                      class="btn-action btn-edit"
+                      (click)="openEditCategoryModal(category)"
+                      [disabled]="isDeletingCategory() === category.id"
+                      title="Editar categoría">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button
+                      class="btn-action btn-delete"
+                      (click)="deleteCategory(category)"
+                      [disabled]="isDeletingCategory() === category.id"
+                      title="Eliminar categoría">
+                      @if (isDeletingCategory() !== category.id) {
+                        <i class="fas fa-trash"></i>
+                      } @else {
+                        <span class="spinner-tiny"></span>
+                      }
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (!isLoadingCategories() && categories().length === 0) {
+            <div class="no-data-small">
+              <i class="fas fa-folder-open"></i>
+              <p>No hay categorías creadas</p>
+            </div>
+          }
         </div>
       </div>
 
@@ -94,54 +288,55 @@
         </div>
 
         <div class="card-body">
-          <div class="form-group">
-            <label for="temperature-slider" class="form-label">
-              Temperatura: <span class="temperature-value">{{ temperature().toFixed(1) }}</span>
-            </label>
+          <form [formGroup]="promptConfigForm">
+            <div class="form-group">
+              <label for="temperature-slider" class="form-label">
+                Temperatura: <span class="temperature-value">{{ temperatureValue.toFixed(1) }}</span>
+              </label>
 
-            <div class="temperature-info">
-              <div class="info-card">
-                <span class="info-label">Nivel:</span>
-                <span class="info-value">{{ getTemperatureLabel() }}</span>
+              <div class="temperature-info">
+                <div class="info-card">
+                  <span class="info-label">Nivel:</span>
+                  <span class="info-value">{{ getTemperatureLabel() }}</span>
+                </div>
+                <div class="info-card">
+                  <span class="info-label">Descripción:</span>
+                  <span class="info-value">{{ getTemperatureDescription() }}</span>
+                </div>
               </div>
-              <div class="info-card">
-                <span class="info-label">Descripción:</span>
-                <span class="info-value">{{ getTemperatureDescription() }}</span>
+
+              <!-- Slider -->
+              <div class="slider-container">
+                <span class="slider-label slider-min">
+                  <i class="fas fa-arrow-left"></i>
+                  Preciso (0.0)
+                </span>
+
+                <input
+                  id="temperature-slider"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  formControlName="temperature"
+                  
+                  class="form-range">
+
+                <span class="slider-label slider-max">
+                  Creativo (1.0)
+                  <i class="fas fa-arrow-right"></i>
+                </span>
               </div>
+
+              <p class="form-help">
+                <strong>0.0 = Determinista:</strong> Respuestas idénticas y predecibles.
+                <br>
+                <strong>1.0 = Creativo:</strong> Máxima variedad y aleatoriedad.
+                <br>
+                <strong>Recomendado: 0.7</strong> (Balance entre precisión y diversidad)
+              </p>
             </div>
-
-            <!-- Slider -->
-            <div class="slider-container">
-              <span class="slider-label slider-min">
-                <i class="fas fa-arrow-left"></i>
-                Preciso (0.0)
-              </span>
-
-              <input
-                id="temperature-slider"
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                [(ngModel)]="temperature"
-                (change)="onTemperatureChange()"
-                [disabled]="isSaving()"
-                class="form-range">
-
-              <span class="slider-label slider-max">
-                Creativo (1.0)
-                <i class="fas fa-arrow-right"></i>
-              </span>
-            </div>
-
-            <p class="form-help">
-              <strong>0.0 = Determinista:</strong> Respuestas idénticas y predecibles.
-              <br>
-              <strong>1.0 = Creativo:</strong> Máxima variedad y aleatoriedad.
-              <br>
-              <strong>Recomendado: 0.7</strong> (Balance entre precisión y diversidad)
-            </p>
-          </div>
+          </form>
         </div>
       </div>
 
@@ -230,6 +425,15 @@
         </p>
       </div>
     </div>
+  }
+
+  <!-- Category Modal -->
+  @if (isCategoryModalOpen()) {
+    <app-category-modal
+      [categoryToEdit]="categoryToEdit()"
+      (close)="closeCategoryModal()"
+      (saved)="onCategorySaved()">
+    </app-category-modal>
   }
 </div>
 

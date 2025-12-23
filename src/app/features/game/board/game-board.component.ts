@@ -23,7 +23,7 @@ export class GameBoardComponent implements OnInit {
   // Session data
   private playerId!: number;
   private sessionId = signal<number | null>(null);
-  private categoryId = signal<number>(1);
+  // categoryId = 0 significa "todas las categorías"
 
   // Game state
   gameState = signal<GameState>('loading');
@@ -38,6 +38,8 @@ export class GameBoardComponent implements OnInit {
   lives = signal<number>(3);
   difficulty = signal<number>(1.0);
   questionCount = signal<number>(0);
+  maxQuestions = signal<number>(15);
+  lockedLevels = signal<number[]>([]);
 
   // Feedback data
   feedbackData = signal<AnswerSubmitResponse | null>(null);
@@ -61,6 +63,17 @@ export class GameBoardComponent implements OnInit {
   difficultyPercentage = computed(() => {
     const diff = this.difficulty();
     return Math.round((diff / 5) * 100);
+  });
+
+  // Progress indicators for question limit
+  progressPercentage = computed(() => {
+    const answered = this.questionCount();
+    const max = this.maxQuestions();
+    return max > 0 ? Math.round((answered / max) * 100) : 0;
+  });
+
+  remainingQuestions = computed(() => {
+    return Math.max(0, this.maxQuestions() - this.questionCount());
   });
 
   constructor(
@@ -124,15 +137,26 @@ export class GameBoardComponent implements OnInit {
     this.gameState.set('loading');
     this.selectedOptionId.set(null);
     this.feedbackData.set(null); // Limpiar feedback anterior
-    this.questionCount.update((c) => c + 1);
 
-    this.gameService.getNextQuestion(sessionId, difficulty, this.categoryId()).subscribe({
+    // No pasar categoryId (default 0 = todas las categorías)
+    this.gameService.getNextQuestion(sessionId, difficulty).subscribe({
       next: (response) => {
 
         if (response.ok && response.question) {
           this.currentQuestion.set(response.question);
+
+          // Actualizar metadata de progreso si está disponible
+          if (response.question.progress) {
+            this.maxQuestions.set(response.question.progress.max_questions);
+            this.lockedLevels.set(response.question.progress.locked_levels || []);
+            this.questionCount.set(response.question.progress.total_answered);
+          }
+
           this.gameState.set('playing');
           this.startTimer();
+        } else if (response.completed) {
+          // Cuestionario completado exitosamente
+          this.handleGameCompleted(response.message || '¡Felicitaciones! Completaste el cuestionario');
         } else {
           // No hay más preguntas disponibles - fin del juego por completar todas
           this.handleNoQuestionsAvailable('¡Felicitaciones! Has completado todas las preguntas disponibles.');
@@ -151,12 +175,21 @@ export class GameBoardComponent implements OnInit {
 
   private handleNoQuestionsAvailable(message: string): void {
     this.stopTimer();
-    this.gameState.set('gameover');
+    // Usar 'completed' en lugar de 'gameover' cuando no es por vidas
+    this.gameState.set('completed');
+    this.notification.warning(message, NOTIFICATION_DURATION.LONG);
+    // Ya no redirigimos automáticamente - el usuario controla con un botón
+  }
+
+  private handleGameCompleted(message: string): void {
+    this.stopTimer();
+    this.gameState.set('completed');
     this.notification.success(message, NOTIFICATION_DURATION.LONG);
-    // Redirigir al perfil después de mostrar el mensaje
-    setTimeout(() => {
-      this.router.navigate(['/profile']);
-    }, 5000);
+    // Ya no redirigimos automáticamente - el usuario controla con un botón
+  }
+
+  goToProfile(): void {
+    this.router.navigate(['/profile']);
   }
 
   private showErrorMessage(message: string): void {
@@ -208,6 +241,19 @@ export class GameBoardComponent implements OnInit {
           }
           if (response.next_difficulty !== undefined) {
             this.difficulty.set(response.next_difficulty);
+          }
+
+          // Incrementar contador de preguntas respondidas
+          this.questionCount.update((c) => c + 1);
+
+          // Verificar si alcanzó el límite de preguntas
+          if (this.questionCount() >= this.maxQuestions()) {
+            this.gameState.set('feedback');
+            this.isAnswering.set(false);
+            setTimeout(() => {
+              this.handleGameCompleted('¡Felicitaciones! Completaste el cuestionario');
+            }, 3000);
+            return;
           }
 
           // IMPORTANTE: Si lives = 0, el effect() activará endGame() automáticamente
@@ -277,10 +323,7 @@ export class GameBoardComponent implements OnInit {
   private endGame(): void {
     this.gameState.set('gameover');
     this.stopTimer();
-    // Redirigir a resumen después de 2 segundos
-    setTimeout(() => {
-      this.router.navigate(['/profile']);
-    }, 5000);
+    // Ya no redirigimos automáticamente - el usuario controla con un botón
   }
 
   getOptionClass(optionId: number): string {

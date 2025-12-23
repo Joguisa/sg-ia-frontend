@@ -1,25 +1,28 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { PromptConfigResponse, AdminPrompt } from '../../../core/models/admin';
+import { PromptConfigResponse, AdminPrompt, AdminCategory, AvailableProvidersResponse } from '../../../core/models/admin';
 import { HttpStatus } from '../../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
+import { CategoryModalComponent } from '../components/category-modal/category-modal.component';
 
 @Component({
   selector: 'app-admin-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent],
   templateUrl: './admin-settings.component.html',
   styleUrls: ['./admin-settings.component.css']
 })
 export class AdminSettingsComponent implements OnInit {
-  // ========== CONFIGURACIÓN DEL PROMPT ==========
-  promptText = signal<string>('');
-  temperature = signal<number>(0.7);
+  // ========== HELPER PARA TEMPLATE ==========
+  Math = Math; // Exponer Math para usar en el template
+
+  // ========== FORMULARIOS REACTIVOS ==========
+  promptConfigForm!: FormGroup;
 
   // ========== UI STATE ==========
   isLoading = signal<boolean>(true);
@@ -31,36 +34,76 @@ export class AdminSettingsComponent implements OnInit {
   // ========== ORIGINAL STATE (para detectar cambios) ==========
   originalPromptText = signal<string>('');
   originalTemperature = signal<number>(0.7);
+  originalPreferredProvider = signal<string>('auto');
+
+  // ========== GESTIÓN DE PROVEEDORES IA ==========
+  availableProviders = signal<string[]>([]);
+  isLoadingProviders = signal<boolean>(false);
+
+  // ========== GESTIÓN DE CATEGORÍAS ==========
+  categories = signal<AdminCategory[]>([]);
+  isLoadingCategories = signal<boolean>(false);
+  isDeletingCategory = signal<number | null>(null);
+
+  // Modal de crear/editar categoría
+  isCategoryModalOpen = signal<boolean>(false);
+  categoryToEdit = signal<AdminCategory | null>(null);
 
   constructor(
     private adminService: AdminService,
     private authService: AuthService,
     private notification: NotificationService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private fb: FormBuilder
+  ) {
+    this.initForms();
+  }
 
   ngOnInit(): void {
     this.loadSystemPrompt();
+    this.loadCategories();
+    this.loadAvailableProviders();
+  }
+
+  /**
+   * Inicializa los formularios reactivos
+   */
+  private initForms(): void {
+    // Formulario de configuración del prompt
+    this.promptConfigForm = this.fb.group({
+      promptText: ['', [Validators.required]],
+      temperature: [0.7, [Validators.required, Validators.min(0), Validators.max(1)]],
+      preferredProvider: ['auto', [Validators.required]],
+      maxQuestionsPerGame: [15, [Validators.required, Validators.min(5), Validators.max(100)]]
+    });
+
+    // Detectar cambios en el formulario de prompt
+    this.promptConfigForm.valueChanges.subscribe(() => {
+      this.checkForChanges();
+    });
   }
 
   /**
    * Carga la configuración del sistema desde el backend
    */
   private loadSystemPrompt(): void {
-
     this.adminService.getPromptConfig().subscribe({
       next: (response: PromptConfigResponse) => {
-
         if (response.ok && response.prompt) {
           const config = response.prompt;
 
-          // Establecer valores
-          this.promptText.set(config.prompt_text);
-          this.temperature.set(config.temperature);
+          // Establecer valores en el formulario
+          this.promptConfigForm.patchValue({
+            promptText: config.prompt_text,
+            temperature: config.temperature,
+            preferredProvider: config.preferred_ai_provider || 'auto',
+            maxQuestionsPerGame: config.max_questions_per_game || 15
+          }, { emitEvent: false });
 
           // Guardar originals para detectar cambios
           this.originalPromptText.set(config.prompt_text);
           this.originalTemperature.set(config.temperature);
+          this.originalPreferredProvider.set(config.preferred_ai_provider || 'auto');
 
           this.isLoading.set(false);
         } else {
@@ -87,66 +130,112 @@ export class AdminSettingsComponent implements OnInit {
   }
 
   /**
-   * Detecta cambios en el formulario
+   * Carga los proveedores de IA disponibles desde el backend
    */
-  onPromptChange(): void {
-    this.checkForChanges();
-  }
+  private loadAvailableProviders(): void {
+    this.isLoadingProviders.set(true);
 
-  onTemperatureChange(): void {
-    this.checkForChanges();
+    this.adminService.getAvailableProviders().subscribe({
+      next: (response: AvailableProvidersResponse) => {
+        if (response.ok && response.providers) {
+          // 1. Extraemos solo los nombres de los objetos (transformamos Provider[] a string[])
+          const backendProviders = response.providers.map(p => p.name);
+          
+          // 2. Filtramos si por casualidad viniera 'auto' del backend para no duplicarlo
+          const uniqueBackendProviders = backendProviders.filter(name => name !== 'auto');
+
+          // 3. Construimos el array final de strings
+          const providers = ['auto', ...uniqueBackendProviders];
+          
+          this.availableProviders.set(providers);
+        } else {
+          // Fallback en caso de respuesta vacía
+          this.availableProviders.set(['auto', 'gemini', 'groq', 'deepseek', 'fireworks']);
+        }
+        this.isLoadingProviders.set(false);
+      },
+      error: () => {
+        // Fallback en caso de error de red
+        this.availableProviders.set(['auto', 'gemini', 'groq', 'deepseek', 'fireworks']);
+        this.isLoadingProviders.set(false);
+      }
+    });
   }
 
   /**
    * Verifica si hay cambios respecto al estado original
    */
   private checkForChanges(): void {
-    const hasPromptChange = this.promptText() !== this.originalPromptText();
-    const hasTemperatureChange = this.temperature() !== this.originalTemperature();
+    const currentPrompt = this.promptConfigForm.get('promptText')?.value || '';
+    const currentTemp = this.promptConfigForm.get('temperature')?.value || 0.7;
+    const currentProvider = this.promptConfigForm.get('preferredProvider')?.value || 'auto';
 
-    this.hasChanges.set(hasPromptChange || hasTemperatureChange);
+    const hasPromptChange = currentPrompt !== this.originalPromptText();
+    const hasTemperatureChange = currentTemp !== this.originalTemperature();
+    const hasProviderChange = currentProvider !== this.originalPreferredProvider();
+
+    this.hasChanges.set(hasPromptChange || hasTemperatureChange || hasProviderChange);
   }
 
   /**
    * Guarda los cambios en el backend
    */
   saveChanges(): void {
-    // Validación
-    if (!this.promptText().trim()) {
-      this.errorMessage.set('El prompt del sistema no puede estar vacío');
+    // Validación del formulario
+    if (this.promptConfigForm.invalid) {
+      this.errorMessage.set('Por favor completa todos los campos correctamente');
+      this.promptConfigForm.markAllAsTouched();
       return;
     }
 
-    if (this.temperature() < 0 || this.temperature() > 1) {
-      this.errorMessage.set('La temperatura debe estar entre 0.0 y 1.0');
-      return;
-    }
+    // 1. Capturamos los valores ANTES de deshabilitar (importante)
+    const formValue = this.promptConfigForm.getRawValue(); // Usamos getRawValue por seguridad
+    const cleanPrompt = formValue.promptText.trim();
+    const cleanTemp = Number(formValue.temperature.toFixed(1));
+    const cleanProvider = formValue.preferredProvider || 'auto';
+    const cleanMaxQuestions = Number(formValue.maxQuestionsPerGame);
 
     this.isSaving.set(true);
     this.errorMessage.set('');
 
-    const cleanPrompt = this.promptText().trim();
-    const cleanTemp = Number(this.temperature().toFixed(1));
+    // 2. Deshabilitamos el formulario aquí
+    this.promptConfigForm.disable();
 
     // Llamar al servicio
-    this.adminService.updatePromptConfig(cleanPrompt, cleanTemp).subscribe({
+    this.adminService.updatePromptConfig(cleanPrompt, cleanTemp, cleanProvider, cleanMaxQuestions).subscribe({
       next: (response: any) => {
+        // if (response.ok) {
+        //   // Actualizar originals para resincronizar
+        //   this.originalPromptText.set(formValue.promptText);
+        //   this.originalTemperature.set(formValue.temperature);
+        //   this.hasChanges.set(false);
 
+        //   this.successMessage.set('Configuración actualizada exitosamente');
+        //   this.isSaving.set(false);
+
+        //   // Limpiar mensaje después de 3 segundos
+        //   setTimeout(() => this.successMessage.set(''), 3000);
         if (response.ok) {
-          // Actualizar originals para resincronizar
-          this.originalPromptText.set(this.promptText());
-          this.originalTemperature.set(this.temperature());
+          this.originalPromptText.set(cleanPrompt); // Usa la variable limpia
+          this.originalTemperature.set(cleanTemp);
+          this.originalPreferredProvider.set(cleanProvider);
           this.hasChanges.set(false);
-
           this.successMessage.set('Configuración actualizada exitosamente');
+
+          // 3. Importante: Habilitar el formulario al terminar
+          this.promptConfigForm.enable();
           this.isSaving.set(false);
 
-          // Limpiar mensaje después de 3 segundos
           setTimeout(() => this.successMessage.set(''), 3000);
 
         } else {
+          // this.errorMessage.set(response.error || 'Error al guardar la configuración');
+          // this.isSaving.set(false);
           this.errorMessage.set(response.error || 'Error al guardar la configuración');
-          this.isSaving.set(false);
+        
+        // 3. Habilitar en caso de error lógico
+        this.promptConfigForm.enable();
+        this.isSaving.set(false);
         }
       },
       error: (error) => {
@@ -162,6 +251,7 @@ export class AdminSettingsComponent implements OnInit {
 
         this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
         this.errorMessage.set(errorMsg);
+        this.promptConfigForm.enable();
         this.isSaving.set(false);
       }
     });
@@ -171,8 +261,11 @@ export class AdminSettingsComponent implements OnInit {
    * Descarta los cambios sin guardar
    */
   discardChanges(): void {
-    this.promptText.set(this.originalPromptText());
-    this.temperature.set(this.originalTemperature());
+    this.promptConfigForm.patchValue({
+      promptText: this.originalPromptText(),
+      temperature: this.originalTemperature(),
+      preferredProvider: this.originalPreferredProvider()
+    }, { emitEvent: false });
     this.hasChanges.set(false);
     this.errorMessage.set('');
   }
@@ -197,9 +290,10 @@ RESTRICCIONES:
 - Evita preguntas ambiguas o con múltiples interpretaciones.
 - Sé consistente con la terminología médica estándar.`;
 
-    this.promptText.set(defaultPrompt);
-    this.temperature.set(0.7);
-    this.checkForChanges();
+    this.promptConfigForm.patchValue({
+      promptText: defaultPrompt,
+      temperature: 0.7
+    });
   }
 
   /**
@@ -221,7 +315,7 @@ RESTRICCIONES:
    * Formatea el valor de temperatura para mostrar
    */
   getTemperatureLabel(): string {
-    const temp = this.temperature();
+    const temp = this.promptConfigForm.get('temperature')?.value || 0.7;
     if (temp < 0.3) return 'Muy preciso';
     if (temp < 0.5) return 'Preciso';
     if (temp < 0.7) return 'Moderado';
@@ -233,11 +327,163 @@ RESTRICCIONES:
    * Obtiene la descripción del valor de temperatura
    */
   getTemperatureDescription(): string {
-    const temp = this.temperature();
+    const temp = this.promptConfigForm.get('temperature')?.value || 0.7;
     if (temp < 0.3) return 'Respuestas predecibles y consistentes';
     if (temp < 0.5) return 'Preciso con variación controlada';
     if (temp < 0.7) return 'Balance entre precisión y creatividad';
     if (temp < 0.9) return 'Más diversidad en las respuestas';
     return 'Máxima variación y aleatoriedad';
+  }
+
+  /**
+   * Obtiene el valor de temperatura actual
+   */
+  get temperatureValue(): number {
+    return this.promptConfigForm.get('temperature')?.value || 0.7;
+  }
+
+  /**
+   * Obtiene el valor de prompt text actual
+   */
+  get promptTextValue(): string {
+    return this.promptConfigForm.get('promptText')?.value || '';
+  }
+
+  /**
+   * Obtiene el valor de proveedor preferido actual
+   */
+  get preferredProviderValue(): string {
+    return this.promptConfigForm.get('preferredProvider')?.value || 'auto';
+  }
+
+  /**
+   * Obtiene el valor de máximo de preguntas por juego
+   */
+  get maxQuestionsValue(): number {
+    return this.promptConfigForm.get('maxQuestionsPerGame')?.value || 15;
+  }
+
+  /**
+   * Obtiene la etiqueta amigable de un proveedor de IA
+   */
+  getProviderLabel(provider: string): string {
+    const labels: Record<string, string> = {
+      'auto': 'Automático (Failover)',
+      'gemini': 'Google Gemini',
+      'groq': 'Groq',
+      'deepseek': 'DeepSeek',
+      'fireworks': 'Fireworks AI'
+    };
+    return labels[provider] || provider;
+  }
+
+  /**
+   * Obtiene la descripción de un proveedor de IA
+   */
+  getProviderDescription(provider: string): string {
+    const descriptions: Record<string, string> = {
+      'auto': 'El sistema selecciona automáticamente el mejor proveedor disponible',
+      'gemini': 'Google Gemini Flash 1.5 - Rápido y eficiente',
+      'groq': 'Groq Llama 3.3 70B - Alta velocidad de inferencia',
+      'deepseek': 'DeepSeek Chat - Modelo económico y efectivo',
+      'fireworks': 'Fireworks Llama 3.3 70B - Balance entre velocidad y calidad'
+    };
+    return descriptions[provider] || '';
+  }
+
+  // ========== MÉTODOS DE GESTIÓN DE CATEGORÍAS ==========
+
+  /**
+   * Carga las categorías desde el backend
+   */
+  loadCategories(): void {
+    this.isLoadingCategories.set(true);
+
+    this.adminService.getCategories().subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.categories.set(response.categories || []);
+        } else {
+          this.notification.error(response.error || 'Error al cargar categorías', NOTIFICATION_DURATION.DEFAULT);
+        }
+        this.isLoadingCategories.set(false);
+      },
+      error: (error) => {
+        this.notification.error('Error al cargar categorías', NOTIFICATION_DURATION.DEFAULT);
+        this.isLoadingCategories.set(false);
+      }
+    });
+  }
+
+  /**
+   * Abre el modal para crear una nueva categoría
+   */
+  openCreateCategoryModal(): void {
+    this.categoryToEdit.set(null);
+    this.isCategoryModalOpen.set(true);
+  }
+
+  /**
+   * Abre el modal para editar una categoría existente
+   */
+  openEditCategoryModal(category: AdminCategory): void {
+    this.categoryToEdit.set(category);
+    this.isCategoryModalOpen.set(true);
+  }
+
+  /**
+   * Cierra el modal de categoría
+   */
+  closeCategoryModal(): void {
+    this.isCategoryModalOpen.set(false);
+    this.categoryToEdit.set(null);
+  }
+
+  /**
+   * Handler cuando se guarda exitosamente una categoría
+   */
+  onCategorySaved(): void {
+    this.loadCategories();
+    this.closeCategoryModal();
+  }
+
+
+  /**
+   * Elimina una categoría
+   */
+  deleteCategory(category: AdminCategory): void {
+    if (!category.id) {
+      this.notification.error('ID de categoría no encontrado', NOTIFICATION_DURATION.DEFAULT);
+      return;
+    }
+
+    // Confirmar antes de eliminar
+    if (!confirm(`¿Estás seguro de eliminar la categoría "${category.name}"?\n\nNOTA: No se puede eliminar si tiene preguntas asociadas.`)) {
+      return;
+    }
+
+    this.isDeletingCategory.set(category.id);
+
+    this.adminService.deleteCategory(category.id).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.notification.success('Categoría eliminada exitosamente', NOTIFICATION_DURATION.SHORT);
+          this.loadCategories();
+        } else {
+          this.notification.error(response.error || 'Error al eliminar categoría', NOTIFICATION_DURATION.DEFAULT);
+        }
+        this.isDeletingCategory.set(null);
+      },
+      error: (error) => {
+        let errorMsg = 'Error al eliminar categoría';
+        if (error.status === HttpStatus.BAD_REQUEST) {
+          errorMsg = 'No se puede eliminar: tiene preguntas asociadas';
+        } else if (error.error?.error) {
+          errorMsg = error.error.error;
+        }
+        this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
+        this.isDeletingCategory.set(null);
+      }
+    });
   }
 }

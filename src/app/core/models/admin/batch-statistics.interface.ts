@@ -13,6 +13,7 @@ export interface BatchStatistics {
   verification_percent: number | null;
   imported_at: string;
   status: 'pending' | 'partial' | 'complete';
+  ai_provider_used?: string | null;
 }
 
 /**

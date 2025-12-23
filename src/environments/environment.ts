@@ -81,6 +81,8 @@ export const environment = {
       createCategory: '/admin/categories',
       /** GET /admin/categories - Listar categorías */
       getCategories: '/admin/categories',
+      /** PUT /admin/categories/{id} - Actualizar categoría */
+      updateCategory: (id: number) => `/admin/categories/${id}`,
       /** DELETE /admin/categories/{id} - Eliminar categoría */
       deleteCategory: (id: number) => `/admin/categories/${id}`,
       /** POST /admin/generate-batch - Generar preguntas con IA (batch) */
@@ -104,7 +106,11 @@ export const environment = {
       /** GET /admin/questions/{id}/full - Obtener pregunta completa con opciones y explicaciones */
       getQuestionFull: (id: number) => `/admin/questions/${id}/full`,
       /** PUT /admin/questions/{id}/full - Actualizar pregunta completa */
-      updateQuestionFull: (id: number) => `/admin/questions/${id}/full`
+      updateQuestionFull: (id: number) => `/admin/questions/${id}/full`,
+
+      // ========== AI PROVIDERS ==========
+      /** GET /admin/available-providers - Obtener proveedores de IA disponibles */
+      availableProviders: '/admin/available-providers'
     }
   }
 };

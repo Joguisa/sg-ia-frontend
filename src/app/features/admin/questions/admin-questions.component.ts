@@ -8,7 +8,6 @@ import { NotificationService } from '../../../core/services/notification.service
 import {
   AdminCategory,
   GenerationResponse,
-  UnverifiedQuestion,
   BatchStatistics,
   CsvImportResponse,
   QuestionFull,
@@ -47,20 +46,11 @@ export class AdminQuestionsComponent implements OnInit {
   deleteConfirmId = signal<number | null>(null);
 
   // ========== BATCH MANAGEMENT ==========
-  unverifiedQuestions = signal<UnverifiedQuestion[]>([]);
   batchStatistics = signal<BatchStatistics[]>([]);
-  selectedBatchFilter = signal<number | null>(null);
-  isUnverifiedSectionOpen = signal<boolean>(false);
   isCsvImportOpen = signal<boolean>(false);
-  isLoadingUnverified = signal<boolean>(false);
   isImportingCsv = signal<boolean>(false);
   isVerifyingBatch = signal<boolean>(false);
   lastImportResult = signal<CsvImportResponse | null>(null);
-
-  // ========== EDIT EXPLANATION MODAL ==========
-  isEditExplanationOpen = signal<boolean>(false);
-  selectedQuestionForEdit = signal<UnverifiedQuestion | null>(null);
-  editExplanationForm: FormGroup;
 
   // ========== FULL QUESTION EDIT MODAL ==========
   isFullEditModalOpen = signal<boolean>(false);
@@ -130,12 +120,6 @@ export class AdminQuestionsComponent implements OnInit {
       search: ['', [Validators.maxLength(100)]],
       category: [null],
       status: ['all']
-    });
-
-    // Inicializar formulario de edición de explicaciones
-    this.editExplanationForm = this.fb.group({
-      correctExplanation: ['', [Validators.required, Validators.minLength(10)]],
-      incorrectExplanation: ['', [Validators.required, Validators.minLength(10)]]
     });
 
     // Inicializar formulario de edición completa de pregunta
@@ -416,44 +400,11 @@ export class AdminQuestionsComponent implements OnInit {
   // ========== BATCH MANAGEMENT METHODS ==========
 
   /**
-   * Toggle de la sección de preguntas sin verificar
-   */
-  toggleUnverifiedSection(): void {
-    this.isUnverifiedSectionOpen.set(!this.isUnverifiedSectionOpen());
-    if (this.isUnverifiedSectionOpen() && this.unverifiedQuestions().length === 0) {
-      this.loadUnverifiedQuestions();
-    }
-  }
-
-  /**
    * Toggle de la sección de importación CSV
    */
   toggleCsvImportSection(): void {
     this.isCsvImportOpen.set(!this.isCsvImportOpen());
     this.lastImportResult.set(null);
-  }
-
-  /**
-   * Carga las preguntas sin verificar desde el backend
-   */
-  loadUnverifiedQuestions(batchId?: number): void {
-    this.isLoadingUnverified.set(true);
-
-    this.adminService.getUnverifiedQuestions(batchId).subscribe({
-      next: (response) => {
-        if (response.ok) {
-          this.unverifiedQuestions.set(response.questions || []);
-          this.selectedBatchFilter.set(batchId || null);
-        } else {
-          this.notification.error(response.error || 'Error al cargar preguntas sin verificar', NOTIFICATION_DURATION.DEFAULT);
-        }
-        this.isLoadingUnverified.set(false);
-      },
-      error: (error) => {
-        this.notification.error('Error al cargar preguntas sin verificar', NOTIFICATION_DURATION.DEFAULT);
-        this.isLoadingUnverified.set(false);
-      }
-    });
   }
 
   /**
@@ -487,8 +438,6 @@ export class AdminQuestionsComponent implements OnInit {
             `${response.verified_count} preguntas verificadas exitosamente`,
             NOTIFICATION_DURATION.DEFAULT
           );
-          // Recargar preguntas sin verificar y estadísticas
-          this.loadUnverifiedQuestions(this.selectedBatchFilter() || undefined);
           this.loadBatchStatistics();
           this.loadQuestions();
         } else {
@@ -542,11 +491,14 @@ export class AdminQuestionsComponent implements OnInit {
     this.notification.info('Importando archivo CSV...', NOTIFICATION_DURATION.LONG);
 
     this.adminService.importCsv(file).subscribe({
-      next: (response) => {
+      next: (response: any) => {
+        console.log('response', response)
         this.lastImportResult.set(response);
 
         if (response.ok) {
           if (response.errors > 0) {
+            console.log('response with errors', response);
+            
             this.notification.warning(
               `Importación parcial: ${response.imported} importadas, ${response.errors} errores`,
               NOTIFICATION_DURATION.LONG
@@ -560,9 +512,6 @@ export class AdminQuestionsComponent implements OnInit {
           // Recargar datos
           this.loadQuestions();
           this.loadBatchStatistics();
-          // Abrir sección de sin verificar con el nuevo batch
-          this.isUnverifiedSectionOpen.set(true);
-          this.loadUnverifiedQuestions(response.batch_id);
         } else {
           this.notification.error(response.error || 'Error al importar CSV', NOTIFICATION_DURATION.LONG);
         }
@@ -577,110 +526,6 @@ export class AdminQuestionsComponent implements OnInit {
         this.isImportingCsv.set(false);
       }
     });
-  }
-
-  /**
-   * Abre el modal de edición de explicaciones
-   */
-  openEditExplanationModal(question: UnverifiedQuestion): void {
-    this.selectedQuestionForEdit.set(question);
-
-    // Prellenar formulario con explicaciones existentes
-    const correctExp = question.explanations?.find(e => e.explanation_type === 'correct');
-    const incorrectExp = question.explanations?.find(e => e.explanation_type === 'incorrect');
-
-    this.editExplanationForm.patchValue({
-      correctExplanation: correctExp?.text || '',
-      incorrectExplanation: incorrectExp?.text || ''
-    });
-
-    this.isEditExplanationOpen.set(true);
-  }
-
-  /**
-   * Cierra el modal de edición de explicaciones
-   */
-  closeEditExplanationModal(): void {
-    this.isEditExplanationOpen.set(false);
-    this.selectedQuestionForEdit.set(null);
-    this.editExplanationForm.reset();
-  }
-
-  /**
-   * Guarda las explicaciones editadas
-   */
-  saveExplanations(): void {
-    const question = this.selectedQuestionForEdit();
-    if (!question) return;
-
-    this.editExplanationForm.markAllAsTouched();
-
-    if (this.editExplanationForm.invalid) {
-      this.notification.warning('Por favor completa ambas explicaciones (mínimo 10 caracteres)', NOTIFICATION_DURATION.DEFAULT);
-      return;
-    }
-
-    const formValues = this.editExplanationForm.value;
-    const correctExp = question.explanations?.find(e => e.explanation_type === 'correct');
-    const incorrectExp = question.explanations?.find(e => e.explanation_type === 'incorrect');
-
-    // Contador de operaciones pendientes
-    let pendingOps = 0;
-    let successOps = 0;
-
-    const checkComplete = () => {
-      pendingOps--;
-      if (pendingOps === 0) {
-        if (successOps > 0) {
-          this.notification.success('Explicaciones actualizadas', NOTIFICATION_DURATION.SHORT);
-          this.loadUnverifiedQuestions(this.selectedBatchFilter() || undefined);
-        }
-        this.closeEditExplanationModal();
-      }
-    };
-
-    // Actualizar explicación correcta si existe y cambió
-    if (correctExp && formValues.correctExplanation !== correctExp.text) {
-      pendingOps++;
-      this.adminService.editExplanation(correctExp.id, formValues.correctExplanation).subscribe({
-        next: (res) => {
-          if (res.ok) successOps++;
-          checkComplete();
-        },
-        error: () => {
-          this.notification.error('Error al actualizar explicación correcta', NOTIFICATION_DURATION.DEFAULT);
-          checkComplete();
-        }
-      });
-    }
-
-    // Actualizar explicación incorrecta si existe y cambió
-    if (incorrectExp && formValues.incorrectExplanation !== incorrectExp.text) {
-      pendingOps++;
-      this.adminService.editExplanation(incorrectExp.id, formValues.incorrectExplanation).subscribe({
-        next: (res) => {
-          if (res.ok) successOps++;
-          checkComplete();
-        },
-        error: () => {
-          this.notification.error('Error al actualizar explicación incorrecta', NOTIFICATION_DURATION.DEFAULT);
-          checkComplete();
-        }
-      });
-    }
-
-    // Si no hay nada que actualizar
-    if (pendingOps === 0) {
-      this.notification.info('No hay cambios que guardar', NOTIFICATION_DURATION.SHORT);
-      this.closeEditExplanationModal();
-    }
-  }
-
-  /**
-   * Filtra preguntas sin verificar por batch
-   */
-  filterUnverifiedByBatch(batchId: number | null): void {
-    this.loadUnverifiedQuestions(batchId || undefined);
   }
 
   /**
@@ -826,9 +671,6 @@ export class AdminQuestionsComponent implements OnInit {
           this.closeFullEditModal();
           // Recargar datos
           this.loadQuestions();
-          if (this.isUnverifiedSectionOpen()) {
-            this.loadUnverifiedQuestions(this.selectedBatchFilter() || undefined);
-          }
         } else {
           this.notification.error(response.error || 'Error al actualizar la pregunta', NOTIFICATION_DURATION.DEFAULT);
         }
