@@ -36,11 +36,17 @@
   color: white;
 }
 
+.header-title i {
+  font-size: 32px;
+  line-height: 1;
+}
+
 .header-title h1 {
   margin: 0;
   font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.5px;
+  color: white;
 }
 
 .header-subtitle {
@@ -712,6 +718,10 @@ button.btn-action i {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+}
+
+.batch-section .section-title {
+  color: #0f3460;
 }
 
 .btn-refresh {

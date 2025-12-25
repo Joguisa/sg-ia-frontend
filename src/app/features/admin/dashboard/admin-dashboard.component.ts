@@ -11,11 +11,14 @@ import { NOTIFICATION_DURATION } from '../../../core/constants/notification-conf
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
+  // Helper para usar en el template
+  Number = Number;
+
   // KPI Signals
   totalPlayers = signal<number>(0);
   totalSessions = signal<number>(0);
@@ -39,7 +42,7 @@ export class AdminDashboardComponent implements OnInit {
     private authService: AuthService,
     private notification: NotificationService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadDashboardStats();
@@ -102,11 +105,18 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   /**
+   * Navega a la gestión de jugadores
+   */
+  goToPlayers(): void {
+    this.router.navigate(['/admin/players']);
+  }
+
+  /**
    * Cierra sesión y redirige al login
    */
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/admin/login']).then((success) => {});
+    this.router.navigate(['/admin/login']).then((success) => { });
   }
 
   /**

@@ -40,7 +40,7 @@
         <div class="generator-header" (click)="toggleGenerator()">
           <div class="generator-title">
             <i class="fas fa-lightbulb"></i>
-            <h2>Generador Automático (Gemini AI)</h2>
+            <h2>Generador Automático </h2>
           </div>
           <button class="btn-toggle" [ngClass]="{ 'open': isGeneratorOpen() }">
             <i class="fas fa-chevron-down"></i>
@@ -243,6 +243,26 @@
           </div>
         </form>
       </div>
+
+      <!-- Bulk Actions -->
+      @if (pendingQuestionsCount > 0) {
+        <div class="bulk-actions-section">
+          <div class="bulk-actions-header">
+            <div class="bulk-info">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>{{ pendingQuestionsCount }} pregunta(s) pendiente(s) de verificación</span>
+            </div>
+            <button
+              class="btn btn-verify-all"
+              (click)="verifyAllPending()"
+              [disabled]="isLoading()"
+              title="Verificar todas las preguntas pendientes">
+              <i class="fas fa-check-double"></i>
+              Verificar Todas las Pendientes
+            </button>
+          </div>
+        </div>
+      }
 
       <!-- Questions Table -->
       <div class="table-card">

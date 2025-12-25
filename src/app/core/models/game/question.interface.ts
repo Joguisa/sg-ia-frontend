@@ -5,6 +5,7 @@ export interface Question {
   category_id: number;
   is_ai_generated?: boolean;
   admin_verified?: boolean;
+  batch_id?: number;
 }
 
 export interface QuestionResponse {

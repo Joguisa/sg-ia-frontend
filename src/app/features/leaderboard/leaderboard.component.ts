@@ -53,13 +53,8 @@ export class LeaderboardComponent implements OnInit {
     this.gameService.getLeaderboard().subscribe({
       next: (response: LeaderboardResponse) => {
         if (response.ok && response.leaderboard) {
-          // Asignar rankings (el backend retorna rank: 0, así que asignamos nosotros)
-          const leaderboardWithRanks = response.leaderboard.map((entry, index) => ({
-            ...entry,
-            rank: index + 1 // Rank empieza en 1
-          }));
-
-          this.leaderboard.set(leaderboardWithRanks);
+          // El backend ya calcula los rankings correctamente
+          this.leaderboard.set(response.leaderboard);
           this.isLoading.set(false);
         } else {
           this.errorMessage.set(response.error || 'Error al cargar el leaderboard.');

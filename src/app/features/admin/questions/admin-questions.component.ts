@@ -101,6 +101,14 @@ export class AdminQuestionsComponent implements OnInit {
     return result;
   });
 
+  // ========== GETTERS ==========
+  /**
+   * Retorna el número de preguntas pendientes de verificación
+   */
+  get pendingQuestionsCount(): number {
+    return this.allQuestions().filter(q => !q.admin_verified).length;
+  }
+
   constructor(
     private fb: FormBuilder,
     private adminService: AdminService,
@@ -315,6 +323,71 @@ export class AdminQuestionsComponent implements OnInit {
       },
       error: (error) => {
         this.notification.error('Error al cambiar estado de verificación', NOTIFICATION_DURATION.DEFAULT);
+      }
+    });
+  }
+
+  /**
+   * Verifica todas las preguntas pendientes
+   */
+  verifyAllPending(): void {
+    const pendingCount = this.allQuestions().filter(q => !q.admin_verified).length;
+
+    if (pendingCount === 0) {
+      this.notification.info('No hay preguntas pendientes de verificación', NOTIFICATION_DURATION.SHORT);
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    this.adminService.verifyBulk({ verify_all_pending: true }).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.notification.success(response.message || `${response.verified_count} preguntas verificadas`, NOTIFICATION_DURATION.DEFAULT);
+          this.loadQuestions(); // Recargar preguntas
+        } else {
+          this.notification.error('Error al verificar preguntas', NOTIFICATION_DURATION.DEFAULT);
+        }
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        this.notification.error('Error al verificar preguntas masivamente', NOTIFICATION_DURATION.DEFAULT);
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  /**
+   * Verifica todas las preguntas de un batch específico
+   */
+  verifyBatchQuestions(batchId: number): void {
+    const batchQuestions = this.allQuestions().filter(q => q.batch_id === batchId && !q.admin_verified);
+    const pendingCount = batchQuestions.length;
+
+    if (pendingCount === 0) {
+      this.notification.info('No hay preguntas pendientes en este batch', NOTIFICATION_DURATION.SHORT);
+      return;
+    }
+
+    if (!confirm(`¿Verificar las ${pendingCount} pregunta(s) pendiente(s) de este batch?`)) {
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    this.adminService.verifyBulk({ batch_id: batchId }).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.notification.success(response.message || `${response.verified_count} preguntas verificadas`, NOTIFICATION_DURATION.DEFAULT);
+          this.loadQuestions(); // Recargar preguntas
+        } else {
+          this.notification.error('Error al verificar batch', NOTIFICATION_DURATION.DEFAULT);
+        }
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        this.notification.error('Error al verificar batch', NOTIFICATION_DURATION.DEFAULT);
+        this.isLoading.set(false);
       }
     });
   }

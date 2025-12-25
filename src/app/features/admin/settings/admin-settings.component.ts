@@ -1,7 +1,7 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -9,17 +9,25 @@ import { PromptConfigResponse, AdminPrompt, AdminCategory, AvailableProvidersRes
 import { HttpStatus } from '../../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 import { CategoryModalComponent } from '../components/category-modal/category-modal.component';
+import { TabsComponent, Tab } from '../../../shared/tabs/tabs.component';
 
 @Component({
   selector: 'app-admin-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent, TabsComponent],
   templateUrl: './admin-settings.component.html',
   styleUrls: ['./admin-settings.component.css']
 })
 export class AdminSettingsComponent implements OnInit {
   // ========== HELPER PARA TEMPLATE ==========
   Math = Math; // Exponer Math para usar en el template
+
+  // ========== TABS CONFIGURATION ==========
+  readonly tabs: Tab[] = [
+    { id: 'ia', label: 'Inteligencia Artificial', icon: 'fas fa-brain' },
+    { id: 'juego', label: 'Juego y Categorías', icon: 'fas fa-gamepad' }
+  ];
+  activeTab = signal<string>('ia');
 
   // ========== FORMULARIOS REACTIVOS ==========
   promptConfigForm!: FormGroup;
@@ -35,6 +43,7 @@ export class AdminSettingsComponent implements OnInit {
   originalPromptText = signal<string>('');
   originalTemperature = signal<number>(0.7);
   originalPreferredProvider = signal<string>('auto');
+  originalMaxQuestions = signal<number>(15);
 
   // ========== GESTIÓN DE PROVEEDORES IA ==========
   availableProviders = signal<string[]>([]);
@@ -45,6 +54,9 @@ export class AdminSettingsComponent implements OnInit {
   isLoadingCategories = signal<boolean>(false);
   isDeletingCategory = signal<number | null>(null);
 
+  // ========== PREGUNTAS VERIFICADAS ==========
+  totalVerifiedQuestions = signal<number>(0);
+
   // Modal de crear/editar categoría
   isCategoryModalOpen = signal<boolean>(false);
   categoryToEdit = signal<AdminCategory | null>(null);
@@ -54,15 +66,37 @@ export class AdminSettingsComponent implements OnInit {
     private authService: AuthService,
     private notification: NotificationService,
     private router: Router,
+    private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
     this.initForms();
   }
 
   ngOnInit(): void {
+    // Leer tab desde query params
+    this.route.queryParams.subscribe(params => {
+      const tab = params['tab'];
+      if (tab && this.tabs.some(t => t.id === tab)) {
+        this.activeTab.set(tab);
+      }
+    });
+
     this.loadSystemPrompt();
     this.loadCategories();
     this.loadAvailableProviders();
+    this.loadVerifiedQuestionsCount();
+  }
+
+  /**
+   * Cambia el tab activo y actualiza URL
+   */
+  onTabChange(tabId: string): void {
+    this.activeTab.set(tabId);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tabId },
+      queryParamsHandling: 'merge'
+    });
   }
 
   /**
@@ -74,7 +108,7 @@ export class AdminSettingsComponent implements OnInit {
       promptText: ['', [Validators.required]],
       temperature: [0.7, [Validators.required, Validators.min(0), Validators.max(1)]],
       preferredProvider: ['auto', [Validators.required]],
-      maxQuestionsPerGame: [15, [Validators.required, Validators.min(5), Validators.max(100)]]
+      maxQuestionsPerGame: [15, [Validators.required, Validators.min(5), Validators.max(1000)]]
     });
 
     // Detectar cambios en el formulario de prompt
@@ -97,13 +131,14 @@ export class AdminSettingsComponent implements OnInit {
             promptText: config.prompt_text,
             temperature: config.temperature,
             preferredProvider: config.preferred_ai_provider || 'auto',
-            maxQuestionsPerGame: config.max_questions_per_game || 15
+            maxQuestionsPerGame: Number(config.max_questions_per_game) || 15
           }, { emitEvent: false });
 
           // Guardar originals para detectar cambios
           this.originalPromptText.set(config.prompt_text);
           this.originalTemperature.set(config.temperature);
           this.originalPreferredProvider.set(config.preferred_ai_provider || 'auto');
+          this.originalMaxQuestions.set(Number(config.max_questions_per_game) || 15);
 
           this.isLoading.set(false);
         } else {
@@ -169,12 +204,24 @@ export class AdminSettingsComponent implements OnInit {
     const currentPrompt = this.promptConfigForm.get('promptText')?.value || '';
     const currentTemp = this.promptConfigForm.get('temperature')?.value || 0.7;
     const currentProvider = this.promptConfigForm.get('preferredProvider')?.value || 'auto';
+    const currentMaxQuestionsRaw = this.promptConfigForm.get('maxQuestionsPerGame')?.value;
+
+    // Si maxQuestions está vacío o es null, usar el original (no considerar como cambio mientras escribe)
+    const currentMaxQuestions = (currentMaxQuestionsRaw === null || currentMaxQuestionsRaw === '')
+      ? this.originalMaxQuestions()
+      : Number(currentMaxQuestionsRaw);
 
     const hasPromptChange = currentPrompt !== this.originalPromptText();
     const hasTemperatureChange = currentTemp !== this.originalTemperature();
     const hasProviderChange = currentProvider !== this.originalPreferredProvider();
+    const hasMaxQuestionsChange = currentMaxQuestions !== this.originalMaxQuestions();
 
-    this.hasChanges.set(hasPromptChange || hasTemperatureChange || hasProviderChange);
+    const hasAnyChange = hasPromptChange || hasTemperatureChange || hasProviderChange || hasMaxQuestionsChange;
+
+    // No permitir guardar si el valor de maxQuestions no es válido
+    const maxQuestionsValid = this.maxQuestionsIsValid;
+
+    this.hasChanges.set(hasAnyChange && maxQuestionsValid);
   }
 
   /**
@@ -219,6 +266,7 @@ export class AdminSettingsComponent implements OnInit {
           this.originalPromptText.set(cleanPrompt); // Usa la variable limpia
           this.originalTemperature.set(cleanTemp);
           this.originalPreferredProvider.set(cleanProvider);
+          this.originalMaxQuestions.set(cleanMaxQuestions);
           this.hasChanges.set(false);
           this.successMessage.set('Configuración actualizada exitosamente');
 
@@ -264,7 +312,8 @@ export class AdminSettingsComponent implements OnInit {
     this.promptConfigForm.patchValue({
       promptText: this.originalPromptText(),
       temperature: this.originalTemperature(),
-      preferredProvider: this.originalPreferredProvider()
+      preferredProvider: this.originalPreferredProvider(),
+      maxQuestionsPerGame: this.originalMaxQuestions()
     }, { emitEvent: false });
     this.hasChanges.set(false);
     this.errorMessage.set('');
@@ -360,7 +409,104 @@ RESTRICCIONES:
    * Obtiene el valor de máximo de preguntas por juego
    */
   get maxQuestionsValue(): number {
-    return this.promptConfigForm.get('maxQuestionsPerGame')?.value || 15;
+    const value = this.promptConfigForm.get('maxQuestionsPerGame')?.value;
+    // Si es null, undefined o vacío, retornar 0 para no mostrar error
+    if (value === null || value === undefined || value === '') {
+      return 0;
+    }
+    return Number(value) || 15;
+  }
+
+  /**
+   * Obtiene el número total de categorías
+   */
+  get totalCategoriesCount(): number {
+    return this.categories().length;
+  }
+
+  /**
+   * Obtiene el número mínimo de preguntas requeridas (1 por categoría)
+   */
+  get minimumQuestionsRequired(): number {
+    return this.totalCategoriesCount > 0 ? this.totalCategoriesCount : 1;
+  }
+
+  /**
+   * Verifica si el valor de maxQuestions excede las preguntas verificadas
+   */
+  get maxQuestionsExceedsAvailable(): boolean {
+    const configured = this.maxQuestionsValue;
+    const available = this.totalVerifiedQuestions();
+    // Solo mostrar advertencia si hay un valor configurado mayor a 0
+    return configured > 0 && configured > available && available > 0;
+  }
+
+  /**
+   * Verifica si el valor de maxQuestions está por debajo del mínimo requerido
+   */
+  get maxQuestionsBelowMinimum(): boolean {
+    const configured = this.maxQuestionsValue;
+    const minimum = this.minimumQuestionsRequired;
+    return configured > 0 && configured < minimum;
+  }
+
+  /**
+   * Verifica si el valor de maxQuestions es válido (no excede disponibles ni está por debajo del mínimo)
+   */
+  get maxQuestionsIsValid(): boolean {
+    return !this.maxQuestionsExceedsAvailable && !this.maxQuestionsBelowMinimum;
+  }
+
+  /**
+   * Valida que solo se ingresen números en el input de maxQuestions
+   */
+  onMaxQuestionsInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    // Remover cualquier carácter que no sea número
+    value = value.replace(/[^0-9]/g, '');
+
+    // Actualizar el valor del input
+    input.value = value;
+
+    // Actualizar el formulario (permitir vacío temporalmente)
+    if (value === '') {
+      this.promptConfigForm.patchValue({ maxQuestionsPerGame: null }, { emitEvent: true });
+    } else {
+      const numValue = parseInt(value, 10);
+      this.promptConfigForm.patchValue({ maxQuestionsPerGame: numValue }, { emitEvent: true });
+    }
+  }
+
+  /**
+   * Valida y ajusta el valor cuando el input pierde el foco
+   */
+  onMaxQuestionsBlur(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    const minimum = this.minimumQuestionsRequired;
+
+    // Si está vacío, establecer mínimo requerido
+    if (value === '' || value === null) {
+      value = minimum.toString();
+    }
+
+    const numValue = parseInt(value, 10);
+
+    // Validar límites
+    if (!isNaN(numValue)) {
+      // Mínimo: basado en número de categorías
+      if (numValue < minimum) {
+        value = minimum.toString();
+      }
+      // Máximo: no limitamos aquí, pero la validación mostrará advertencia
+    }
+
+    // Actualizar el valor del input y del formulario
+    input.value = value;
+    this.promptConfigForm.patchValue({ maxQuestionsPerGame: parseInt(value, 10) || minimum });
   }
 
   /**
@@ -389,6 +535,26 @@ RESTRICCIONES:
       'fireworks': 'Fireworks Llama 3.3 70B - Balance entre velocidad y calidad'
     };
     return descriptions[provider] || '';
+  }
+
+  /**
+   * Carga el total de preguntas verificadas desde el backend
+   */
+  private loadVerifiedQuestionsCount(): void {
+    this.adminService.getDashboardStats().subscribe({
+      next: (response) => {
+        if (response.ok && response.summary) {
+          // Total de preguntas menos las pendientes de verificación
+          const totalQuestions = response.summary.total_questions || 0;
+          const pending = response.summary.pending_verification || 0;
+          this.totalVerifiedQuestions.set(totalQuestions - pending);
+        }
+      },
+      error: () => {
+        // Si falla, usar un valor por defecto alto
+        this.totalVerifiedQuestions.set(100);
+      }
+    });
   }
 
   // ========== MÉTODOS DE GESTIÓN DE CATEGORÍAS ==========

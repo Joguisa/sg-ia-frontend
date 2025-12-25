@@ -77,6 +77,20 @@ export class AdminService {
   }
 
   /**
+   * Verificación masiva de preguntas
+   *
+   * Backend: POST /admin/questions/verify-bulk
+   * @param options Opciones: { verify_all_pending?: boolean, question_ids?: number[], batch_id?: number }
+   * @returns Observable con el conteo de preguntas verificadas
+   */
+  verifyBulk(options: { verify_all_pending?: boolean; question_ids?: number[]; batch_id?: number }): Observable<{ ok: boolean; message: string; verified_count: number }> {
+    return this.http.post<{ ok: boolean; message: string; verified_count: number }>(
+      `${this.apiUrl}/admin/questions/verify-bulk`,
+      options
+    );
+  }
+
+  /**
    * Obtiene la configuración actual del prompt de IA
    *
    * Backend: GET /admin/config/prompt

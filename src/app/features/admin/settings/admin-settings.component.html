@@ -24,417 +24,433 @@
 
   <!-- Success & Error Messages -->
   @if (successMessage()) {
-    <div class="alert alert-success">
-      <i class="fas fa-check"></i>
-      <span>{{ successMessage() }}</span>
-    </div>
+  <div class="alert alert-success">
+    <i class="fas fa-check"></i>
+    <span>{{ successMessage() }}</span>
+  </div>
   }
 
   @if (errorMessage()) {
-    <div class="alert alert-danger">
-      <i class="fas fa-circle-info"></i>
-      <span>{{ errorMessage() }}</span>
-    </div>
+  <div class="alert alert-danger">
+    <i class="fas fa-circle-info"></i>
+    <span>{{ errorMessage() }}</span>
+  </div>
   }
 
   <!-- Loading State -->
   @if (isLoading()) {
-    <div class="loading-container">
-      <div class="spinner"></div>
-      <p>Cargando configuración...</p>
-    </div>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando configuración...</p>
+  </div>
   }
 
   <!-- Settings Content -->
   @if (!isLoading()) {
-    <div class="settings-content">
-      <!-- System Prompt Section -->
-      <div class="settings-card">
-        <div class="card-header">
-          <h2 class="card-title">
-            <i class="fas fa-file-text"></i>
-            Instrucción del Sistema
-          </h2>
-          <p class="card-subtitle">Define la personalidad y reglas estrictas para la generación de preguntas con IA</p>
-        </div>
+  <div class="settings-content">
 
-        <div class="card-body">
-          <form [formGroup]="promptConfigForm">
-            <div class="form-group">
-              <label for="prompt-textarea" class="form-label">
-                System Prompt
-                <span class="required">*</span>
-              </label>
-              <p class="form-help">Este texto guía a Gemini en cómo generar preguntas. Sé específico y detallado.</p>
+    <!-- Tabs Navigation -->
+    <app-tabs
+      [tabs]="tabs"
+      [activeTab]="activeTab()"
+      (tabChange)="onTabChange($event)">
+    </app-tabs>
 
-              <textarea
-                id="prompt-textarea"
-                class="form-control form-textarea"
-                rows="12"
-                formControlName="promptText"
-                
-                placeholder="Escribe el prompt del sistema aquí...">
+    <!-- TAB 1: INTELIGENCIA ARTIFICIAL -->
+    @if (activeTab() === 'ia') {
+    <!-- System Prompt Section -->
+    <div class="settings-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-file-text"></i>
+          Instrucción del Sistema
+        </h2>
+        <p class="card-subtitle">Define la personalidad y reglas estrictas para la generación de preguntas con IA</p>
+      </div>
+
+      <div class="card-body">
+        <form [formGroup]="promptConfigForm">
+          <div class="form-group">
+            <label for="prompt-textarea" class="form-label">
+              System Prompt
+              <span class="required">*</span>
+            </label>
+            <p class="form-help">Este texto guía a Gemini en cómo generar preguntas. Sé específico y detallado.</p>
+
+            <textarea id="prompt-textarea" class="form-control form-textarea" rows="12" formControlName="promptText"
+              placeholder="Escribe el prompt del sistema aquí...">
               </textarea>
 
-              <div class="textarea-footer">
-                <span class="char-count">{{ promptTextValue.length }} caracteres</span>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- AI Provider Selection Section -->
-      <div class="settings-card">
-        <div class="card-header">
-          <h2 class="card-title">
-            <i class="fas fa-server"></i>
-            Proveedor de Inteligencia Artificial
-          </h2>
-          <p class="card-subtitle">Selecciona el proveedor de IA preferido para generar preguntas</p>
-        </div>
-
-        <div class="card-body">
-          <form [formGroup]="promptConfigForm">
-            <div class="form-group">
-              <label for="provider-select" class="form-label">
-                Proveedor Preferido <span class="required">*</span>
-              </label>
-              <p class="form-help">
-                Selecciona un proveedor específico o deja en 'Automático' para failover inteligente
-              </p>
-
-              @if (isLoadingProviders()) {
-                <div class="loading-small">
-                  <span class="spinner-small"></span>
-                  <span>Cargando proveedores...</span>
-                </div>
-              } @else {
-                <select
-                  id="provider-select"
-                  class="form-control form-select"
-                  formControlName="preferredProvider">
-                  @for (provider of availableProviders(); track provider) {
-                    <option [value]="provider">{{ getProviderLabel(provider) }}</option>
-                  }
-                </select>
-
-                <div class="provider-info-card">
-                  <div class="provider-icon">
-                    <i class="fas fa-circle-info"></i>
-                  </div>
-                  <div class="provider-description">
-                    <strong>{{ getProviderLabel(preferredProviderValue) }}</strong>
-                    <p>{{ getProviderDescription(preferredProviderValue) }}</p>
-                  </div>
-                </div>
-
-                <div class="provider-status-section">
-                  <p class="provider-status-label">Proveedores Disponibles:</p>
-                  <div class="provider-badges">
-                    @for (provider of availableProviders(); track provider) {
-                      @if (provider !== 'auto') {
-                        <span class="provider-badge" [class.active]="preferredProviderValue === provider">
-                          <i class="fas fa-check-circle"></i>
-                          {{ getProviderLabel(provider) }}
-                        </span>
-                      }
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-
-            <!-- Max Questions Per Game Configuration -->
-            <div class="form-group">
-              <label for="max-questions" class="form-label">
-                Preguntas Máximas por Cuestionario <span class="required">*</span>
-              </label>
-              <p class="form-help">
-                Define el número máximo de preguntas que un jugador responderá por sesión (5-100)
-              </p>
-
-              <div class="number-input-wrapper">
-                <input
-                  type="number"
-                  id="max-questions"
-                  class="form-control number-input"
-                  formControlName="maxQuestionsPerGame"
-                  min="5"
-                  max="100"
-                  step="5"
-                  [class.is-invalid]="promptConfigForm.get('maxQuestionsPerGame')?.invalid &&
-                                      promptConfigForm.get('maxQuestionsPerGame')?.touched">
-
-                <div class="input-group-append">
-                  <span class="input-group-text">preguntas</span>
-                </div>
-              </div>
-
-              <div class="config-info-card">
-                <div class="config-icon">
-                  <i class="fas fa-calculator"></i>
-                </div>
-                <div class="config-description">
-                  <strong>Distribución Automática</strong>
-                  <p>
-                    {{ Math.floor(maxQuestionsValue / 5) }} preguntas por nivel de dificultad
-                    (niveles 1, 2, 3, 4, 5)
-                  </p>
-                  <p class="text-muted">
-                    El jugador puede saltar niveles según su desempeño, pero cada nivel se bloquea
-                    después de completar su cuota.
-                  </p>
-                </div>
-              </div>
-
-              @if (promptConfigForm.get('maxQuestionsPerGame')?.invalid &&
-                   promptConfigForm.get('maxQuestionsPerGame')?.touched) {
-                <div class="invalid-feedback" style="display: block;">
-                  El valor debe estar entre 5 y 100
-                </div>
-              }
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- Categories Management Section -->
-      <div class="settings-card">
-        <div class="card-header">
-          <h2 class="card-title">
-            <i class="fas fa-folder"></i>
-            Gestión de Categorías
-          </h2>
-          <p class="card-subtitle">Administra las categorías de preguntas del sistema</p>
-        </div>
-
-        <div class="card-body">
-          <!-- Create Button -->
-          <div class="category-actions">
-            <button
-              class="btn btn-primary"
-              (click)="openCreateCategoryModal()"
-              [disabled]="isLoadingCategories()">
-              <i class="fas fa-plus"></i>
-              Nueva Categoría
-            </button>
-          </div>
-
-          <!-- Loading -->
-          @if (isLoadingCategories()) {
-            <div class="loading-small">
-              <span class="spinner-small"></span>
-              <span>Cargando categorías...</span>
-            </div>
-          }
-
-          <!-- Categories List -->
-          @if (!isLoadingCategories() && categories().length > 0) {
-            <div class="categories-list">
-              @for (category of categories(); track category.id) {
-                <div class="category-item">
-                  <div class="category-info">
-                    <div class="category-header">
-                      <h4 class="category-name">{{ category.name }}</h4>
-                      <span class="category-id">ID: {{ category.id }}</span>
-                    </div>
-                    @if (category.description) {
-                      <p class="category-description">{{ category.description }}</p>
-                    }
-                  </div>
-                  <div class="category-actions-buttons">
-                    <button
-                      class="btn-action btn-edit"
-                      (click)="openEditCategoryModal(category)"
-                      [disabled]="isDeletingCategory() === category.id"
-                      title="Editar categoría">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button
-                      class="btn-action btn-delete"
-                      (click)="deleteCategory(category)"
-                      [disabled]="isDeletingCategory() === category.id"
-                      title="Eliminar categoría">
-                      @if (isDeletingCategory() !== category.id) {
-                        <i class="fas fa-trash"></i>
-                      } @else {
-                        <span class="spinner-tiny"></span>
-                      }
-                    </button>
-                  </div>
-                </div>
-              }
-            </div>
-          }
-
-          @if (!isLoadingCategories() && categories().length === 0) {
-            <div class="no-data-small">
-              <i class="fas fa-folder-open"></i>
-              <p>No hay categorías creadas</p>
-            </div>
-          }
-        </div>
-      </div>
-
-      <!-- Temperature Settings -->
-      <div class="settings-card">
-        <div class="card-header">
-          <h2 class="card-title">
-            <i class="fas fa-thermometer-half"></i>
-            Creatividad (Temperatura)
-          </h2>
-          <p class="card-subtitle">Controla el nivel de variabilidad en las respuestas de la IA</p>
-        </div>
-
-        <div class="card-body">
-          <form [formGroup]="promptConfigForm">
-            <div class="form-group">
-              <label for="temperature-slider" class="form-label">
-                Temperatura: <span class="temperature-value">{{ temperatureValue.toFixed(1) }}</span>
-              </label>
-
-              <div class="temperature-info">
-                <div class="info-card">
-                  <span class="info-label">Nivel:</span>
-                  <span class="info-value">{{ getTemperatureLabel() }}</span>
-                </div>
-                <div class="info-card">
-                  <span class="info-label">Descripción:</span>
-                  <span class="info-value">{{ getTemperatureDescription() }}</span>
-                </div>
-              </div>
-
-              <!-- Slider -->
-              <div class="slider-container">
-                <span class="slider-label slider-min">
-                  <i class="fas fa-arrow-left"></i>
-                  Preciso (0.0)
-                </span>
-
-                <input
-                  id="temperature-slider"
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  formControlName="temperature"
-                  
-                  class="form-range">
-
-                <span class="slider-label slider-max">
-                  Creativo (1.0)
-                  <i class="fas fa-arrow-right"></i>
-                </span>
-              </div>
-
-              <p class="form-help">
-                <strong>0.0 = Determinista:</strong> Respuestas idénticas y predecibles.
-                <br>
-                <strong>1.0 = Creativo:</strong> Máxima variedad y aleatoriedad.
-                <br>
-                <strong>Recomendado: 0.7</strong> (Balance entre precisión y diversidad)
-              </p>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="action-buttons">
-        <!-- Discard Changes -->
-        @if (hasChanges()) {
-          <button
-            class="btn btn-secondary btn-lg"
-            (click)="discardChanges()"
-            [disabled]="isSaving()">
-            <i class="fas fa-times"></i>
-            Descartar Cambios
-          </button>
-        }
-
-        <!-- Reset to Default -->
-        <button
-          class="btn btn-warning btn-lg"
-          (click)="resetToDefault()"
-          [disabled]="isSaving()">
-          <i class="fas fa-refresh"></i>
-          Restaurar Predeterminado
-        </button>
-
-        <!-- Save Changes -->
-        <button
-          class="btn btn-primary btn-lg"
-          (click)="saveChanges()"
-          [disabled]="!hasChanges() || isSaving()">
-          @if (!isSaving()) {
-            <i class="fas fa-save"></i>
-            Guardar Cambios
-          } @else {
-            <span class="spinner-small"></span>
-            Guardando...
-          }
-        </button>
-      </div>
-
-      <!-- Info Section -->
-      <div class="info-section">
-        <h3 class="info-title">
-          <i class="fas fa-circle-info"></i>
-          Información Importante
-        </h3>
-
-        <div class="info-cards">
-          <div class="info-item">
-            <span class="info-icon">
-              <i class="fas fa-lightbulb"></i>
-            </span>
-            <div class="info-text">
-              <h4>Cambios Inmediatos</h4>
-              <p>Los cambios en el prompt afectarán a todas las nuevas preguntas generadas, no a las existentes.</p>
+            <div class="textarea-footer">
+              <span class="char-count">{{ promptTextValue.length }} caracteres</span>
             </div>
           </div>
-
-          <div class="info-item">
-            <span class="info-icon">
-              <i class="fas fa-shield-check"></i>
-            </span>
-            <div class="info-text">
-              <h4>Validación Estricta</h4>
-              <p>Las preguntas generadas se validan según las reglas del prompt. Sé claro y específico.</p>
-            </div>
-          </div>
-
-          <div class="info-item">
-            <span class="info-icon">
-              <i class="fas fa-flask"></i>
-            </span>
-            <div class="info-text">
-              <h4>Experimenta</h4>
-              <p>Prueba diferentes valores de temperatura para encontrar el balance ideal para tu caso.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="settings-footer">
-        <p class="footer-text">
-          <i class="fas fa-circle-info"></i>
-          Última actualización: En tiempo real | Modelo: Gemini API
-        </p>
+        </form>
       </div>
     </div>
+
+    <!-- AI Provider Selection Section -->
+    <div class="settings-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-server"></i>
+          Proveedor de Inteligencia Artificial
+        </h2>
+        <p class="card-subtitle">Selecciona el proveedor de IA preferido para generar preguntas</p>
+      </div>
+
+      <div class="card-body">
+        <form [formGroup]="promptConfigForm">
+          <div class="form-group">
+            <label for="provider-select" class="form-label">
+              Proveedor Preferido <span class="required">*</span>
+            </label>
+            <p class="form-help">
+              Selecciona un proveedor específico o deja en 'Automático' para failover inteligente
+            </p>
+
+            @if (isLoadingProviders()) {
+            <div class="loading-small">
+              <span class="spinner-small"></span>
+              <span>Cargando proveedores...</span>
+            </div>
+            } @else {
+            <select id="provider-select" class="form-control form-select" formControlName="preferredProvider">
+              @for (provider of availableProviders(); track provider) {
+              <option [value]="provider">{{ getProviderLabel(provider) }}</option>
+              }
+            </select>
+
+            <div class="provider-info-card">
+              <div class="provider-icon">
+                <i class="fas fa-circle-info"></i>
+              </div>
+              <div class="provider-description">
+                <strong>{{ getProviderLabel(preferredProviderValue) }}</strong>
+                <p>{{ getProviderDescription(preferredProviderValue) }}</p>
+              </div>
+            </div>
+
+            <div class="provider-status-section">
+              <p class="provider-status-label">Proveedores Disponibles:</p>
+              <div class="provider-badges">
+                @for (provider of availableProviders(); track provider) {
+                @if (provider !== 'auto') {
+                <span class="provider-badge" [class.active]="preferredProviderValue === provider">
+                  <i class="fas fa-check-circle"></i>
+                  {{ getProviderLabel(provider) }}
+                </span>
+                }
+                }
+              </div>
+            </div>
+            }
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- Temperature Settings -->
+    <div class="settings-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-thermometer-half"></i>
+          Creatividad (Temperatura)
+        </h2>
+        <p class="card-subtitle">Controla el nivel de variabilidad en las respuestas de la IA</p>
+      </div>
+
+      <div class="card-body">
+        <form [formGroup]="promptConfigForm">
+          <div class="form-group">
+            <label for="temperature-slider" class="form-label">
+              Temperatura: <span class="temperature-value">{{ temperatureValue.toFixed(1) }}</span>
+            </label>
+
+            <div class="temperature-info">
+              <div class="info-card">
+                <span class="info-label">Nivel:</span>
+                <span class="info-value">{{ getTemperatureLabel() }}</span>
+              </div>
+              <div class="info-card">
+                <span class="info-label">Descripción:</span>
+                <span class="info-value">{{ getTemperatureDescription() }}</span>
+              </div>
+            </div>
+
+            <!-- Slider -->
+            <div class="slider-container">
+              <span class="slider-label slider-min">
+                <i class="fas fa-arrow-left"></i>
+                Preciso (0.0)
+              </span>
+
+              <input id="temperature-slider" type="range" min="0" max="1" step="0.1" formControlName="temperature"
+                class="form-range">
+
+              <span class="slider-label slider-max">
+                Creativo (1.0)
+                <i class="fas fa-arrow-right"></i>
+              </span>
+            </div>
+
+            <p class="form-help">
+              <strong>0.0 = Determinista:</strong> Respuestas idénticas y predecibles.
+              <br>
+              <strong>1.0 = Creativo:</strong> Máxima variedad y aleatoriedad.
+              <br>
+              <strong>Recomendado: 0.7</strong> (Balance entre precisión y diversidad)
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+    }
+    <!-- END TAB 1 -->
+
+    <!-- TAB 2: JUEGO Y CATEGORÍAS -->
+    @if (activeTab() === 'juego') {
+    <!-- Max Questions Per Game Section -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h2 class="admin-card-title">
+          <i class="fas fa-list-ol"></i>
+          Preguntas por Partida
+        </h2>
+        <p class="admin-card-subtitle">Define el número máximo de preguntas que se mostrarán en cada juego</p>
+      </div>
+
+      <div class="admin-card-body">
+        <form [formGroup]="promptConfigForm">
+          <div class="form-group">
+            <label for="max-questions-input" class="form-label">
+              Máximo de Preguntas por Juego
+              <span class="required">*</span>
+            </label>
+            <p class="form-help">
+              Cantidad de preguntas que se presentarán en cada partida.
+              <strong>Mínimo: {{ minimumQuestionsRequired }}</strong> (1 por categoría),
+              <strong>Máximo: {{ totalVerifiedQuestions() }}</strong> (preguntas verificadas disponibles)
+            </p>
+
+            <input id="max-questions-input" type="text" class="form-control" formControlName="maxQuestionsPerGame"
+              (input)="onMaxQuestionsInput($event)" (blur)="onMaxQuestionsBlur($event)"
+              [placeholder]="minimumQuestionsRequired.toString()"
+              inputmode="numeric">
+
+            <div class="input-footer">
+              <span class="input-info">
+                <i class="fas fa-circle-info"></i>
+                Valor actual: <strong>{{ maxQuestionsValue > 0 ? maxQuestionsValue : '-' }}</strong> {{
+                maxQuestionsValue > 0 ? 'preguntas' : '' }}
+              </span>
+              <span class="input-info" style="margin-left: 1rem;">
+                <i class="fas fa-layer-group"></i>
+                Total categorías: <strong>{{ totalCategoriesCount }}</strong>
+              </span>
+              <span class="input-info" style="margin-left: 1rem;">
+                <i class="fas fa-check-circle"></i>
+                Preguntas verificadas: <strong>{{ totalVerifiedQuestions() }}</strong>
+              </span>
+            </div>
+
+            <!-- Advertencia si está por debajo del mínimo -->
+            @if (maxQuestionsBelowMinimum) {
+            <div class="admin-alert admin-alert-danger" style="margin-top: 1rem;">
+              <i class="fas fa-exclamation-triangle"></i>
+              <div>
+                <strong>Error:</strong> Has configurado <strong>{{ maxQuestionsValue }}</strong> preguntas por
+                juego, pero el mínimo requerido es <strong>{{ minimumQuestionsRequired }}</strong> preguntas (1 por cada categoría).
+                Aumenta el límite a al menos <strong>{{ minimumQuestionsRequired }}</strong> preguntas.
+              </div>
+            </div>
+            }
+
+            <!-- Advertencia si excede el disponible -->
+            @if (maxQuestionsExceedsAvailable) {
+            <div class="admin-alert admin-alert-danger" style="margin-top: 1rem;">
+              <i class="fas fa-exclamation-triangle"></i>
+              <div>
+                <strong>Error:</strong> Has configurado <strong>{{ maxQuestionsValue }}</strong> preguntas por
+                juego, pero solo hay <strong>{{ totalVerifiedQuestions() }}</strong> preguntas verificadas disponibles.
+                Reduce el límite o verifica más preguntas en la sección de "Gestión de Preguntas".
+              </div>
+            </div>
+            }
+
+            <!-- Info card sobre distribución -->
+            <div class="distribution-info-card">
+              <div class="info-icon">
+                <i class="fas fa-chart-pie"></i>
+              </div>
+              <div class="info-content">
+                <h4>Distribución de Preguntas</h4>
+                <p>Las preguntas se distribuyen equitativamente entre todas las categorías activas. Si hay más
+                  categorías que preguntas configuradas, cada categoría recibirá al menos una pregunta.</p>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Categories Management Section -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h2 class="admin-card-title">
+          <i class="fas fa-folder"></i>
+          Gestión de Categorías
+        </h2>
+        <p class="admin-card-subtitle">Administra las categorías de preguntas del sistema</p>
+      </div>
+
+      <div class="admin-card-body">
+        <!-- Create Button -->
+        <div class="category-actions">
+          <button class="admin-btn admin-btn-primary" (click)="openCreateCategoryModal()"
+            [disabled]="isLoadingCategories()">
+            <i class="fas fa-plus"></i>
+            Nueva Categoría
+          </button>
+        </div>
+
+        <!-- Loading -->
+        @if (isLoadingCategories()) {
+        <div class="admin-loading-container admin-loading-container-dark" style="min-height: 100px;">
+          <span class="admin-spinner admin-spinner-dark" style="width: 20px; height: 20px;"></span>
+          <span>Cargando categorías...</span>
+        </div>
+        }
+
+        <!-- Categories List -->
+        @if (!isLoadingCategories() && categories().length > 0) {
+        <div class="categories-list">
+          @for (category of categories(); track category.id) {
+          <div class="category-item">
+            <div class="category-info">
+              <div class="category-header">
+                <h4 class="category-name">{{ category.name }}</h4>
+                <span class="category-id">ID: {{ category.id }}</span>
+              </div>
+              @if (category.description) {
+              <p class="category-description">{{ category.description }}</p>
+              }
+            </div>
+            <div class="category-actions-buttons">
+              <button class="admin-btn admin-btn-secondary"
+                style="padding: 8px; width: 32px; height: 32px; min-width: unset;"
+                (click)="openEditCategoryModal(category)" [disabled]="isDeletingCategory() === category.id"
+                title="Editar categoría">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="admin-btn admin-btn-secondary"
+                style="padding: 8px; width: 32px; height: 32px; min-width: unset; color: #e74c3c;"
+                (click)="deleteCategory(category)" [disabled]="isDeletingCategory() === category.id"
+                title="Eliminar categoría">
+                @if (isDeletingCategory() !== category.id) {
+                <i class="fas fa-trash"></i>
+                } @else {
+                <span class="admin-spinner admin-spinner-dark" style="width: 14px; height: 14px;"></span>
+                }
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+        }
+
+        @if (!isLoadingCategories() && categories().length === 0) {
+        <div class="admin-no-data" style="padding: 20px;">
+          <i class="fas fa-folder-open"></i>
+          <p>No hay categorías creadas</p>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    <!-- Action Buttons (OUTSIDE tabs, always visible) -->
+    <div class="action-buttons">
+      <!-- Discard Changes -->
+      @if (hasChanges()) {
+      <button class="btn btn-secondary btn-lg" (click)="discardChanges()" [disabled]="isSaving()">
+        <i class="fas fa-times"></i>
+        Descartar Cambios
+      </button>
+      }
+
+      <!-- Reset to Default -->
+      <button class="btn btn-warning btn-lg" (click)="resetToDefault()" [disabled]="isSaving()">
+        <i class="fas fa-refresh"></i>
+        Restaurar Predeterminado
+      </button>
+
+      <!-- Save Changes -->
+      <button class="btn btn-primary btn-lg" (click)="saveChanges()" [disabled]="!hasChanges() || isSaving()">
+        @if (!isSaving()) {
+        <i class="fas fa-save"></i>
+        Guardar Cambios
+        } @else {
+        <span class="spinner-small"></span>
+        Guardando...
+        }
+      </button>
+    </div>
+
+    <!-- Info Section -->
+    <div class="info-section">
+      <h3 class="info-title">
+        <i class="fas fa-circle-info"></i>
+        Información Importante
+      </h3>
+
+      <div class="info-cards">
+        <div class="info-item">
+          <span class="info-icon">
+            <i class="fas fa-lightbulb"></i>
+          </span>
+          <div class="info-text">
+            <h4>Cambios Inmediatos</h4>
+            <p>Los cambios en el prompt afectarán a todas las nuevas preguntas generadas, no a las existentes.</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-icon">
+            <i class="fas fa-shield-check"></i>
+          </span>
+          <div class="info-text">
+            <h4>Validación Estricta</h4>
+            <p>Las preguntas generadas se validan según las reglas del prompt. Sé claro y específico.</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-icon">
+            <i class="fas fa-flask"></i>
+          </span>
+          <div class="info-text">
+            <h4>Experimenta</h4>
+            <p>Prueba diferentes valores de temperatura para encontrar el balance ideal para tu caso.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="settings-footer">
+      <p class="footer-text">
+        <i class="fas fa-circle-info"></i>
+        Última actualización: En tiempo real | Multi-AI Failover System
+      </p>
+    </div>
+  </div>
   }
 
   <!-- Category Modal -->
   @if (isCategoryModalOpen()) {
-    <app-category-modal
-      [categoryToEdit]="categoryToEdit()"
-      (close)="closeCategoryModal()"
-      (saved)="onCategorySaved()">
-    </app-category-modal>
+  <app-category-modal [categoryToEdit]="categoryToEdit()" (close)="closeCategoryModal()" (saved)="onCategorySaved()">
+  </app-category-modal>
   }
 </div>
-
-
