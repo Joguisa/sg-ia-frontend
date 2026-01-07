@@ -1,17 +1,20 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { RoomService } from '../../../core/services/room.service';
 import { DashboardStatsResponse, BatchStatistics } from '../../../core/models/admin';
+import { GameRoom } from '../../../core/models/room';
 import { HttpStatus } from '../../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
@@ -33,6 +36,11 @@ export class AdminDashboardComponent implements OnInit {
   batchStatistics = signal<BatchStatistics[]>([]);
   isLoadingBatches = signal<boolean>(false);
 
+  // Room Selector Signals
+  rooms = signal<GameRoom[]>([]);
+  selectedRoomId = signal<number | null>(null);
+  isLoadingRooms = signal<boolean>(false);
+
   // UI State Signals
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
@@ -41,12 +49,57 @@ export class AdminDashboardComponent implements OnInit {
     private adminService: AdminService,
     private authService: AuthService,
     private notification: NotificationService,
+    private roomService: RoomService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
+    this.loadRooms();
     this.loadDashboardStats();
     this.loadBatchStatistics();
+  }
+
+  /**
+   * Carga la lista de salas disponibles
+   */
+  private loadRooms(): void {
+    this.isLoadingRooms.set(true);
+
+    this.roomService.listRooms().subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.rooms.set(response.rooms || []);
+        }
+        this.isLoadingRooms.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading rooms:', error);
+        this.isLoadingRooms.set(false);
+      }
+    });
+  }
+
+  /**
+   * Maneja el cambio de sala seleccionada
+   */
+  onRoomChange(roomId: number | null): void {
+    this.selectedRoomId.set(roomId);
+
+    if (roomId) {
+      // Navegar a la vista de estadísticas de la sala
+      this.router.navigate(['/admin/rooms'], { queryParams: { roomId } });
+    }
+  }
+
+  /**
+   * Obtiene el nombre de la sala seleccionada
+   */
+  getSelectedRoomName(): string {
+    const roomId = this.selectedRoomId();
+    if (!roomId) return 'Todas las salas';
+
+    const room = this.rooms().find(r => r.id === roomId);
+    return room ? room.name : 'Sala desconocida';
   }
 
   /**
@@ -109,6 +162,13 @@ export class AdminDashboardComponent implements OnInit {
    */
   goToPlayers(): void {
     this.router.navigate(['/admin/players']);
+  }
+
+  /**
+   * Navega a la gestión de salas
+   */
+  goToRooms(): void {
+    this.router.navigate(['/admin/rooms']);
   }
 
   /**

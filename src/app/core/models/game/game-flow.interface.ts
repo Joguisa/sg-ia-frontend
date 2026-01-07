@@ -39,12 +39,26 @@ export interface AnswerSubmitResponse {
   error?: string;
 }
 
+/**
+ * Datos de sala retornados al iniciar sesión con room_code
+ */
+export interface SessionRoomData {
+  id: number;
+  room_code: string;
+  name: string;
+  filter_categories?: number[] | null;
+  filter_difficulties?: number[] | null;
+}
+
 export interface GameSession {
+  ok?: boolean;
   session_id: number;
   current_difficulty: number;
-  status: 'active' | 'game_over' | string;
+  status: 'active' | 'game_over' | 'completed' | string;
   score?: number;
   lives?: number;
+  room?: SessionRoomData;
+  error?: string;
 }
 
 /**

@@ -110,7 +110,43 @@ export const environment = {
 
       // ========== AI PROVIDERS ==========
       /** GET /admin/available-providers - Obtener proveedores de IA disponibles */
-      availableProviders: '/admin/available-providers'
+      availableProviders: '/admin/available-providers',
+
+      // ========== ROOM MANAGEMENT ==========
+      /** POST /admin/rooms - Crear sala */
+      createRoom: '/admin/rooms',
+      /** GET /admin/rooms - Listar todas las salas */
+      listRooms: '/admin/rooms',
+      /** GET /admin/rooms/{id} - Obtener sala por ID */
+      getRoom: (id: number) => `/admin/rooms/${id}`,
+      /** PUT /admin/rooms/{id} - Actualizar sala */
+      updateRoom: (id: number) => `/admin/rooms/${id}`,
+      /** DELETE /admin/rooms/{id} - Eliminar sala */
+      deleteRoom: (id: number) => `/admin/rooms/${id}`,
+      /** PATCH /admin/rooms/{id}/status - Cambiar estado de sala */
+      updateRoomStatus: (id: number) => `/admin/rooms/${id}/status`,
+      /** GET /admin/rooms/{id}/players - Obtener jugadores activos en sala */
+      getRoomPlayers: (id: number) => `/admin/rooms/${id}/players`,
+      /** GET /admin/rooms/{id}/stats - Obtener estadísticas de sala */
+      getRoomStats: (id: number) => `/admin/rooms/${id}/stats`,
+      /** GET /admin/rooms/{id}/stats/players - Estadísticas de jugadores en sala */
+      getRoomPlayerStats: (id: number) => `/admin/rooms/${id}/stats/players`,
+      /** GET /admin/rooms/{id}/stats/questions - Estadísticas de preguntas en sala */
+      getRoomQuestionStats: (id: number) => `/admin/rooms/${id}/stats/questions`,
+      /** GET /admin/rooms/{id}/stats/categories - Estadísticas por categoría en sala */
+      getRoomCategoryStats: (id: number) => `/admin/rooms/${id}/stats/categories`,
+      /** GET /admin/rooms/{id}/stats/analysis - Análisis de preguntas (Top 5 difíciles/fáciles) */
+      getRoomQuestionAnalysis: (id: number) => `/admin/rooms/${id}/stats/analysis`,
+      /** GET /admin/rooms/{id}/export/pdf - Exportar reporte PDF */
+      exportRoomPdf: (id: number) => `/admin/rooms/${id}/export/pdf`,
+      /** GET /admin/rooms/{id}/export/excel - Exportar reporte Excel */
+      exportRoomExcel: (id: number) => `/admin/rooms/${id}/export/excel`
+    },
+
+    // ========== ROOMS PUBLIC ==========
+    rooms: {
+      /** GET /rooms/validate/{code} - Validar código de sala */
+      validateCode: (code: string) => `/rooms/validate/${code}`
     }
   }
 };

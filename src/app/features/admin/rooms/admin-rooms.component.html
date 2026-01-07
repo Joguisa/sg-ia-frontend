@@ -1,0 +1,515 @@
+<div class="admin-container">
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goToDashboard()">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1 class="page-title">
+        <i class="fas fa-door-open"></i>
+        Gestión de Salas
+      </h1>
+    </div>
+    <div class="header-right">
+      <button class="btn-logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        Cerrar Sesión
+      </button>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <app-tabs
+    [tabs]="tabs"
+    [activeTab]="activeTab()"
+    (tabChange)="onTabChange($event)"
+  ></app-tabs>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+
+    <!-- TAB 1: ROOMS LIST -->
+    <div *ngIf="activeTab() === 'rooms'" class="rooms-list-tab">
+      <!-- Actions Bar -->
+      <div class="actions-bar">
+        <div class="search-filters">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              placeholder="Buscar por nombre o código..."
+              [value]="searchQuery()"
+              (input)="onSearchChange($event)"
+            />
+          </div>
+          <select class="filter-select" (change)="onStatusFilterChange($event)">
+            <option value="all">Todos los estados</option>
+            <option value="active">Activas</option>
+            <option value="paused">Pausadas</option>
+            <option value="closed">Cerradas</option>
+          </select>
+        </div>
+        <button class="btn-primary" (click)="openCreateModal()">
+          <i class="fas fa-plus"></i>
+          Nueva Sala
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="isLoadingRooms()" class="loading-container">
+        <div class="spinner"></div>
+        <p>Cargando salas...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoadingRooms() && filteredRooms().length === 0" class="empty-state">
+        <i class="fas fa-door-open"></i>
+        <h3>No hay salas</h3>
+        <p>Crea una nueva sala para comenzar a organizar tus sesiones de juego.</p>
+        <button class="btn-primary" (click)="openCreateModal()">
+          <i class="fas fa-plus"></i>
+          Crear Primera Sala
+        </button>
+      </div>
+
+      <!-- Rooms Grid -->
+      <div *ngIf="!isLoadingRooms() && filteredRooms().length > 0" class="rooms-grid">
+        <div *ngFor="let room of filteredRooms()" class="room-card">
+          <div class="room-header">
+            <div class="room-code-badge" (click)="copyRoomCode(room.room_code)" title="Click para copiar">
+              <i class="fas fa-key"></i>
+              {{ room.room_code }}
+              <i class="fas fa-copy copy-icon"></i>
+            </div>
+            <span class="status-badge" [ngClass]="getStatusClass(room.status)">
+              {{ getStatusLabel(room.status) }}
+            </span>
+          </div>
+
+          <div class="room-body">
+            <h3 class="room-name">{{ room.name }}</h3>
+            <p *ngIf="room.description" class="room-description">{{ room.description }}</p>
+
+            <div class="room-meta">
+              <div class="meta-item">
+                <i class="fas fa-users"></i>
+                <span>Máx: {{ room.max_players }} jugadores</span>
+              </div>
+              <div class="meta-item" *ngIf="room.filter_categories?.length">
+                <i class="fas fa-tags"></i>
+                <span>{{ room.filter_categories?.length }} categorías</span>
+              </div>
+              <div class="meta-item" *ngIf="room.filter_difficulties?.length">
+                <i class="fas fa-signal"></i>
+                <span>{{ room.filter_difficulties?.length }} niveles</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="room-actions">
+            <button class="btn-icon btn-view" (click)="viewRoomDetail(room)" title="Ver detalles">
+              <i class="fas fa-chart-bar"></i>
+            </button>
+            <button class="btn-icon btn-edit" (click)="openEditModal(room)" title="Editar">
+              <i class="fas fa-edit"></i>
+            </button>
+
+            <!-- Status Actions -->
+            <div class="status-actions">
+              <button
+                *ngIf="room.status !== 'active'"
+                class="btn-icon btn-activate"
+                (click)="updateRoomStatus(room, 'active')"
+                title="Activar"
+              >
+                <i class="fas fa-play"></i>
+              </button>
+              <button
+                *ngIf="room.status === 'active'"
+                class="btn-icon btn-pause"
+                (click)="updateRoomStatus(room, 'paused')"
+                title="Pausar"
+              >
+                <i class="fas fa-pause"></i>
+              </button>
+              <button
+                *ngIf="room.status !== 'closed'"
+                class="btn-icon btn-close"
+                (click)="updateRoomStatus(room, 'closed')"
+                title="Cerrar"
+              >
+                <i class="fas fa-stop"></i>
+              </button>
+            </div>
+
+            <button class="btn-icon btn-delete" (click)="deleteRoom(room)" title="Eliminar">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: ROOM DETAIL -->
+    <div *ngIf="activeTab() === 'detail'" class="room-detail-tab">
+      <!-- No Room Selected -->
+      <div *ngIf="!selectedRoomId()" class="empty-state">
+        <i class="fas fa-chart-bar"></i>
+        <h3>Selecciona una sala</h3>
+        <p>Selecciona una sala de la lista para ver sus estadísticas detalladas.</p>
+        <button class="btn-secondary" (click)="onTabChange('rooms')">
+          <i class="fas fa-list"></i>
+          Ver Lista de Salas
+        </button>
+      </div>
+
+      <!-- Room Detail Content -->
+      <div *ngIf="selectedRoomId()" class="detail-content">
+        <!-- Back Button -->
+        <button class="btn-back-detail" (click)="clearRoomSelection()">
+          <i class="fas fa-arrow-left"></i>
+          Volver a la lista
+        </button>
+
+        <!-- Loading -->
+        <div *ngIf="isLoadingDetail()" class="loading-container">
+          <div class="spinner"></div>
+          <p>Cargando información de la sala...</p>
+        </div>
+
+        <!-- Room Info Card -->
+        <div *ngIf="!isLoadingDetail() && selectedRoom()" class="room-info-card">
+          <div class="info-header">
+            <div class="info-title">
+              <h2>{{ selectedRoom()?.name }}</h2>
+              <div class="room-code-large" (click)="copyRoomCode(selectedRoom()!.room_code)">
+                <i class="fas fa-key"></i>
+                {{ selectedRoom()?.room_code }}
+                <i class="fas fa-copy"></i>
+              </div>
+            </div>
+            <span class="status-badge large" [ngClass]="getStatusClass(selectedRoom()!.status)">
+              {{ getStatusLabel(selectedRoom()!.status) }}
+            </span>
+          </div>
+
+          <p *ngIf="selectedRoom()?.description" class="info-description">
+            {{ selectedRoom()?.description }}
+          </p>
+
+          <!-- Export Buttons -->
+          <div class="export-buttons">
+            <button
+              class="btn-export btn-pdf"
+              (click)="exportToPdf()"
+              [disabled]="isExporting()"
+            >
+              <i class="fas fa-file-pdf"></i>
+              Exportar PDF
+            </button>
+            <button
+              class="btn-export btn-excel"
+              (click)="exportToExcel()"
+              [disabled]="isExporting()"
+            >
+              <i class="fas fa-file-excel"></i>
+              Exportar Excel
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div *ngIf="roomStats()" class="stats-overview">
+          <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <div class="stat-value">{{ roomStats()?.unique_players || 0 }}</div>
+            <div class="stat-label">Jugadores</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-gamepad"></i>
+            <div class="stat-value">{{ roomStats()?.total_sessions || 0 }}</div>
+            <div class="stat-label">Sesiones</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-question-circle"></i>
+            <div class="stat-value">{{ roomStats()?.total_answers || 0 }}</div>
+            <div class="stat-label">Respuestas</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-percentage"></i>
+            <div class="stat-value">{{ roomStats()?.avg_accuracy || 0 }}%</div>
+            <div class="stat-label">Precisión Promedio</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-trophy"></i>
+            <div class="stat-value">{{ roomStats()?.highest_score || 0 }}</div>
+            <div class="stat-label">Puntuación Máxima</div>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+          <!-- Player Performance Chart -->
+          <div class="chart-card" *ngIf="playerStatsChartData()">
+            <h3><i class="fas fa-chart-bar"></i> Rendimiento de Jugadores</h3>
+            <div class="chart-container">
+              <canvas
+                baseChart
+                [data]="playerStatsChartData()!"
+                [options]="playerStatsChartOptions"
+                [type]="playerStatsChartType"
+              ></canvas>
+            </div>
+          </div>
+
+          <!-- Category Distribution Chart -->
+          <div class="chart-card" *ngIf="categoryStatsChartData()">
+            <h3><i class="fas fa-chart-pie"></i> Distribución por Categoría</h3>
+            <div class="chart-container doughnut">
+              <canvas
+                baseChart
+                [data]="categoryStatsChartData()!"
+                [options]="categoryStatsChartOptions"
+                [type]="categoryStatsChartType"
+              ></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Analysis Section -->
+        <div class="analytics-section" *ngIf="topHardest().length > 0 || topEasiest().length > 0">
+          <h3 class="section-subtitle"><i class="fas fa-chart-line"></i> Análisis de Preguntas</h3>
+
+          <div class="analytics-grid">
+            <!-- Top Hardest Questions -->
+            <div class="analytics-card" *ngIf="topHardest().length > 0">
+              <div class="analytics-header">
+                <h4 class="analytics-title">
+                  <i class="fas fa-arrow-down"></i>
+                  Top 5 Preguntas Difíciles
+                </h4>
+                <p class="analytics-subtitle">Menor tasa de éxito</p>
+              </div>
+
+              <div class="analytics-content">
+                <div class="questions-list">
+                  <div class="question-item" *ngFor="let question of topHardest(); let idx = index">
+                    <div class="question-rank">{{ idx + 1 }}</div>
+                    <div class="question-info">
+                      <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
+                      <p class="question-meta">
+                        <i class="fas fa-circle-info"></i>
+                        ID: {{ question.id }} | {{ question.times_answered }} respuestas
+                      </p>
+                    </div>
+                    <div class="question-rate" [ngClass]="getSuccessRateClass(+question.success_rate)">
+                      <p class="rate-value">{{ (+question.success_rate).toFixed(1) }}%</p>
+                      <p class="rate-label">Éxito</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top Easiest Questions -->
+            <div class="analytics-card" *ngIf="topEasiest().length > 0">
+              <div class="analytics-header">
+                <h4 class="analytics-title">
+                  <i class="fas fa-arrow-up"></i>
+                  Top 5 Preguntas Fáciles
+                </h4>
+                <p class="analytics-subtitle">Mayor tasa de éxito</p>
+              </div>
+
+              <div class="analytics-content">
+                <div class="questions-list">
+                  <div class="question-item" *ngFor="let question of topEasiest(); let idx = index">
+                    <div class="question-rank">{{ idx + 1 }}</div>
+                    <div class="question-info">
+                      <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
+                      <p class="question-meta">
+                        <i class="fas fa-circle-info"></i>
+                        ID: {{ question.id }} | {{ question.times_answered }} respuestas
+                      </p>
+                    </div>
+                    <div class="question-rate" [ngClass]="getSuccessRateClass(+question.success_rate)">
+                      <p class="rate-value">{{ (+question.success_rate).toFixed(1) }}%</p>
+                      <p class="rate-label">Éxito</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Player Stats Table -->
+        <div class="data-section" *ngIf="roomPlayerStats().length > 0">
+          <h3><i class="fas fa-users"></i> Estadísticas de Jugadores</h3>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Jugador</th>
+                  <th>Sesiones</th>
+                  <th>Respuestas</th>
+                  <th>Precisión</th>
+                  <th>Prom. Punt.</th>
+                  <th>Punt. Máx.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let player of roomPlayerStats()">
+                  <td>{{ player.player_name }}</td>
+                  <td>{{ player.sessions_played }}</td>
+                  <td>{{ player.total_answers }}</td>
+                  <td>
+                    <span class="accuracy-badge" [class.high]="player.accuracy_percent >= 70" [class.medium]="player.accuracy_percent >= 50 && player.accuracy_percent < 70" [class.low]="player.accuracy_percent < 50">
+                      {{ player.accuracy_percent }}%
+                    </span>
+                  </td>
+                  <td>{{ player.avg_score }}</td>
+                  <td>{{ player.high_score }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Question Stats Table -->
+        <div class="data-section" *ngIf="roomQuestionStats().length > 0">
+          <h3><i class="fas fa-question-circle"></i> Preguntas con Mayor Tasa de Error</h3>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Pregunta</th>
+                  <th>Veces Respondida</th>
+                  <th>Tasa de Error</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let q of roomQuestionStats().slice(0, 10)">
+                  <td class="question-text">{{ q.statement }}</td>
+                  <td>{{ q.times_answered }}</td>
+                  <td>
+                    <span class="error-badge" [class.high]="q.error_rate >= 50" [class.medium]="q.error_rate >= 30 && q.error_rate < 50" [class.low]="q.error_rate < 30">
+                      {{ q.error_rate }}%
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CREATE/EDIT MODAL -->
+  <div class="modal-overlay" *ngIf="showModal()" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ isEditing() ? 'Editar Sala' : 'Nueva Sala' }}</h2>
+        <button class="btn-close-modal" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form [formGroup]="roomForm" (ngSubmit)="saveRoom()" class="modal-body">
+        <!-- Name -->
+        <div class="form-group">
+          <label for="name">Nombre de la Sala *</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            placeholder="Ej: Sesión Educativa - Prevención Cáncer de Colon"
+            [class.is-invalid]="roomForm.get('name')?.invalid && roomForm.get('name')?.touched"
+          />
+          <div class="invalid-feedback" *ngIf="roomForm.get('name')?.hasError('required') && roomForm.get('name')?.touched">
+            El nombre es requerido
+          </div>
+          <div class="invalid-feedback" *ngIf="roomForm.get('name')?.hasError('minlength') && roomForm.get('name')?.touched">
+            El nombre debe tener al menos 3 caracteres
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="description">Descripción (opcional)</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            placeholder="Describe el propósito de esta sala..."
+            rows="3"
+          ></textarea>
+        </div>
+
+        <!-- Max Players -->
+        <div class="form-group">
+          <label for="max_players">Máximo de Jugadores (1-500)</label>
+          <input
+            type="text"
+            id="max_players"
+            formControlName="max_players"
+            placeholder="50"
+            (input)="onMaxPlayersInput($event)"
+            (keypress)="preventNonNumeric($event)"
+            [class.is-invalid]="roomForm.get('max_players')?.invalid && roomForm.get('max_players')?.touched"
+          />
+          <div class="invalid-feedback" *ngIf="roomForm.get('max_players')?.hasError('required') && roomForm.get('max_players')?.touched">
+            El número de jugadores es requerido
+          </div>
+          <div class="invalid-feedback" *ngIf="roomForm.get('max_players')?.hasError('min') && roomForm.get('max_players')?.touched">
+            Mínimo 1 jugador
+          </div>
+          <div class="invalid-feedback" *ngIf="roomForm.get('max_players')?.hasError('max') && roomForm.get('max_players')?.touched">
+            Máximo 500 jugadores
+          </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="form-group">
+          <label>Filtrar por Categorías (opcional)</label>
+          <p class="help-text">Deja vacío para incluir todas las categorías</p>
+          <div class="checkbox-grid">
+            <label *ngFor="let cat of categories()" class="checkbox-item">
+              <input
+                type="checkbox"
+                [checked]="isCategorySelected(cat.id!)"
+                (change)="onCategoryToggle(cat.id!, $event)"
+              />
+              <span>{{ cat.name }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Difficulty Filters -->
+        <div class="form-group">
+          <label>Filtrar por Dificultad (opcional)</label>
+          <p class="help-text">Deja vacío para incluir todas las dificultades</p>
+          <div class="checkbox-grid">
+            <label *ngFor="let diff of difficulties" class="checkbox-item">
+              <input
+                type="checkbox"
+                [checked]="isDifficultySelected(diff)"
+                (change)="onDifficultyToggle(diff, $event)"
+              />
+              <span>{{ getDifficultyLabel(diff) }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="isSaving()">
+            <span *ngIf="isSaving()" class="spinner-small"></span>
+            {{ isEditing() ? 'Guardar Cambios' : 'Crear Sala' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

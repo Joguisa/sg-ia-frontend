@@ -100,6 +100,18 @@
                     <small *ngIf="generatorForm.get('quantity')?.hasError('invalidQuantity')">Cantidad debe ser entre 1 y 50</small>
                   </div>
                 </div>
+
+                <!-- Idioma -->
+                <div class="form-group">
+                  <label for="gen-language">Idioma</label>
+                  <select
+                    id="gen-language"
+                    class="form-control"
+                    formControlName="language">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                  </select>
+                </div>
               </div>
             </form>
 

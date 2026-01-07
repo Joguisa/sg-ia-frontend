@@ -197,14 +197,16 @@ export class AdminService {
    * @param quantity Cantidad de preguntas a generar (1-50)
    * @param categoryId ID de la categoría
    * @param difficulty Nivel de dificultad (1-5)
+   * @param language Idioma de las preguntas ('es' o 'en')
    * @returns Observable con resultado de generación (generadas y fallidas)
    */
   generateBatch(
     quantity: number,
     categoryId: number,
-    difficulty: number
+    difficulty: number,
+    language: 'es' | 'en' = 'es'
   ): Observable<GenerateBatchResponse> {
-    const body = { quantity, category_id: categoryId, difficulty };
+    const body = { quantity, category_id: categoryId, difficulty, language };
     return this.http.post<GenerateBatchResponse>(
       `${this.apiUrl}${environment.apiEndpoints.admin.generateBatch}`,
       body

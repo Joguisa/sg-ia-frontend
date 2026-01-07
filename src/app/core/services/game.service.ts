@@ -41,13 +41,20 @@ export class GameService {
    * Backend: POST /games/start
    * @param playerId ID del jugador (debe existir en DB)
    * @param startDifficulty Dificultad inicial (default: 1.0)
-   * @returns Observable con session_id y current_difficulty
+   * @param roomCode Código de sala opcional (6 caracteres)
+   * @returns Observable con session_id, current_difficulty y datos de sala si aplica
    */
-  startSession(playerId: number, startDifficulty: number = 1.0): Observable<GameSession> {
-    const body = {
+  startSession(playerId: number, startDifficulty: number = 1.0, roomCode?: string): Observable<GameSession> {
+    const body: any = {
       player_id: playerId,
       start_difficulty: startDifficulty
     };
+
+    // Agregar room_code solo si se proporciona
+    if (roomCode && roomCode.trim()) {
+      body.room_code = roomCode.trim().toUpperCase();
+    }
+
     return this.http.post<GameSession>(
       `${this.apiUrl}${environment.apiEndpoints.games.start}`,
       body

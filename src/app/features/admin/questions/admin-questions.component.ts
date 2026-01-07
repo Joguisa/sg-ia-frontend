@@ -120,7 +120,8 @@ export class AdminQuestionsComponent implements OnInit {
     this.generatorForm = this.fb.group({
       categoryId: [null, [Validators.required]],
       difficulty: [1, [Validators.required, Validators.min(1), Validators.max(5)]],
-      quantity: [1, [Validators.required, this.quantityValidator]]
+      quantity: [1, [Validators.required, this.quantityValidator]],
+      language: ['es', [Validators.required]]
     });
 
     // Inicializar formulario de filtros
@@ -243,7 +244,8 @@ export class AdminQuestionsComponent implements OnInit {
     this.adminService.generateBatch(
       formValues.quantity,
       formValues.categoryId,
-      formValues.difficulty
+      formValues.difficulty,
+      formValues.language
     ).subscribe({
       next: (response: GenerationResponse) => {
         const generatedCount = response.generated ?? 0;
@@ -260,7 +262,8 @@ export class AdminQuestionsComponent implements OnInit {
           this.generatorForm.reset({
             categoryId: null,
             difficulty: 1,
-            quantity: 1
+            quantity: 1,
+            language: 'es'
           });
           this.generatorForm.enable();
           this.isGeneratorOpen.set(false);

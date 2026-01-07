@@ -55,6 +55,58 @@
           </div>
         </div>
 
+        <!-- Room Code Toggle -->
+        <div class="room-code-section">
+          <button
+            type="button"
+            class="room-code-toggle"
+            (click)="toggleRoomCode()"
+            [disabled]="isLoading()"
+          >
+            <i class="fas" [ngClass]="showRoomCode() ? 'fa-chevron-up' : 'fa-door-open'"></i>
+            {{ showRoomCode() ? 'Ocultar código de sala' : '¿Tienes un código de sala?' }}
+          </button>
+
+          <!-- Room Code Input (collapsed by default) -->
+          <div class="room-code-input-wrapper" *ngIf="showRoomCode()">
+            <label for="roomCode" class="form-label">Código de sala</label>
+            <div class="room-code-input-group">
+              <input
+                type="text"
+                id="roomCode"
+                class="form-control room-code-input"
+                formControlName="roomCode"
+                (input)="onRoomCodeInput($event)"
+                placeholder="Ej: ABC123"
+                maxlength="6"
+                [class.is-valid]="roomValidated()"
+                [class.is-invalid]="roomError()"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-primary btn-validate"
+                (click)="validateRoomCode()"
+                [disabled]="isValidatingRoom() || isLoading() || roomValidated()"
+              >
+                <span *ngIf="isValidatingRoom()" class="spinner-small"></span>
+                <span *ngIf="!isValidatingRoom() && !roomValidated()">Validar</span>
+                <span *ngIf="roomValidated()"><i class="fas fa-check"></i></span>
+              </button>
+            </div>
+
+            <!-- Room validation feedback -->
+            <div class="room-feedback">
+              <div *ngIf="roomError()" class="room-error">
+                <i class="fas fa-exclamation-circle"></i> {{ roomError() }}
+              </div>
+              <div *ngIf="roomValidated() && validatedRoom()" class="room-success">
+                <i class="fas fa-check-circle"></i>
+                Sala: <strong>{{ validatedRoom()?.name }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Error Message -->
         <div *ngIf="errorMessage()" class="alert alert-danger">
           {{ errorMessage() }}

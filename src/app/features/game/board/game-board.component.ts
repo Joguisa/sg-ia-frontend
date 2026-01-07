@@ -7,7 +7,8 @@ import {
   QuestionFull,
   AnswerSubmitResponse,
   GameSession,
-  GameState
+  GameState,
+  SessionRoomData
 } from '../../../core/models/game/game-flow.interface';
 import { HttpStatus } from '../../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
@@ -23,6 +24,8 @@ export class GameBoardComponent implements OnInit {
   // Session data
   private playerId!: number;
   private sessionId = signal<number | null>(null);
+  private roomCode: string | null = null;
+  currentRoom = signal<SessionRoomData | null>(null);
   // categoryId = 0 significa "todas las categorías"
 
   // Game state
@@ -97,6 +100,7 @@ export class GameBoardComponent implements OnInit {
     // Obtener ID del jugador desde localStorage
     const playerIdStr = localStorage.getItem('playerId');
     const playerNameStr = localStorage.getItem('playerName');
+    const roomCodeStr = localStorage.getItem('roomCode');
 
     if (!playerIdStr) {
       // Sin ID de jugador, redirigir a /play
@@ -106,20 +110,32 @@ export class GameBoardComponent implements OnInit {
 
     this.playerId = parseInt(playerIdStr, 10);
     this.playerName.set(playerNameStr || 'Jugador');
+    this.roomCode = roomCodeStr || null;
 
-    // Iniciar sesión de juego
-    this.gameService.startSession(this.playerId, 1.0).subscribe({
+    // Iniciar sesión de juego (con código de sala si existe)
+    this.gameService.startSession(this.playerId, 1.0, this.roomCode || undefined).subscribe({
       next: (session: GameSession) => {
-        console.log('next session', session)
+        console.log('next session', session);
         if (session.session_id) {
           this.sessionId.set(session.session_id);
           this.difficulty.set(session.current_difficulty);
+
+          // Guardar información de la sala si existe
+          if (session.room) {
+            this.currentRoom.set(session.room);
+          }
+
           // Cargar primera pregunta
           this.loadNextQuestion();
         }
       },
       error: (error) => {
-        this.notification.error('Error al iniciar el juego. Intenta de nuevo.', NOTIFICATION_DURATION.LONG);
+        // Manejar errores específicos de sala
+        if (error.error?.error) {
+          this.notification.error(error.error.error, NOTIFICATION_DURATION.LONG);
+        } else {
+          this.notification.error('Error al iniciar el juego. Intenta de nuevo.', NOTIFICATION_DURATION.LONG);
+        }
         this.router.navigate(['/play']);
       }
     });
@@ -252,7 +268,7 @@ export class GameBoardComponent implements OnInit {
             this.isAnswering.set(false);
             setTimeout(() => {
               this.handleGameCompleted('¡Felicitaciones! Completaste el cuestionario');
-            }, 3000);
+            }, 1000);
             return;
           }
 

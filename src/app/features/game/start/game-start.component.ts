@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PlayerService } from '../../../core/services/player.service';
+import { RoomService } from '../../../core/services/room.service';
+import { GameRoom } from '../../../core/models/room';
 
 @Component({
   selector: 'app-game-start',
@@ -16,14 +18,23 @@ export class GameStartComponent {
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
 
+  // Room code signals
+  showRoomCode = signal<boolean>(false);
+  isValidatingRoom = signal<boolean>(false);
+  roomValidated = signal<boolean>(false);
+  validatedRoom = signal<GameRoom | null>(null);
+  roomError = signal<string>('');
+
   constructor(
     private fb: FormBuilder,
     private playerService: PlayerService,
+    private roomService: RoomService,
     private router: Router
   ) {
     this.playerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      age: ['', [Validators.required, this.ageValidator]]
+      age: ['', [Validators.required, this.ageValidator]],
+      roomCode: ['', [Validators.pattern(/^[A-Za-z0-9]{6}$/)]]
     });
   }
 
@@ -87,12 +98,26 @@ export class GameStartComponent {
       return;
     }
 
+    // Validate room code if shown
+    if (this.showRoomCode()) {
+      const roomCode = this.playerForm.get('roomCode')?.value?.trim();
+      if (!roomCode) {
+        this.errorMessage.set('Por favor ingresa el código de sala');
+        return;
+      }
+      if (!this.roomValidated()) {
+        this.errorMessage.set('Por favor valida el código de sala antes de continuar');
+        return;
+      }
+    }
+
     this.isLoading.set(true);
     this.playerForm.disable();
 
     const formValues = this.playerForm.value;
     const name = formValues.name.trim();
     const age = parseInt(formValues.age, 10);
+    const roomCode = this.getValidatedRoomCode();
 
     // Crear jugador
     this.playerService.createPlayer(name, age).subscribe({
@@ -101,6 +126,13 @@ export class GameStartComponent {
           // Guardar ID del jugador en localStorage
           localStorage.setItem('playerId', response.player.id.toString());
           localStorage.setItem('playerName', response.player.name);
+
+          // Guardar código de sala si existe
+          if (roomCode) {
+            localStorage.setItem('roomCode', roomCode);
+          } else {
+            localStorage.removeItem('roomCode');
+          }
 
           // Redirigir al tablero de juego
           this.router.navigate(['/game/board']);
@@ -123,5 +155,88 @@ export class GameStartComponent {
 
   goToAdmin(): void {
     this.router.navigate(['/admin/login']);
+  }
+
+  // ========== ROOM CODE METHODS ==========
+
+  /**
+   * Toggle visibility of room code input
+   */
+  toggleRoomCode(): void {
+    const newState = !this.showRoomCode();
+    this.showRoomCode.set(newState);
+
+    // Reset room state when hiding
+    if (!newState) {
+      this.playerForm.patchValue({ roomCode: '' });
+      this.roomValidated.set(false);
+      this.validatedRoom.set(null);
+      this.roomError.set('');
+    }
+  }
+
+  /**
+   * Format room code input (uppercase, alphanumeric only)
+   */
+  onRoomCodeInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+    input.value = value;
+    this.playerForm.patchValue({ roomCode: value }, { emitEvent: false });
+
+    // Reset validation when changing code
+    if (this.roomValidated()) {
+      this.roomValidated.set(false);
+      this.validatedRoom.set(null);
+    }
+    this.roomError.set('');
+  }
+
+  /**
+   * Validate room code against backend
+   */
+  validateRoomCode(): void {
+    const code = this.playerForm.get('roomCode')?.value?.trim();
+
+    if (!code || code.length !== 6) {
+      this.roomError.set('El código de sala debe tener 6 caracteres');
+      return;
+    }
+
+    this.isValidatingRoom.set(true);
+    this.roomError.set('');
+
+    this.roomService.validateRoomCode(code).subscribe({
+      next: (response) => {
+        this.isValidatingRoom.set(false);
+        if (response.ok && response.room) {
+          this.roomValidated.set(true);
+          this.validatedRoom.set(response.room);
+          this.roomError.set('');
+        } else {
+          this.roomValidated.set(false);
+          this.validatedRoom.set(null);
+          this.roomError.set(response.error || 'Código de sala inválido');
+        }
+      },
+      error: (error) => {
+        this.isValidatingRoom.set(false);
+        this.roomValidated.set(false);
+        this.validatedRoom.set(null);
+        console.error('Error validating room:', error);
+        this.roomError.set('Error al validar el código de sala');
+      }
+    });
+  }
+
+  /**
+   * Get room code if validated, otherwise undefined
+   */
+  private getValidatedRoomCode(): string | undefined {
+    if (this.showRoomCode() && this.roomValidated()) {
+      return this.playerForm.get('roomCode')?.value?.trim().toUpperCase();
+    }
+    return undefined;
   }
 }
