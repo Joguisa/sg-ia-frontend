@@ -6,45 +6,7 @@
   margin: 0 auto;
 }
 
-/* Admin Cards */
-.admin-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  margin-bottom: 30px;
-  overflow: hidden;
-}
-
-.admin-card-header {
-  background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
-  padding: 20px 24px;
-  border-bottom: 1px solid #e8ecf1;
-}
-
-.admin-card-title {
-  margin: 0 0 8px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #2c3e50;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.admin-card-title i {
-  font-size: 24px;
-  color: #667eea;
-}
-
-.admin-card-subtitle {
-  margin: 0;
-  font-size: 13px;
-  color: #7f8c8d;
-}
-
-.admin-card-body {
-  padding: 24px;
-}
+/* Card styles moved to ../shared/styles/admin-styles.css */
 
 /* Admin Section Titles */
 .admin-section-title {
@@ -64,125 +26,13 @@
   border-bottom: 2px solid rgba(102, 126, 234, 0.3);
 }
 
-/* Admin Buttons */
-.admin-btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-}
-
-.admin-btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);
-}
-
-.admin-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
-}
-
-.admin-btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.admin-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
+/* Button styles moved to ../shared/styles/admin-styles.css */
 
 
-/* Admin Loading */
-.admin-loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  gap: 20px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.admin-loading-container-dark {
-  color: #7f8c8d;
-}
-
-/* Spinner styles moved to ../shared/styles/admin-styles.css */
-
-/* Admin No Data */
-.admin-no-data {
-  text-align: center;
-  padding: 40px 20px;
-  color: #95a5a6;
-  font-size: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.admin-no-data i {
-  font-size: 48px;
-  opacity: 0.5;
-}
-
-.admin-no-data p {
-  margin: 0;
-  font-weight: 600;
-  color: #2c3e50;
-}
+/* Loading container and no-data styles moved to ../shared/styles/admin-styles.css */
 
 /* Admin Tables */
-.admin-table-container {
-  overflow-x: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: white;
-}
-
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.admin-table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.admin-table th {
-  padding: 14px 12px;
-  text-align: left;
-  font-weight: 600;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
-}
-
-.admin-table tbody tr {
-  border-bottom: 1px solid #e8ecf1;
-  transition: all 0.2s ease;
-}
-
-.admin-table tbody tr:hover {
-  background: #f8f9fa;
-}
-
-.admin-table td {
-  padding: 14px 12px;
-  vertical-align: middle;
-}
+/* Table styles moved to ../shared/styles/admin-styles.css */
 
 /*============================================================================
   ADMIN PLAYERS - Main Container

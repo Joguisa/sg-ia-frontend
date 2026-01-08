@@ -288,11 +288,7 @@ export class AdminPlayersComponent implements OnInit {
     this.selectedPlayerId.set(null);
     this.selectedPlayerStats.set(null);
     this.profileChartData.set(null);
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab: 'profile' },
-      queryParamsHandling: 'merge'
-    });
+    this.activeTab.set('players');
   }
 
   // ============================================================================
@@ -301,6 +297,10 @@ export class AdminPlayersComponent implements OnInit {
 
   goToDashboard(): void {
     this.router.navigate(['/admin/dashboard']);
+  }
+
+  goToPlayers(): void {
+    this.router.navigate(['/admin/players']);
   }
 
   logout(): void {

@@ -184,3 +184,201 @@
         transform: rotate(360deg);
     }
 }
+
+/* ============================================================================
+   BUTTONS - Shared across all admin components
+   ============================================================================ */
+
+/* Base Button */
+.admin-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.admin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Primary Button - Main actions */
+.admin-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);
+}
+
+.admin-btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* Secondary Button - Less prominent actions */
+.admin-btn-secondary {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.admin-btn-secondary:hover:not(:disabled) {
+    background: rgba(102, 126, 234, 0.2);
+}
+
+/* ============================================================================
+   CARDS - Shared across all admin components
+   ============================================================================ */
+
+/* Card Container */
+.admin-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+/* Card Header */
+.admin-card-header {
+    background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+    padding: 20px 24px;
+    border-bottom: 1px solid #e8ecf1;
+}
+
+/* Card Title */
+.admin-card-title {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-card-title i {
+    font-size: 24px;
+    color: #667eea;
+}
+
+/* Card Subtitle */
+.admin-card-subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: #7f8c8d;
+}
+
+/* Card Body */
+.admin-card-body {
+    padding: 24px;
+}
+
+/* ============================================================================
+   TABLES - Shared across all admin components
+   ============================================================================ */
+
+/* Table Container */
+.admin-table-container {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Base */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Table Header */
+.admin-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.admin-table th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Table Body */
+.admin-table tbody tr {
+    border-bottom: 1px solid #e8ecf1;
+    transition: background-color 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.admin-table td {
+    padding: 16px;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+/* ============================================================================
+   LOADING CONTAINERS & EMPTY STATES - Shared across all admin components
+   ============================================================================ */
+
+/* Loading Container - For dark backgrounds */
+.admin-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 20px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Loading Container - For light backgrounds */
+.admin-loading-container-dark {
+    color: #7f8c8d;
+}
+
+/* Generic Loading Container */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 20px;
+    color: #6b7280;
+}
+
+/* No Data / Empty State */
+.admin-no-data {
+    text-align: center;
+    padding: 40px 20px;
+    color: #95a5a6;
+    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-no-data i {
+    font-size: 48px;
+    opacity: 0.5;
+}
+
+.admin-no-data p {
+    margin: 0;
+    font-weight: 600;
+    color: #2c3e50;
+}
