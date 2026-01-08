@@ -1,7 +1,4 @@
 /* ============================================================================
-   CONTAINER
-   ============================================================================ */
-/* ============================================================================
    HEADER
    ============================================================================ */
 .questions-header {
@@ -78,37 +75,6 @@
 }
 
 /* ============================================================================
-   ALERTS
-   ============================================================================ */
-.alert {
-  max-width: 1400px;
-  margin: 0 auto 20px;
-  padding: 16px 20px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-weight: 500;
-}
-
-.alert-success {
-  background: rgba(39, 174, 96, 0.1);
-  border: 1px solid rgba(39, 174, 96, 0.3);
-  color: #27ae60;
-}
-
-.alert-danger {
-  background: rgba(244, 67, 54, 0.1);
-  border: 1px solid rgba(244, 67, 54, 0.3);
-  color: #ff9999;
-}
-
-.alert i {
-  font-size: 18px;
-  flex: 0 0 auto;
-}
-
-/* ============================================================================
    LOADING
    ============================================================================ */
 .loading-container {
@@ -120,8 +86,6 @@
   gap: 20px;
   color: white;
 }
-
-/* Spinner styles moved to ../shared/styles/admin-styles.css */
 
 /* ============================================================================
    CONTENT
@@ -200,75 +164,10 @@
   margin-bottom: 24px;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #7f8c8d;
-  letter-spacing: 0.5px;
-}
-
-.form-control {
-  padding: 10px 12px;
-  border: 1px solid #e8ecf1;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: inherit;
-  transition: all 0.3s ease;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.form-control:disabled {
-  background: #f8f9fa;
-  cursor: not-allowed;
-}
-
 .difficulty-input {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.form-range {
-  flex: 1;
-  height: 6px;
-  border-radius: 3px;
-  background: #e8ecf1;
-  appearance: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-}
-
-.form-range::-webkit-slider-thumb {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-}
-
-.form-range::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .difficulty-value {
@@ -322,12 +221,10 @@
 
 .form-group select.form-control {
   appearance: none;
-  /* Oculta la flecha nativa del navegador */
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
 
-  /* Flecha personalizada SVG (la misma que usas en filtros) */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237f8c8d' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
@@ -396,25 +293,6 @@
   text-transform: uppercase;
   color: #7f8c8d;
   letter-spacing: 0.3px;
-}
-
-.search-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-input i {
-  position: absolute;
-  left: 14px;
-  font-size: 16px;
-  color: #95a5a6;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.search-input .form-control {
-  padding-left: 44px !important;
 }
 
 .filter-item .form-control {

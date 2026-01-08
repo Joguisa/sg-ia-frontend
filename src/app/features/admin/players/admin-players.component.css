@@ -6,8 +6,6 @@
   margin: 0 auto;
 }
 
-/* Card styles moved to ../shared/styles/admin-styles.css */
-
 /* Admin Section Titles */
 .admin-section-title {
   margin: 0 0 24px;
@@ -25,14 +23,6 @@
   color: #2c3e50;
   border-bottom: 2px solid rgba(102, 126, 234, 0.3);
 }
-
-/* Button styles moved to ../shared/styles/admin-styles.css */
-
-
-/* Loading container and no-data styles moved to ../shared/styles/admin-styles.css */
-
-/* Admin Tables */
-/* Table styles moved to ../shared/styles/admin-styles.css */
 
 /*============================================================================
   ADMIN PLAYERS - Main Container
@@ -186,37 +176,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-}
-
-.search-box {
-  flex: 1;
-  position: relative;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 16px 12px 42px;
-  border: 1px solid #e8ecf1;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  background: #f8f9fa;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #667eea;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.search-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #95a5a6;
-  font-size: 16px;
 }
 
 /*============================================================================
@@ -473,38 +432,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-}
-
-.search-input-wrapper {
-  position: relative;
-  flex: 1;
-  max-width: 500px;
-}
-
-.search-input-wrapper i {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #95a5a6;
-  font-size: 16px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 16px 12px 42px;
-  border: 1px solid #e8ecf1;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  background: #f8f9fa;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #667eea;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .search-results-count {

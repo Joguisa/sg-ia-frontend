@@ -34,9 +34,9 @@
       <!-- Actions Bar -->
       <div class="actions-bar">
         <div class="search-filters">
-          <div class="search-box">
+          <div class="search-input-wrapper">
             <i class="fas fa-search"></i>
-            <input type="text" placeholder="Buscar por nombre o código..." [value]="searchQuery()"
+            <input type="text" class="search-input" placeholder="Buscar por nombre o código..." [value]="searchQuery()"
               (input)="onSearchChange($event)" />
           </div>
           <select class="filter-select" (change)="onStatusFilterChange($event)">

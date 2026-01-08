@@ -326,11 +326,10 @@
   background: linear-gradient(135deg, #f5f7fa, #f0f2f5);
 }
 
-/* CORRECCIÓN: Apuntar a la etiqueta 'i' de FontAwesome y darle color explícito */
 .action-icon i {
-  font-size: 32px; /* Ajustado para FontAwesome */
+  font-size: 32px;
   line-height: 1;
-  color: #667eea; /* Color primario del tema para que no se vea blanco */
+  color: #667eea;
 }
 
 .action-content {
@@ -351,11 +350,9 @@
   line-height: 1.6;
 }
 
-/* CORRECCIÓN: Botón reforzado */
 button.btn-action {
   padding: 12px 20px;
-  /* !important asegura que Bootstrap no quite el gradiente */
-  background: linear-gradient(135deg, #667eea, #764ba2) !important; 
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
   color: white !important;
   border: none;
   border-radius: 6px;
@@ -1033,169 +1030,4 @@ button.btn-action i {
   background: rgba(102, 126, 234, 0.15);
   color: #667eea;
   border: 1px solid rgba(102, 126, 234, 0.3);
-}
-
-/*============================================================================
-  ROOM SELECTOR SECTION
-============================================================================ */
-.room-selector-section {
-  margin-bottom: 24px;
-}
-
-.room-selector-container {
-  background: linear-gradient(135deg, rgba(15, 52, 96, 0.6) 0%, rgba(26, 26, 46, 0.8) 100%);
-  border: 1px solid rgba(102, 126, 234, 0.3);
-  border-radius: 12px;
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.room-selector-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #a0aec0;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.room-selector-label i {
-  font-size: 18px;
-  color: #667eea;
-}
-
-.room-selector-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-}
-
-.room-select {
-  min-width: 280px;
-  padding: 10px 16px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(102, 126, 234, 0.4);
-  border-radius: 8px;
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.room-select:hover {
-  border-color: #667eea;
-  background: rgba(30, 41, 59, 1);
-}
-
-.room-select:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-}
-
-.room-select option {
-  background: #1e293b;
-  color: white;
-  padding: 10px;
-}
-
-.btn-clear-room {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(239, 68, 68, 0.2);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  border-radius: 6px;
-  color: #ef4444;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-clear-room:hover {
-  background: rgba(239, 68, 68, 0.3);
-  border-color: #ef4444;
-}
-
-.room-selected-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: auto;
-}
-
-.room-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  background: rgba(102, 126, 234, 0.2);
-  border: 1px solid rgba(102, 126, 234, 0.4);
-  border-radius: 20px;
-  color: #667eea;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.room-badge i {
-  font-size: 12px;
-}
-
-.btn-room-stats {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-room-stats:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.btn-room-stats i {
-  font-size: 14px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .room-selector-container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .room-select {
-    min-width: 100%;
-    width: 100%;
-  }
-
-  .room-selector-wrapper {
-    width: 100%;
-  }
-
-  .room-selected-info {
-    width: 100%;
-    margin-left: 0;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .btn-room-stats {
-    width: 100%;
-    justify-content: center;
-  }
 }

@@ -1,44 +1,4 @@
 /* ============================================================================
-   CONTAINER
-   ============================================================================ */
-
-/* ============================================================================
-   HEADER STYLES - Now handled by admin-styles.css
-   ============================================================================ */
-/* Header styles have been moved to ../shared/styles/admin-styles.css */
-
-/* ============================================================================
-   ALERTS
-   ============================================================================ */
-.alert {
-  max-width: 1200px;
-  margin: 0 auto 20px;
-  padding: 16px 20px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-weight: 500;
-}
-
-.alert-success {
-  background: rgba(39, 174, 96, 0.1);
-  border: 1px solid rgba(39, 174, 96, 0.3);
-  color: #27ae60;
-}
-
-.alert-danger {
-  background: rgba(244, 67, 54, 0.1);
-  border: 1px solid rgba(244, 67, 54, 0.3);
-  color: #ff9999;
-}
-
-.alert i {
-  font-size: 18px;
-  flex: 0 0 auto;
-}
-
-/* ============================================================================
    LOADING
    ============================================================================ */
 .loading-container {
@@ -51,7 +11,6 @@
   color: white;
 }
 
-/* Spinner styles moved to ../shared/styles/admin-styles.css */
 
 /* ============================================================================
    CONTENT
@@ -101,35 +60,6 @@
 
 .card-body {
   padding: 24px;
-}
-
-/* ============================================================================
-   FORM GROUPS
-   ============================================================================ */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.form-label {
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #2c3e50;
-  letter-spacing: 0.5px;
-}
-
-.required {
-  color: #e74c3c;
-  font-weight: 700;
-}
-
-.form-help {
-  margin: 0;
-  font-size: 13px;
-  color: #7f8c8d;
-  line-height: 1.5;
 }
 
 /* ============================================================================
@@ -243,56 +173,6 @@
 .slider-label i {
   font-size: 14px;
   line-height: 1;
-}
-
-.form-range {
-  flex: 1;
-  height: 8px;
-  border-radius: 4px;
-  background: #e8ecf1;
-  appearance: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-  outline: none;
-}
-
-.form-range::-webkit-slider-thumb {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.form-range::-webkit-slider-thumb:hover {
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
-  transform: scale(1.1);
-}
-
-.form-range::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-  transition: all 0.3s ease;
-}
-
-.form-range::-moz-range-thumb:hover {
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
-  transform: scale(1.1);
-}
-
-.form-range:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 /* ============================================================================
@@ -880,8 +760,6 @@
 /* ============================================================
    AI PROVIDER SELECTION STYLES
    ============================================================ */
-
-/* Provider Select Dropdown */
 .form-select {
   padding: 12px 16px;
   border: 2px solid #e8ecf1;
@@ -1026,10 +904,6 @@
 /* ============================================================================
    ADMIN STYLES (TAB 2: JUEGO Y CATEGORÍAS)
    ============================================================================ */
-
-/* Card styles moved to ../shared/styles/admin-styles.css */
-
-/* Button styles moved to ../shared/styles/admin-styles.css */
 
 /* Admin Alerts */
 .admin-alert {

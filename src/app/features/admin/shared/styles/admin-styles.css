@@ -382,3 +382,322 @@
     font-weight: 600;
     color: #2c3e50;
 }
+
+/* ============================================================================
+   ALERTS - Shared across all admin components
+   ============================================================================ */
+
+/* Base Alert */
+.admin-alert {
+    max-width: 1400px;
+    margin: 0 auto 20px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.admin-alert i {
+    font-size: 18px;
+    flex: 0 0 auto;
+}
+
+/* Success Alert */
+.admin-alert-success {
+    background: rgba(39, 174, 96, 0.1);
+    border: 1px solid rgba(39, 174, 96, 0.3);
+    color: #27ae60;
+}
+
+/* Danger/Error Alert */
+.admin-alert-danger {
+    background: rgba(244, 67, 54, 0.1);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    color: #ff9999;
+}
+
+/* Warning Alert */
+.admin-alert-warning {
+    background: rgba(243, 156, 18, 0.1);
+    border: 1px solid rgba(243, 156, 18, 0.3);
+    color: #f39c12;
+}
+
+/* Info Alert */
+.admin-alert-info {
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    color: #667eea;
+}
+
+/* ============================================================================
+   FORMS - Shared across all admin components
+   ============================================================================ */
+
+/* Form Group */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+/* Form Label */
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #2c3e50;
+    letter-spacing: 0.5px;
+}
+
+.form-label.required::after,
+.required {
+    content: ' *';
+    color: #e74c3c;
+    font-weight: 700;
+}
+
+/* Form Help Text */
+.form-help {
+    margin: 0;
+    font-size: 13px;
+    color: #7f8c8d;
+    line-height: 1.5;
+}
+
+/* Form Control - Base Input */
+.form-control {
+    padding: 10px 12px;
+    border: 1px solid #e8ecf1;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-control:disabled {
+    background: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Search Box */
+.search-box {
+    position: relative;
+    flex: 1;
+}
+
+.search-box i,
+.search-icon {
+    position: absolute;
+    left: 1px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #95a5a6;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 500px;
+}
+
+.search-input-wrapper i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #95a5a6;
+    font-size: 16px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    border: 1px solid #e8ecf1;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Select/Filter */
+.filter-select {
+    padding: 12px 15px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Range Slider */
+.form-range {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #e8ecf1;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.form-range::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.form-range::-webkit-slider-thumb:hover {
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    transform: scale(1.1);
+}
+
+.form-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.form-range::-moz-range-thumb:hover {
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    transform: scale(1.1);
+}
+
+.form-range:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Textarea */
+.form-textarea {
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid #e8ecf1;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.6;
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-textarea:disabled {
+    background: #f8f9fa;
+    cursor: not-allowed;
+}
+
+/* ============================================================================
+   BADGES - Shared across all admin components
+   ============================================================================ */
+
+/* Base Badge */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Large Badge */
+.status-badge.large {
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+/* Success Badge - Green (Active, Success, Correct) */
+.status-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* Warning Badge - Yellow (Paused, Medium, Warning) */
+.status-paused {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* Danger Badge - Red (Closed, Error, Incorrect) */
+.status-closed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Room Code Badge - Purple Gradient */
+.room-code-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.room-code-badge:hover {
+    transform: scale(1.05);
+}
+
+.room-code-badge .copy-icon {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 12px;
+}
+
+.room-code-badge:hover .copy-icon {
+    opacity: 1;
+}
