@@ -24,21 +24,15 @@
           <label for="email" class="form-label">Correo Electrónico</label>
           <div class="input-wrapper">
             <i class="fas fa-envelope text-primary"></i>
-            <input
-              type="email"
-              id="email"
-              class="form-control"
-              formControlName="email"
-              placeholder="admin@sg-ia.com"
-              maxlength="100"
-              [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-              autocomplete="email"
-            />
+            <input type="email" id="email" class="form-control" formControlName="email" placeholder="admin@sg-ia.com"
+              maxlength="100" [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+              autocomplete="email" />
           </div>
           <div class="invalid-feedback" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
             <small *ngIf="loginForm.get('email')?.hasError('required')">El correo electrónico es requerido</small>
             <small *ngIf="loginForm.get('email')?.hasError('invalidEmail')">Ingresa un correo electrónico válido</small>
-            <small *ngIf="loginForm.get('email')?.hasError('maxlength')">El correo no puede exceder los 100 caracteres</small>
+            <small *ngIf="loginForm.get('email')?.hasError('maxlength')">El correo no puede exceder los 100
+              caracteres</small>
           </div>
         </div>
 
@@ -47,34 +41,26 @@
           <label for="password" class="form-label">Contraseña</label>
           <div class="input-wrapper">
             <i class="fas fa-lock text-primary"></i>
-            <input
-              [type]="showPassword() ? 'text' : 'password'"
-              id="password"
-              class="form-control"
-              formControlName="password"
-              placeholder="••••••••"
-              maxlength="50"
+            <input [type]="showPassword() ? 'text' : 'password'" id="password" class="form-control"
+              formControlName="password" placeholder="••••••••" maxlength="50"
               [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-              autocomplete="current-password"
-            />
-            <button
-              type="button"
-              class="toggle-password d-flex align-items-center"
-              (click)="togglePasswordVisibility()"
-              [disabled]="isLoading()"
-              title="Mostrar/Ocultar contraseña"
-            >
+              autocomplete="current-password" />
+            <button type="button" class="toggle-password d-flex align-items-center" (click)="togglePasswordVisibility()"
+              [disabled]="isLoading()" title="Mostrar/Ocultar contraseña">
               @if (showPassword()) {
-                <i class="fas fa-eye text-primary"></i>
+              <i class="fas fa-eye text-primary"></i>
               } @else {
-                <i class="fas fa-eye-slash text-muted"></i>
+              <i class="fas fa-eye-slash text-muted"></i>
               }
             </button>
           </div>
-          <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <div class="invalid-feedback"
+            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
             <small *ngIf="loginForm.get('password')?.hasError('required')">La contraseña es requerida</small>
-            <small *ngIf="loginForm.get('password')?.hasError('minlength')">La contraseña debe tener al menos 6 caracteres</small>
-            <small *ngIf="loginForm.get('password')?.hasError('maxlength')">La contraseña no puede exceder los 50 caracteres</small>
+            <small *ngIf="loginForm.get('password')?.hasError('minlength')">La contraseña debe tener al menos 6
+              caracteres</small>
+            <small *ngIf="loginForm.get('password')?.hasError('maxlength')">La contraseña no puede exceder los 50
+              caracteres</small>
           </div>
         </div>
 
@@ -85,11 +71,7 @@
         </div>
 
         <!-- Submit Button -->
-        <button
-          type="submit"
-          class="btn btn-primary btn-login"
-          [disabled]="isLoading()"
-        >
+        <button type="submit" class="btn btn-primary btn-login" [disabled]="isLoading()">
           <span *ngIf="!isLoading()" class="btn-text">
             Iniciar Sesión
           </span>
@@ -103,12 +85,7 @@
       <div class="card-footer">
         <p class="footer-text">
           ¿No eres administrador?
-          <button
-            type="button"
-            class="link-button"
-            (click)="goToPlay()"
-            [disabled]="isLoading()"
-          >
+          <button type="button" class="link-button" (click)="goToPlay()" [disabled]="isLoading()">
             Volver al juego
           </button>
         </p>
@@ -132,4 +109,3 @@
     </div>
   </div>
 </div>
-

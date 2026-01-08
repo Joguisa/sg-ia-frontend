@@ -1,25 +1,8 @@
 /* ========== ADMIN CONTAINER ========== */
-.admin-container {
-  min-height: 100vh;
-  background: #f5f7fa;
-}
+
 
 /* ========== HEADER ========== */
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
 
 .btn-back {
   background: rgba(255, 255, 255, 0.2);
@@ -193,7 +176,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-state {
@@ -919,6 +904,7 @@
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

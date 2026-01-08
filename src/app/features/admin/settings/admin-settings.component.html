@@ -1,20 +1,20 @@
-<div class="admin-settings-container">
+<div class="admin-container">
   <!-- Header with Navigation -->
-  <div class="settings-header">
-    <div class="header-content">
-      <div class="header-title">
+  <div class="admin-header">
+    <div class="admin-header-content">
+      <div class="admin-header-title">
         <i class="fas fa-brain"></i>
-        <div class="header-text">
+        <div class="admin-header-text">
           <h1>Configuración del Modelo IA</h1>
-          <p class="header-subtitle">Ajusta el prompt del sistema, parámetros y proveedores Multi-AI</p>
+          <p class="admin-header-subtitle">Ajusta el prompt del sistema, parámetros y proveedores Multi-AI</p>
         </div>
       </div>
-      <div class="header-actions">
-        <button class="btn btn-sm btn-secondary" (click)="goToDashboard()">
+      <div class="admin-header-actions">
+        <button class="admin-btn-back" (click)="goToDashboard()">
           <i class="fas fa-arrow-left"></i>
           Volver al Dashboard
         </button>
-        <button class="btn btn-sm btn-danger" (click)="logout()">
+        <button class="admin-btn-logout admin-btn-danger" (click)="logout()">
           <i class="fas fa-sign-out-alt"></i>
           Cerrar Sesión
         </button>
@@ -50,10 +50,7 @@
   <div class="settings-content">
 
     <!-- Tabs Navigation -->
-    <app-tabs
-      [tabs]="tabs"
-      [activeTab]="activeTab()"
-      (tabChange)="onTabChange($event)">
+    <app-tabs [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="onTabChange($event)">
     </app-tabs>
 
     <!-- TAB 1: INTELIGENCIA ARTIFICIAL -->
@@ -236,8 +233,7 @@
 
             <input id="max-questions-input" type="text" class="form-control" formControlName="maxQuestionsPerGame"
               (input)="onMaxQuestionsInput($event)" (blur)="onMaxQuestionsBlur($event)"
-              [placeholder]="minimumQuestionsRequired.toString()"
-              inputmode="numeric">
+              [placeholder]="minimumQuestionsRequired.toString()" inputmode="numeric">
 
             <div class="input-footer">
               <span class="input-info">
@@ -261,7 +257,8 @@
               <i class="fas fa-exclamation-triangle"></i>
               <div>
                 <strong>Error:</strong> Has configurado <strong>{{ maxQuestionsValue }}</strong> preguntas por
-                juego, pero el mínimo requerido es <strong>{{ minimumQuestionsRequired }}</strong> preguntas (1 por cada categoría).
+                juego, pero el mínimo requerido es <strong>{{ minimumQuestionsRequired }}</strong> preguntas (1 por cada
+                categoría).
                 Aumenta el límite a al menos <strong>{{ minimumQuestionsRequired }}</strong> preguntas.
               </div>
             </div>

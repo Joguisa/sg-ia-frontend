@@ -30,7 +30,7 @@ import { AdminCategory } from '../../../core/models/admin';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TabsComponent, BaseChartDirective],
   templateUrl: './admin-rooms.component.html',
-  styleUrl: './admin-rooms.component.css'
+  styleUrls: ['../shared/styles/admin-styles.css', './admin-rooms.component.css']
 })
 export class AdminRoomsComponent implements OnInit {
 

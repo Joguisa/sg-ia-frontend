@@ -23,7 +23,10 @@ import { NOTIFICATION_DURATION } from '../../../core/constants/notification-conf
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-questions.component.html',
-  styleUrls: ['./admin-questions.component.css']
+  styleUrls: [
+    '../shared/styles/admin-styles.css',
+    './admin-questions.component.css'
+  ]
 })
 export class AdminQuestionsComponent implements OnInit {
   // ========== FORMULARIOS REACTIVOS ==========
@@ -574,7 +577,7 @@ export class AdminQuestionsComponent implements OnInit {
         if (response.ok) {
           if (response.errors > 0) {
             console.log('response with errors', response);
-            
+
             this.notification.warning(
               `Importación parcial: ${response.imported} importadas, ${response.errors} errores`,
               NOTIFICATION_DURATION.LONG

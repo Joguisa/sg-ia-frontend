@@ -1,13 +1,6 @@
 /* ============================================================================
    CONTAINER
    ============================================================================ */
-.admin-questions-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
 /* ============================================================================
    HEADER
    ============================================================================ */
@@ -1556,10 +1549,13 @@ code {
 }
 
 @keyframes pulse-warning {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.7;
     transform: scale(1.1);

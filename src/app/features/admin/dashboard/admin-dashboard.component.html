@@ -40,51 +40,6 @@
   <!-- Dashboard Content -->
   @if (!isLoading() && !errorMessage()) {
   <div class="dashboard-content">
-    <!-- Room Selector Section -->
-    @if (rooms().length > 0) {
-    <section class="room-selector-section">
-      <div class="room-selector-container">
-        <div class="room-selector-label">
-          <i class="fas fa-door-open"></i>
-          <span>Filtrar por Sala:</span>
-        </div>
-        <div class="room-selector-wrapper">
-          <select
-            class="room-select"
-            [ngModel]="selectedRoomId()"
-            (ngModelChange)="onRoomChange($event)">
-            <option [ngValue]="null">Todas las salas (Global)</option>
-            @for (room of rooms(); track room.id) {
-              <option [ngValue]="room.id">
-                {{ room.name }} ({{ room.room_code }})
-                @if (room.status !== 'active') {
-                  - {{ room.status === 'paused' ? 'Pausada' : 'Cerrada' }}
-                }
-              </option>
-            }
-          </select>
-          @if (selectedRoomId()) {
-            <button class="btn-clear-room" (click)="onRoomChange(null)" title="Limpiar filtro">
-              <i class="fas fa-times"></i>
-            </button>
-          }
-        </div>
-        @if (selectedRoomId()) {
-          <div class="room-selected-info">
-            <span class="room-badge">
-              <i class="fas fa-filter"></i>
-              Filtrando: {{ getSelectedRoomName() }}
-            </span>
-            <button class="btn btn-sm btn-room-stats" (click)="goToRooms()">
-              <i class="fas fa-chart-bar"></i>
-              Ver Estadísticas Detalladas
-            </button>
-          </div>
-        }
-      </div>
-    </section>
-    }
-
     <!-- KPI Cards Section -->
     <section class="kpi-section">
       <h2 class="section-title">Estadísticas Principales</h2>

@@ -1,29 +1,30 @@
 <div class="admin-container">
   <!-- Header -->
-  <header class="admin-header">
-    <div class="header-left">
-      <button class="btn-back" (click)="goToDashboard()">
-        <i class="fas fa-arrow-left"></i>
-      </button>
-      <h1 class="page-title">
+  <div class="admin-header">
+    <div class="admin-header-content">
+      <div class="admin-header-title">
         <i class="fas fa-door-open"></i>
-        Gestión de Salas
-      </h1>
+        <div class="admin-header-text">
+          <h1>Gestión de Salas</h1>
+          <p class="admin-header-subtitle">Estadísticas y mantenimientos de salas</p>
+        </div>
+      </div>
+      <div class="admin-header-actions">
+        <button class="admin-btn-back" (click)="goToDashboard()">
+          <i class="fas fa-arrow-left"></i>
+          Volver al Dashboard
+        </button>
+        <button class="admin-btn-logout admin-btn-danger" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          Cerrar Sesión
+        </button>
+      </div>
     </div>
-    <div class="header-right">
-      <button class="btn-logout" (click)="logout()">
-        <i class="fas fa-sign-out-alt"></i>
-        Cerrar Sesión
-      </button>
-    </div>
-  </header>
+  </div>
+
 
   <!-- Tabs -->
-  <app-tabs
-    [tabs]="tabs"
-    [activeTab]="activeTab()"
-    (tabChange)="onTabChange($event)"
-  ></app-tabs>
+  <app-tabs [tabs]="tabs" [activeTab]="activeTab()" (tabChange)="onTabChange($event)"></app-tabs>
 
   <!-- Tab Content -->
   <div class="tab-content">
@@ -35,12 +36,8 @@
         <div class="search-filters">
           <div class="search-box">
             <i class="fas fa-search"></i>
-            <input
-              type="text"
-              placeholder="Buscar por nombre o código..."
-              [value]="searchQuery()"
-              (input)="onSearchChange($event)"
-            />
+            <input type="text" placeholder="Buscar por nombre o código..." [value]="searchQuery()"
+              (input)="onSearchChange($event)" />
           </div>
           <select class="filter-select" (change)="onStatusFilterChange($event)">
             <option value="all">Todos los estados</option>
@@ -116,28 +113,16 @@
 
             <!-- Status Actions -->
             <div class="status-actions">
-              <button
-                *ngIf="room.status !== 'active'"
-                class="btn-icon btn-activate"
-                (click)="updateRoomStatus(room, 'active')"
-                title="Activar"
-              >
+              <button *ngIf="room.status !== 'active'" class="btn-icon btn-activate"
+                (click)="updateRoomStatus(room, 'active')" title="Activar">
                 <i class="fas fa-play"></i>
               </button>
-              <button
-                *ngIf="room.status === 'active'"
-                class="btn-icon btn-pause"
-                (click)="updateRoomStatus(room, 'paused')"
-                title="Pausar"
-              >
+              <button *ngIf="room.status === 'active'" class="btn-icon btn-pause"
+                (click)="updateRoomStatus(room, 'paused')" title="Pausar">
                 <i class="fas fa-pause"></i>
               </button>
-              <button
-                *ngIf="room.status !== 'closed'"
-                class="btn-icon btn-close"
-                (click)="updateRoomStatus(room, 'closed')"
-                title="Cerrar"
-              >
+              <button *ngIf="room.status !== 'closed'" class="btn-icon btn-close"
+                (click)="updateRoomStatus(room, 'closed')" title="Cerrar">
                 <i class="fas fa-stop"></i>
               </button>
             </div>
@@ -199,19 +184,11 @@
 
           <!-- Export Buttons -->
           <div class="export-buttons">
-            <button
-              class="btn-export btn-pdf"
-              (click)="exportToPdf()"
-              [disabled]="isExporting()"
-            >
+            <button class="btn-export btn-pdf" (click)="exportToPdf()" [disabled]="isExporting()">
               <i class="fas fa-file-pdf"></i>
               Exportar PDF
             </button>
-            <button
-              class="btn-export btn-excel"
-              (click)="exportToExcel()"
-              [disabled]="isExporting()"
-            >
+            <button class="btn-export btn-excel" (click)="exportToExcel()" [disabled]="isExporting()">
               <i class="fas fa-file-excel"></i>
               Exportar Excel
             </button>
@@ -253,12 +230,8 @@
           <div class="chart-card" *ngIf="playerStatsChartData()">
             <h3><i class="fas fa-chart-bar"></i> Rendimiento de Jugadores</h3>
             <div class="chart-container">
-              <canvas
-                baseChart
-                [data]="playerStatsChartData()!"
-                [options]="playerStatsChartOptions"
-                [type]="playerStatsChartType"
-              ></canvas>
+              <canvas baseChart [data]="playerStatsChartData()!" [options]="playerStatsChartOptions"
+                [type]="playerStatsChartType"></canvas>
             </div>
           </div>
 
@@ -266,12 +239,8 @@
           <div class="chart-card" *ngIf="categoryStatsChartData()">
             <h3><i class="fas fa-chart-pie"></i> Distribución por Categoría</h3>
             <div class="chart-container doughnut">
-              <canvas
-                baseChart
-                [data]="categoryStatsChartData()!"
-                [options]="categoryStatsChartOptions"
-                [type]="categoryStatsChartType"
-              ></canvas>
+              <canvas baseChart [data]="categoryStatsChartData()!" [options]="categoryStatsChartOptions"
+                [type]="categoryStatsChartType"></canvas>
             </div>
           </div>
         </div>
@@ -364,7 +333,9 @@
                   <td>{{ player.sessions_played }}</td>
                   <td>{{ player.total_answers }}</td>
                   <td>
-                    <span class="accuracy-badge" [class.high]="player.accuracy_percent >= 70" [class.medium]="player.accuracy_percent >= 50 && player.accuracy_percent < 70" [class.low]="player.accuracy_percent < 50">
+                    <span class="accuracy-badge" [class.high]="player.accuracy_percent >= 70"
+                      [class.medium]="player.accuracy_percent >= 50 && player.accuracy_percent < 70"
+                      [class.low]="player.accuracy_percent < 50">
                       {{ player.accuracy_percent }}%
                     </span>
                   </td>
@@ -393,7 +364,8 @@
                   <td class="question-text">{{ q.statement }}</td>
                   <td>{{ q.times_answered }}</td>
                   <td>
-                    <span class="error-badge" [class.high]="q.error_rate >= 50" [class.medium]="q.error_rate >= 30 && q.error_rate < 50" [class.low]="q.error_rate < 30">
+                    <span class="error-badge" [class.high]="q.error_rate >= 50"
+                      [class.medium]="q.error_rate >= 30 && q.error_rate < 50" [class.low]="q.error_rate < 30">
                       {{ q.error_rate }}%
                     </span>
                   </td>
@@ -421,17 +393,15 @@
         <!-- Name -->
         <div class="form-group">
           <label for="name">Nombre de la Sala *</label>
-          <input
-            type="text"
-            id="name"
-            formControlName="name"
+          <input type="text" id="name" formControlName="name"
             placeholder="Ej: Sesión Educativa - Prevención Cáncer de Colon"
-            [class.is-invalid]="roomForm.get('name')?.invalid && roomForm.get('name')?.touched"
-          />
-          <div class="invalid-feedback" *ngIf="roomForm.get('name')?.hasError('required') && roomForm.get('name')?.touched">
+            [class.is-invalid]="roomForm.get('name')?.invalid && roomForm.get('name')?.touched" />
+          <div class="invalid-feedback"
+            *ngIf="roomForm.get('name')?.hasError('required') && roomForm.get('name')?.touched">
             El nombre es requerido
           </div>
-          <div class="invalid-feedback" *ngIf="roomForm.get('name')?.hasError('minlength') && roomForm.get('name')?.touched">
+          <div class="invalid-feedback"
+            *ngIf="roomForm.get('name')?.hasError('minlength') && roomForm.get('name')?.touched">
             El nombre debe tener al menos 3 caracteres
           </div>
         </div>
@@ -439,33 +409,26 @@
         <!-- Description -->
         <div class="form-group">
           <label for="description">Descripción (opcional)</label>
-          <textarea
-            id="description"
-            formControlName="description"
-            placeholder="Describe el propósito de esta sala..."
-            rows="3"
-          ></textarea>
+          <textarea id="description" formControlName="description" placeholder="Describe el propósito de esta sala..."
+            rows="3"></textarea>
         </div>
 
         <!-- Max Players -->
         <div class="form-group">
           <label for="max_players">Máximo de Jugadores (1-500)</label>
-          <input
-            type="text"
-            id="max_players"
-            formControlName="max_players"
-            placeholder="50"
-            (input)="onMaxPlayersInput($event)"
-            (keypress)="preventNonNumeric($event)"
-            [class.is-invalid]="roomForm.get('max_players')?.invalid && roomForm.get('max_players')?.touched"
-          />
-          <div class="invalid-feedback" *ngIf="roomForm.get('max_players')?.hasError('required') && roomForm.get('max_players')?.touched">
+          <input type="text" id="max_players" formControlName="max_players" placeholder="50"
+            (input)="onMaxPlayersInput($event)" (keypress)="preventNonNumeric($event)"
+            [class.is-invalid]="roomForm.get('max_players')?.invalid && roomForm.get('max_players')?.touched" />
+          <div class="invalid-feedback"
+            *ngIf="roomForm.get('max_players')?.hasError('required') && roomForm.get('max_players')?.touched">
             El número de jugadores es requerido
           </div>
-          <div class="invalid-feedback" *ngIf="roomForm.get('max_players')?.hasError('min') && roomForm.get('max_players')?.touched">
+          <div class="invalid-feedback"
+            *ngIf="roomForm.get('max_players')?.hasError('min') && roomForm.get('max_players')?.touched">
             Mínimo 1 jugador
           </div>
-          <div class="invalid-feedback" *ngIf="roomForm.get('max_players')?.hasError('max') && roomForm.get('max_players')?.touched">
+          <div class="invalid-feedback"
+            *ngIf="roomForm.get('max_players')?.hasError('max') && roomForm.get('max_players')?.touched">
             Máximo 500 jugadores
           </div>
         </div>
@@ -476,11 +439,8 @@
           <p class="help-text">Deja vacío para incluir todas las categorías</p>
           <div class="checkbox-grid">
             <label *ngFor="let cat of categories()" class="checkbox-item">
-              <input
-                type="checkbox"
-                [checked]="isCategorySelected(cat.id!)"
-                (change)="onCategoryToggle(cat.id!, $event)"
-              />
+              <input type="checkbox" [checked]="isCategorySelected(cat.id!)"
+                (change)="onCategoryToggle(cat.id!, $event)" />
               <span>{{ cat.name }}</span>
             </label>
           </div>
@@ -492,11 +452,8 @@
           <p class="help-text">Deja vacío para incluir todas las dificultades</p>
           <div class="checkbox-grid">
             <label *ngFor="let diff of difficulties" class="checkbox-item">
-              <input
-                type="checkbox"
-                [checked]="isDifficultySelected(diff)"
-                (change)="onDifficultyToggle(diff, $event)"
-              />
+              <input type="checkbox" [checked]="isDifficultySelected(diff)"
+                (change)="onDifficultyToggle(diff, $event)" />
               <span>{{ getDifficultyLabel(diff) }}</span>
             </label>
           </div>

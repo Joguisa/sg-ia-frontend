@@ -20,7 +20,10 @@ import { PlayerStatsResponse, PlayerGlobalStats, PlayerTopicStats } from '../../
   standalone: true,
   imports: [CommonModule, FormsModule, TabsComponent, BaseChartDirective],
   templateUrl: './admin-players.component.html',
-  styleUrl: './admin-players.component.css'
+  styleUrls: [
+    '../shared/styles/admin-styles.css',
+    './admin-players.component.css'
+  ]
 })
 export class AdminPlayersComponent implements OnInit {
 
@@ -93,7 +96,7 @@ export class AdminPlayersComponent implements OnInit {
     private notification: NotificationService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Read tab from query params
@@ -152,7 +155,7 @@ export class AdminPlayersComponent implements OnInit {
     this.isLoadingLeaderboard.set(true);
 
     this.gameService.getLeaderboard().subscribe({
-      next: (response) => {        
+      next: (response) => {
         if (response.ok && response.leaderboard) {
           this.leaderboardData.set(response.leaderboard);
           this.buildLeaderboardChart(response.leaderboard.slice(0, 10)); // Top 10

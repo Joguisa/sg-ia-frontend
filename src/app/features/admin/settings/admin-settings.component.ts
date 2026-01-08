@@ -16,7 +16,10 @@ import { TabsComponent, Tab } from '../../../shared/tabs/tabs.component';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent, TabsComponent],
   templateUrl: './admin-settings.component.html',
-  styleUrls: ['./admin-settings.component.css']
+  styleUrls: [
+    '../shared/styles/admin-styles.css',
+    './admin-settings.component.css'
+  ]
 })
 export class AdminSettingsComponent implements OnInit {
   // ========== HELPER PARA TEMPLATE ==========
@@ -175,13 +178,13 @@ export class AdminSettingsComponent implements OnInit {
         if (response.ok && response.providers) {
           // 1. Extraemos solo los nombres de los objetos (transformamos Provider[] a string[])
           const backendProviders = response.providers.map(p => p.name);
-          
+
           // 2. Filtramos si por casualidad viniera 'auto' del backend para no duplicarlo
           const uniqueBackendProviders = backendProviders.filter(name => name !== 'auto');
 
           // 3. Construimos el array final de strings
           const providers = ['auto', ...uniqueBackendProviders];
-          
+
           this.availableProviders.set(providers);
         } else {
           // Fallback en caso de respuesta vacía
@@ -280,10 +283,10 @@ export class AdminSettingsComponent implements OnInit {
           // this.errorMessage.set(response.error || 'Error al guardar la configuración');
           // this.isSaving.set(false);
           this.errorMessage.set(response.error || 'Error al guardar la configuración');
-        
-        // 3. Habilitar en caso de error lógico
-        this.promptConfigForm.enable();
-        this.isSaving.set(false);
+
+          // 3. Habilitar en caso de error lógico
+          this.promptConfigForm.enable();
+          this.isSaving.set(false);
         }
       },
       error: (error) => {

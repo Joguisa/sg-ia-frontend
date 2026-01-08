@@ -1,20 +1,20 @@
-<div class="admin-questions-container">
+<div class="admin-container">
   <!-- Header with Navigation -->
-  <div class="questions-header">
-    <div class="header-content">
-      <div class="header-title">
+  <div class="admin-header">
+    <div class="admin-header-content">
+      <div class="admin-header-title">
         <i class="fas fa-file-text"></i>
-        <div class="header-text">
+        <div class="admin-header-text">
           <h1>Gestión de Preguntas</h1>
-          <p class="header-subtitle">Administra la base de datos de preguntas y genera nuevas con IA</p>
+          <p class="admin-header-subtitle">Administra la base de datos de preguntas y genera nuevas con IA</p>
         </div>
       </div>
-      <div class="header-actions">
-        <button class="btn btn-sm btn-secondary" (click)="goToDashboard()">
+      <div class="admin-header-actions">
+        <button class="admin-btn-back" (click)="goToDashboard()">
           <i class="fas fa-arrow-left"></i>
           Volver al Dashboard
         </button>
-        <button class="btn btn-sm btn-danger" (click)="logout()">
+        <button class="admin-btn-logout admin-btn-danger" (click)="logout()">
           <i class="fas fa-sign-out-alt"></i>
           Cerrar Sesión
         </button>
@@ -26,602 +26,534 @@
 
   <!-- Loading State -->
   @if (isLoading()) {
-    <div class="loading-container">
-      <div class="spinner"></div>
-      <p>Cargando preguntas...</p>
-    </div>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando preguntas...</p>
+  </div>
   }
 
   <!-- Main Content -->
   @if (!isLoading()) {
-    <div class="questions-content">
-      <!-- AI Generator Section -->
-      <div class="generator-section">
-        <div class="generator-header" (click)="toggleGenerator()">
-          <div class="generator-title">
-            <i class="fas fa-lightbulb"></i>
-            <h2>Generador Automático </h2>
-          </div>
-          <button class="btn-toggle" [ngClass]="{ 'open': isGeneratorOpen() }">
-            <i class="fas fa-chevron-down"></i>
-          </button>
+  <div class="questions-content">
+    <!-- AI Generator Section -->
+    <div class="generator-section">
+      <div class="generator-header" (click)="toggleGenerator()">
+        <div class="generator-title">
+          <i class="fas fa-lightbulb"></i>
+          <h2>Generador Automático </h2>
         </div>
-
-        @if (isGeneratorOpen()) {
-          <div class="generator-content">
-            <form [formGroup]="generatorForm">
-              <div class="form-grid">
-                <!-- Categoría -->
-                <div class="form-group">
-                  <label for="gen-category">Categoría</label>
-                  <select
-                    id="gen-category"
-                    class="form-control"
-                    formControlName="categoryId"
-                    [class.is-invalid]="generatorForm.get('categoryId')?.invalid && generatorForm.get('categoryId')?.touched">
-                    <option [value]="null">Selecciona una categoría...</option>
-                    @for (cat of categories(); track cat.id) {
-                      <option [value]="cat.id">{{ cat.name }}</option>
-                    }
-                  </select>
-                  <div class="invalid-feedback" *ngIf="generatorForm.get('categoryId')?.invalid && generatorForm.get('categoryId')?.touched">
-                    <small *ngIf="generatorForm.get('categoryId')?.hasError('required')">La categoría es requerida</small>
-                  </div>
-                </div>
-
-                <!-- Dificultad -->
-                <div class="form-group">
-                  <label for="gen-difficulty">Dificultad (1-5)</label>
-                  <div class="difficulty-input">
-                    <input
-                      id="gen-difficulty"
-                      type="range"
-                      min="1"
-                      max="5"
-                      formControlName="difficulty"
-                      class="form-range">
-                    <span class="difficulty-value">{{ generatorForm.get('difficulty')?.value }}</span>
-                  </div>
-                </div>
-
-                <!-- Cantidad -->
-                <div class="form-group">
-                  <label for="gen-quantity">Cantidad (1-50)</label>
-                  <input
-                    id="gen-quantity"
-                    type="number"
-                    min="1"
-                    max="50"
-                    formControlName="quantity"
-                    [class.is-invalid]="generatorForm.get('quantity')?.invalid && generatorForm.get('quantity')?.touched"
-                    class="form-control">
-                  <div class="invalid-feedback" *ngIf="generatorForm.get('quantity')?.invalid && generatorForm.get('quantity')?.touched">
-                    <small *ngIf="generatorForm.get('quantity')?.hasError('required')">La cantidad es requerida</small>
-                    <small *ngIf="generatorForm.get('quantity')?.hasError('invalidQuantity')">Cantidad debe ser entre 1 y 50</small>
-                  </div>
-                </div>
-
-                <!-- Idioma -->
-                <div class="form-group">
-                  <label for="gen-language">Idioma</label>
-                  <select
-                    id="gen-language"
-                    class="form-control"
-                    formControlName="language">
-                    <option value="es">Español</option>
-                    <option value="en">English</option>
-                  </select>
-                </div>
-              </div>
-            </form>
-
-            <!-- Mensaje de estado handled by NotificationService -->
-
-            <!-- Botón Generar -->
-            <button
-              class="btn btn-primary btn-generate"
-              (click)="generateQuestionsWithAI()"
-              [disabled]="isGenerating()">
-              @if (!isGenerating()) {
-                <i class="fas fa-lightbulb"></i>
-                Generar con IA
-              } @else {
-                <span class="spinner-small"></span>
-                Generando...
-              }
-            </button>
-          </div>
-        }
+        <button class="btn-toggle" [ngClass]="{ 'open': isGeneratorOpen() }">
+          <i class="fas fa-chevron-down"></i>
+        </button>
       </div>
 
-      <!-- CSV Import Section -->
-      <div class="generator-section csv-import-section">
-        <div class="generator-header" (click)="toggleCsvImportSection()">
-          <div class="generator-title">
-            <i class="fas fa-file-csv"></i>
-            <h2>Importar desde CSV</h2>
-          </div>
-          <button class="btn-toggle" [ngClass]="{ 'open': isCsvImportOpen() }">
-            <i class="fas fa-chevron-down"></i>
-          </button>
-        </div>
-
-        @if (isCsvImportOpen()) {
-          <div class="generator-content">
-            <div class="csv-info">
-              <p><strong>Formato requerido del CSV:</strong></p>
-              <code class="csv-headers">category_id, difficulty, statement, option_1, option_2, option_3, option_4, correct_option_index, explanation_correct, explanation_incorrect, source_citation</code>
-              <p class="csv-note">
-                <i class="fas fa-info-circle"></i>
-                category_id: ID existente | difficulty: 1-5 | correct_option_index: 0-3 (0=option_1) | Max 5MB
-              </p>
-            </div>
-
-            <div class="csv-upload-area">
-              <input
-                type="file"
-                id="csvFileInput"
-                accept=".csv"
-                (change)="onCsvFileSelected($event)"
-                [disabled]="isImportingCsv()"
-                class="csv-file-input">
-              <label for="csvFileInput" class="csv-upload-label" [class.disabled]="isImportingCsv()">
-                @if (!isImportingCsv()) {
-                  <i class="fas fa-cloud-upload-alt"></i>
-                  <span>Seleccionar archivo CSV</span>
-                } @else {
-                  <span class="spinner-small"></span>
-                  <span>Importando...</span>
-                }
-              </label>
-            </div>
-
-            <!-- Import Results -->
-            @if (lastImportResult()) {
-              <div class="import-results" [ngClass]="{'has-errors': lastImportResult()!.errors > 0}">
-                <div class="import-summary">
-                  <span class="import-stat success">
-                    <i class="fas fa-check-circle"></i>
-                    {{ lastImportResult()!.imported }} importadas
-                  </span>
-                  @if (lastImportResult()!.errors > 0) {
-                    <span class="import-stat error">
-                      <i class="fas fa-exclamation-circle"></i>
-                      {{ lastImportResult()!.errors }} errores
-                    </span>
-                  }
-                </div>
-
-                @if (lastImportResult()!.error_details && lastImportResult()!.error_details.length > 0) {
-                  <div class="error-details">
-                    <p><strong>Detalles de errores:</strong></p>
-                    <ul>
-                      @for (err of lastImportResult()!.error_details; track err) {
-                        <li>{{ err }}</li>
-                      }
-                    </ul>
-                  </div>
-                }
-              </div>
-            }
-          </div>
-        }
-      </div>
-
-      <!-- Filters Section -->
-      <div class="filters-section">
-        <h3 class="filters-title">Filtros y Búsqueda</h3>
-        <form [formGroup]="filterForm">
-          <div class="filters-grid">
-            <!-- Search -->
-            <div class="filter-item">
-              <label>Búsqueda</label>
-              <div class="search-input">
-                <i class="fas fa-search"></i>
-                <input
-                  type="text"
-                  placeholder="Buscar por ID o texto..."
-                  formControlName="search"
-                  maxlength="100"
-                  class="form-control">
-              </div>
-            </div>
-
-            <!-- Category Filter -->
-            <div class="filter-item">
-              <label>Categoría</label>
-              <select formControlName="category" class="form-control">
-                <option [value]="null">Todas las categorías</option>
+      @if (isGeneratorOpen()) {
+      <div class="generator-content">
+        <form [formGroup]="generatorForm">
+          <div class="form-grid">
+            <!-- Categoría -->
+            <div class="form-group">
+              <label for="gen-category">Categoría</label>
+              <select id="gen-category" class="form-control" formControlName="categoryId"
+                [class.is-invalid]="generatorForm.get('categoryId')?.invalid && generatorForm.get('categoryId')?.touched">
+                <option [value]="null">Selecciona una categoría...</option>
                 @for (cat of categories(); track cat.id) {
-                  <option [value]="cat.id">{{ cat.name }}</option>
+                <option [value]="cat.id">{{ cat.name }}</option>
                 }
               </select>
+              <div class="invalid-feedback"
+                *ngIf="generatorForm.get('categoryId')?.invalid && generatorForm.get('categoryId')?.touched">
+                <small *ngIf="generatorForm.get('categoryId')?.hasError('required')">La categoría es requerida</small>
+              </div>
             </div>
 
-            <!-- Status Filter -->
-            <div class="filter-item">
-              <label>Estado</label>
-              <select formControlName="status" class="form-control">
-                <option value="all">Todas</option>
-                <option value="verified">Verificadas</option>
-                <option value="pending">Pendientes</option>
+            <!-- Dificultad -->
+            <div class="form-group">
+              <label for="gen-difficulty">Dificultad (1-5)</label>
+              <div class="difficulty-input">
+                <input id="gen-difficulty" type="range" min="1" max="5" formControlName="difficulty" class="form-range">
+                <span class="difficulty-value">{{ generatorForm.get('difficulty')?.value }}</span>
+              </div>
+            </div>
+
+            <!-- Cantidad -->
+            <div class="form-group">
+              <label for="gen-quantity">Cantidad (1-50)</label>
+              <input id="gen-quantity" type="number" min="1" max="50" formControlName="quantity"
+                [class.is-invalid]="generatorForm.get('quantity')?.invalid && generatorForm.get('quantity')?.touched"
+                class="form-control">
+              <div class="invalid-feedback"
+                *ngIf="generatorForm.get('quantity')?.invalid && generatorForm.get('quantity')?.touched">
+                <small *ngIf="generatorForm.get('quantity')?.hasError('required')">La cantidad es requerida</small>
+                <small *ngIf="generatorForm.get('quantity')?.hasError('invalidQuantity')">Cantidad debe ser entre 1 y
+                  50</small>
+              </div>
+            </div>
+
+            <!-- Idioma -->
+            <div class="form-group">
+              <label for="gen-language">Idioma</label>
+              <select id="gen-language" class="form-control" formControlName="language">
+                <option value="es">Español</option>
+                <option value="en">English</option>
               </select>
-            </div>
-
-            <!-- Results Count -->
-            <div class="filter-item results-count">
-              <p>{{ filteredQuestions().length }} pregunta{{ filteredQuestions().length !== 1 ? 's' : '' }} encontrada{{ filteredQuestions().length !== 1 ? 's' : '' }}</p>
             </div>
           </div>
         </form>
+
+        <!-- Mensaje de estado handled by NotificationService -->
+
+        <!-- Botón Generar -->
+        <button class="btn btn-primary btn-generate" (click)="generateQuestionsWithAI()" [disabled]="isGenerating()">
+          @if (!isGenerating()) {
+          <i class="fas fa-lightbulb"></i>
+          Generar con IA
+          } @else {
+          <span class="spinner-small"></span>
+          Generando...
+          }
+        </button>
+      </div>
+      }
+    </div>
+
+    <!-- CSV Import Section -->
+    <div class="generator-section csv-import-section">
+      <div class="generator-header" (click)="toggleCsvImportSection()">
+        <div class="generator-title">
+          <i class="fas fa-file-csv"></i>
+          <h2>Importar desde CSV</h2>
+        </div>
+        <button class="btn-toggle" [ngClass]="{ 'open': isCsvImportOpen() }">
+          <i class="fas fa-chevron-down"></i>
+        </button>
       </div>
 
-      <!-- Bulk Actions -->
-      @if (pendingQuestionsCount > 0) {
-        <div class="bulk-actions-section">
-          <div class="bulk-actions-header">
-            <div class="bulk-info">
-              <i class="fas fa-exclamation-circle"></i>
-              <span>{{ pendingQuestionsCount }} pregunta(s) pendiente(s) de verificación</span>
-            </div>
-            <button
-              class="btn btn-verify-all"
-              (click)="verifyAllPending()"
-              [disabled]="isLoading()"
-              title="Verificar todas las preguntas pendientes">
-              <i class="fas fa-check-double"></i>
-              Verificar Todas las Pendientes
-            </button>
-          </div>
+      @if (isCsvImportOpen()) {
+      <div class="generator-content">
+        <div class="csv-info">
+          <p><strong>Formato requerido del CSV:</strong></p>
+          <code
+            class="csv-headers">category_id, difficulty, statement, option_1, option_2, option_3, option_4, correct_option_index, explanation_correct, explanation_incorrect, source_citation</code>
+          <p class="csv-note">
+            <i class="fas fa-info-circle"></i>
+            category_id: ID existente | difficulty: 1-5 | correct_option_index: 0-3 (0=option_1) | Max 5MB
+          </p>
         </div>
-      }
 
-      <!-- Questions Table -->
-      <div class="table-card">
-        @if (filteredQuestions().length > 0) {
-          <div class="table-responsive">
-            <table class="questions-table">
-              <thead>
-                <tr class="table-header">
-                  <th class="col-id">ID</th>
-                  <th class="col-statement">Pregunta</th>
-                  <th class="col-category">Categoría</th>
-                  <th class="col-difficulty">Dificultad</th>
-                  <th class="col-status">Estado</th>
-                  <th class="col-ai">IA</th>
-                  <th class="col-actions">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (question of filteredQuestions(); track question.id) {
-                  <tr class="table-row" [ngClass]="{ 'pending-verify': !(question.admin_verified ?? false) }">
-                    <!-- ID -->
-                    <td class="col-id">
-                      <code>{{ question.id }}</code>
-                    </td>
+        <div class="csv-upload-area">
+          <input type="file" id="csvFileInput" accept=".csv" (change)="onCsvFileSelected($event)"
+            [disabled]="isImportingCsv()" class="csv-file-input">
+          <label for="csvFileInput" class="csv-upload-label" [class.disabled]="isImportingCsv()">
+            @if (!isImportingCsv()) {
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Seleccionar archivo CSV</span>
+            } @else {
+            <span class="spinner-small"></span>
+            <span>Importando...</span>
+            }
+          </label>
+        </div>
 
-                    <!-- Statement -->
-                    <td class="col-statement">
-                      <span class="question-text" [title]="question.statement">
-                        {{ truncateText(question.statement, 60) }}
-                      </span>
-                    </td>
-
-                    <!-- Category -->
-                    <td class="col-category">
-                      <span class="badge badge-primary">
-                        {{ getCategoryName(question.category_id) }}
-                      </span>
-                    </td>
-
-                    <!-- Difficulty -->
-                    <td class="col-difficulty">
-                      <div class="difficulty-badge" [ngClass]="'difficulty-' + question.difficulty">
-                        {{ question.difficulty }}
-                      </div>
-                    </td>
-
-                    <!-- Status -->
-                    <td class="col-status">
-                      @if (question.admin_verified ?? false) {
-                        <span class="status-badge status-verified">
-                          <i class="fas fa-check"></i>
-                          Verificada
-                        </span>
-                      } @else {
-                        <span class="status-badge status-pending">
-                          <i class="fas fa-clock"></i>
-                          Pendiente
-                        </span>
-                      }
-                    </td>
-
-                    <!-- AI Generated -->
-                    <td class="col-ai">
-                      @if (question.is_ai_generated) {
-                        <span class="ai-badge">
-                          <i class="fas fa-lightbulb"></i>
-                          IA
-                        </span>
-                      } @else {
-                        <span class="manual-badge">Manual</span>
-                      }
-                    </td>
-
-                    <!-- Actions -->
-                    <td class="col-actions">
-                      <div class="action-buttons">
-                        <!-- Edit Full Question -->
-                        <button
-                          class="btn-action btn-edit"
-                          (click)="openFullEditModal(question.id)"
-                          title="Editar pregunta completa">
-                          <i class="fas fa-pen-to-square"></i>
-                        </button>
-
-                        <!-- Verify/Unverify -->
-                        <button
-                          class="btn-action btn-verify"
-                          (click)="toggleVerifyQuestion(question.id, question.admin_verified ?? false)"
-                          [title]="question.admin_verified ? 'Desverificar' : 'Verificar'">
-                          @if (question.admin_verified ?? false) {
-                            <i class="fas fa-ban text-danger"></i>
-                          } @else {
-                            <i class="fas fa-certificate"></i>
-                          }
-                        </button>
-
-                        <!-- Delete with Confirmation -->
-                        @if (deleteConfirmId() !== question.id) {
-                          <button
-                            class="btn-action btn-delete"
-                            (click)="deleteQuestion(question.id)"
-                            title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                          </button>
-                        } @else {
-                          <div class="confirm-buttons">
-                            <button
-                              class="btn-confirm confirm-yes"
-                              (click)="confirmDelete(question.id)"
-                              title="Confirmar eliminación">
-                              <i class="fas fa-check"></i>
-                            </button>
-                            <button
-                              class="btn-confirm confirm-no"
-                              (click)="cancelDelete()"
-                              title="Cancelar">
-                              <i class="fas fa-times"></i>
-                            </button>
-                          </div>
-                        }
-                      </div>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
+        <!-- Import Results -->
+        @if (lastImportResult()) {
+        <div class="import-results" [ngClass]="{'has-errors': lastImportResult()!.errors > 0}">
+          <div class="import-summary">
+            <span class="import-stat success">
+              <i class="fas fa-check-circle"></i>
+              {{ lastImportResult()!.imported }} importadas
+            </span>
+            @if (lastImportResult()!.errors > 0) {
+            <span class="import-stat error">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ lastImportResult()!.errors }} errores
+            </span>
+            }
           </div>
-        } @else {
-          <div class="no-data">
-            <i class="fas fa-file"></i>
-            <p>No hay preguntas disponibles. ¡Crea algunas con el generador IA!</p>
+
+          @if (lastImportResult()!.error_details && lastImportResult()!.error_details.length > 0) {
+          <div class="error-details">
+            <p><strong>Detalles de errores:</strong></p>
+            <ul>
+              @for (err of lastImportResult()!.error_details; track err) {
+              <li>{{ err }}</li>
+              }
+            </ul>
           </div>
+          }
+        </div>
         }
       </div>
+      }
+    </div>
 
-      <!-- Footer Info -->
-      <div class="questions-footer">
-        <p class="footer-text">
-          <i class="fas fa-circle-info"></i>
-          Total: {{ allQuestions().length }} preguntas en base de datos
-        </p>
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <h3 class="filters-title">Filtros y Búsqueda</h3>
+      <form [formGroup]="filterForm">
+        <div class="filters-grid">
+          <!-- Search -->
+          <div class="filter-item">
+            <label>Búsqueda</label>
+            <div class="search-input">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Buscar por ID o texto..." formControlName="search" maxlength="100"
+                class="form-control">
+            </div>
+          </div>
+
+          <!-- Category Filter -->
+          <div class="filter-item">
+            <label>Categoría</label>
+            <select formControlName="category" class="form-control">
+              <option [value]="null">Todas las categorías</option>
+              @for (cat of categories(); track cat.id) {
+              <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Status Filter -->
+          <div class="filter-item">
+            <label>Estado</label>
+            <select formControlName="status" class="form-control">
+              <option value="all">Todas</option>
+              <option value="verified">Verificadas</option>
+              <option value="pending">Pendientes</option>
+            </select>
+          </div>
+
+          <!-- Results Count -->
+          <div class="filter-item results-count">
+            <p>{{ filteredQuestions().length }} pregunta{{ filteredQuestions().length !== 1 ? 's' : '' }} encontrada{{
+              filteredQuestions().length !== 1 ? 's' : '' }}</p>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Bulk Actions -->
+    @if (pendingQuestionsCount > 0) {
+    <div class="bulk-actions-section">
+      <div class="bulk-actions-header">
+        <div class="bulk-info">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>{{ pendingQuestionsCount }} pregunta(s) pendiente(s) de verificación</span>
+        </div>
+        <button class="btn btn-verify-all" (click)="verifyAllPending()" [disabled]="isLoading()"
+          title="Verificar todas las preguntas pendientes">
+          <i class="fas fa-check-double"></i>
+          Verificar Todas las Pendientes
+        </button>
       </div>
     </div>
+    }
+
+    <!-- Questions Table -->
+    <div class="table-card">
+      @if (filteredQuestions().length > 0) {
+      <div class="table-responsive">
+        <table class="questions-table">
+          <thead>
+            <tr class="table-header">
+              <th class="col-id">ID</th>
+              <th class="col-statement">Pregunta</th>
+              <th class="col-category">Categoría</th>
+              <th class="col-difficulty">Dificultad</th>
+              <th class="col-status">Estado</th>
+              <th class="col-ai">IA</th>
+              <th class="col-actions">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (question of filteredQuestions(); track question.id) {
+            <tr class="table-row" [ngClass]="{ 'pending-verify': !(question.admin_verified ?? false) }">
+              <!-- ID -->
+              <td class="col-id">
+                <code>{{ question.id }}</code>
+              </td>
+
+              <!-- Statement -->
+              <td class="col-statement">
+                <span class="question-text" [title]="question.statement">
+                  {{ truncateText(question.statement, 60) }}
+                </span>
+              </td>
+
+              <!-- Category -->
+              <td class="col-category">
+                <span class="badge badge-primary">
+                  {{ getCategoryName(question.category_id) }}
+                </span>
+              </td>
+
+              <!-- Difficulty -->
+              <td class="col-difficulty">
+                <div class="difficulty-badge" [ngClass]="'difficulty-' + question.difficulty">
+                  {{ question.difficulty }}
+                </div>
+              </td>
+
+              <!-- Status -->
+              <td class="col-status">
+                @if (question.admin_verified ?? false) {
+                <span class="status-badge status-verified">
+                  <i class="fas fa-check"></i>
+                  Verificada
+                </span>
+                } @else {
+                <span class="status-badge status-pending">
+                  <i class="fas fa-clock"></i>
+                  Pendiente
+                </span>
+                }
+              </td>
+
+              <!-- AI Generated -->
+              <td class="col-ai">
+                @if (question.is_ai_generated) {
+                <span class="ai-badge">
+                  <i class="fas fa-lightbulb"></i>
+                  IA
+                </span>
+                } @else {
+                <span class="manual-badge">Manual</span>
+                }
+              </td>
+
+              <!-- Actions -->
+              <td class="col-actions">
+                <div class="action-buttons">
+                  <!-- Edit Full Question -->
+                  <button class="btn-action btn-edit" (click)="openFullEditModal(question.id)"
+                    title="Editar pregunta completa">
+                    <i class="fas fa-pen-to-square"></i>
+                  </button>
+
+                  <!-- Verify/Unverify -->
+                  <button class="btn-action btn-verify"
+                    (click)="toggleVerifyQuestion(question.id, question.admin_verified ?? false)"
+                    [title]="question.admin_verified ? 'Desverificar' : 'Verificar'">
+                    @if (question.admin_verified ?? false) {
+                    <i class="fas fa-ban text-danger"></i>
+                    } @else {
+                    <i class="fas fa-certificate"></i>
+                    }
+                  </button>
+
+                  <!-- Delete with Confirmation -->
+                  @if (deleteConfirmId() !== question.id) {
+                  <button class="btn-action btn-delete" (click)="deleteQuestion(question.id)" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                  } @else {
+                  <div class="confirm-buttons">
+                    <button class="btn-confirm confirm-yes" (click)="confirmDelete(question.id)"
+                      title="Confirmar eliminación">
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn-confirm confirm-no" (click)="cancelDelete()" title="Cancelar">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  }
+                </div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      } @else {
+      <div class="no-data">
+        <i class="fas fa-file"></i>
+        <p>No hay preguntas disponibles. ¡Crea algunas con el generador IA!</p>
+      </div>
+      }
+    </div>
+
+    <!-- Footer Info -->
+    <div class="questions-footer">
+      <p class="footer-text">
+        <i class="fas fa-circle-info"></i>
+        Total: {{ allQuestions().length }} preguntas en base de datos
+      </p>
+    </div>
+  </div>
   }
 </div>
 
 <!-- Full Question Edit Modal -->
 @if (isFullEditModalOpen()) {
-  <div class="modal-overlay" (click)="closeFullEditModal()">
-    <div class="modal-content modal-large" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>
-          <i class="fas fa-pen-to-square"></i>
-          Editar Pregunta Completa
-        </h3>
-        <button class="btn-close" (click)="closeFullEditModal()">
-          <i class="fas fa-times"></i>
-        </button>
+<div class="modal-overlay" (click)="closeFullEditModal()">
+  <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <i class="fas fa-pen-to-square"></i>
+        Editar Pregunta Completa
+      </h3>
+      <button class="btn-close" (click)="closeFullEditModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      @if (isLoadingQuestion()) {
+      <div class="loading-small">
+        <span class="spinner-small"></span>
+        <span>Cargando pregunta...</span>
       </div>
-
-      <div class="modal-body">
-        @if (isLoadingQuestion()) {
-          <div class="loading-small">
-            <span class="spinner-small"></span>
-            <span>Cargando pregunta...</span>
-          </div>
-        } @else if (questionToEdit()) {
-          <form [formGroup]="fullEditForm">
-            <!-- Question ID Badge -->
-            <div class="question-id-badge">
-              <span>ID: {{ questionToEdit()!.id }}</span>
-              @if (questionToEdit()!.is_ai_generated) {
-                <span class="ai-tag"><i class="fas fa-robot"></i> IA</span>
-              }
-            </div>
-
-            <!-- Statement -->
-            <div class="form-group">
-              <label for="statement">
-                <i class="fas fa-question-circle"></i>
-                Enunciado de la pregunta:
-              </label>
-              <textarea
-                id="statement"
-                formControlName="statement"
-                class="form-control"
-                rows="3"
-                placeholder="Escribe el enunciado de la pregunta..."
-                [class.is-invalid]="fullEditForm.get('statement')?.invalid && fullEditForm.get('statement')?.touched">
-              </textarea>
-              @if (fullEditForm.get('statement')?.invalid && fullEditForm.get('statement')?.touched) {
-                <div class="invalid-feedback">El enunciado debe tener entre 10 y 1000 caracteres</div>
-              }
-            </div>
-
-            <!-- Difficulty and Category Row -->
-            <div class="form-row">
-              <div class="form-group half">
-                <label for="difficulty">
-                  <i class="fas fa-signal"></i>
-                  Dificultad:
-                </label>
-                <select id="difficulty" formControlName="difficulty" class="form-control">
-                  <option [value]="1">1 - Muy Fácil</option>
-                  <option [value]="2">2 - Fácil</option>
-                  <option [value]="3">3 - Media</option>
-                  <option [value]="4">4 - Difícil</option>
-                  <option [value]="5">5 - Muy Difícil</option>
-                </select>
-              </div>
-
-              <div class="form-group half">
-                <label for="category_id">
-                  <i class="fas fa-folder"></i>
-                  Categoría:
-                </label>
-                <select id="category_id" formControlName="category_id" class="form-control">
-                  @for (cat of categories(); track cat.id) {
-                    <option [value]="cat.id">{{ cat.name }}</option>
-                  }
-                </select>
-              </div>
-            </div>
-
-            <!-- Options Section -->
-            <div class="options-section">
-              <h4><i class="fas fa-list"></i> Opciones de Respuesta</h4>
-              <p class="options-hint">Selecciona la opción correcta con el radio button</p>
-
-              <div class="options-grid">
-                <!-- Option A -->
-                <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'a'">
-                  <div class="option-header">
-                    <input type="radio" formControlName="correct_option" value="a" id="correct_a">
-                    <label for="correct_a" class="option-label">A</label>
-                  </div>
-                  <input
-                    type="text"
-                    formControlName="option_a"
-                    class="form-control"
-                    placeholder="Opción A"
-                    [class.is-invalid]="fullEditForm.get('option_a')?.invalid && fullEditForm.get('option_a')?.touched">
-                </div>
-
-                <!-- Option B -->
-                <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'b'">
-                  <div class="option-header">
-                    <input type="radio" formControlName="correct_option" value="b" id="correct_b">
-                    <label for="correct_b" class="option-label">B</label>
-                  </div>
-                  <input
-                    type="text"
-                    formControlName="option_b"
-                    class="form-control"
-                    placeholder="Opción B"
-                    [class.is-invalid]="fullEditForm.get('option_b')?.invalid && fullEditForm.get('option_b')?.touched">
-                </div>
-
-                <!-- Option C -->
-                <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'c'">
-                  <div class="option-header">
-                    <input type="radio" formControlName="correct_option" value="c" id="correct_c">
-                    <label for="correct_c" class="option-label">C</label>
-                  </div>
-                  <input
-                    type="text"
-                    formControlName="option_c"
-                    class="form-control"
-                    placeholder="Opción C"
-                    [class.is-invalid]="fullEditForm.get('option_c')?.invalid && fullEditForm.get('option_c')?.touched">
-                </div>
-
-                <!-- Option D -->
-                <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'd'">
-                  <div class="option-header">
-                    <input type="radio" formControlName="correct_option" value="d" id="correct_d">
-                    <label for="correct_d" class="option-label">D</label>
-                  </div>
-                  <input
-                    type="text"
-                    formControlName="option_d"
-                    class="form-control"
-                    placeholder="Opción D"
-                    [class.is-invalid]="fullEditForm.get('option_d')?.invalid && fullEditForm.get('option_d')?.touched">
-                </div>
-              </div>
-            </div>
-
-            <!-- Explanations Section -->
-            <div class="explanations-section">
-              <h4><i class="fas fa-lightbulb"></i> Explicaciones (Opcionales)</h4>
-
-              <div class="form-group">
-                <label for="exp_correct">
-                  <i class="fas fa-check-circle text-success"></i>
-                  Cuando el jugador acierta:
-                </label>
-                <textarea
-                  id="exp_correct"
-                  formControlName="explanation_correct"
-                  class="form-control"
-                  rows="2"
-                  placeholder="Explicación que se muestra cuando responde correctamente...">
-                </textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="exp_incorrect">
-                  <i class="fas fa-times-circle text-danger"></i>
-                  Cuando el jugador falla:
-                </label>
-                <textarea
-                  id="exp_incorrect"
-                  formControlName="explanation_incorrect"
-                  class="form-control"
-                  rows="2"
-                  placeholder="Explicación que se muestra cuando responde incorrectamente...">
-                </textarea>
-              </div>
-            </div>
-
-            <!-- Warning -->
-            <div class="edit-warning">
-              <i class="fas fa-exclamation-triangle"></i>
-              <span>Al guardar, la pregunta quedará pendiente de verificación.</span>
-            </div>
-          </form>
-        }
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeFullEditModal()" [disabled]="isSavingQuestion()">
-          Cancelar
-        </button>
-        <button
-          class="btn btn-primary"
-          (click)="saveFullQuestion()"
-          [disabled]="isSavingQuestion() || isLoadingQuestion()">
-          @if (!isSavingQuestion()) {
-            <i class="fas fa-save"></i>
-            Guardar Cambios
-          } @else {
-            <span class="spinner-small"></span>
-            Guardando...
+      } @else if (questionToEdit()) {
+      <form [formGroup]="fullEditForm">
+        <!-- Question ID Badge -->
+        <div class="question-id-badge">
+          <span>ID: {{ questionToEdit()!.id }}</span>
+          @if (questionToEdit()!.is_ai_generated) {
+          <span class="ai-tag"><i class="fas fa-robot"></i> IA</span>
           }
-        </button>
-      </div>
+        </div>
+
+        <!-- Statement -->
+        <div class="form-group">
+          <label for="statement">
+            <i class="fas fa-question-circle"></i>
+            Enunciado de la pregunta:
+          </label>
+          <textarea id="statement" formControlName="statement" class="form-control" rows="3"
+            placeholder="Escribe el enunciado de la pregunta..."
+            [class.is-invalid]="fullEditForm.get('statement')?.invalid && fullEditForm.get('statement')?.touched">
+              </textarea>
+          @if (fullEditForm.get('statement')?.invalid && fullEditForm.get('statement')?.touched) {
+          <div class="invalid-feedback">El enunciado debe tener entre 10 y 1000 caracteres</div>
+          }
+        </div>
+
+        <!-- Difficulty and Category Row -->
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="difficulty">
+              <i class="fas fa-signal"></i>
+              Dificultad:
+            </label>
+            <select id="difficulty" formControlName="difficulty" class="form-control">
+              <option [value]="1">1 - Muy Fácil</option>
+              <option [value]="2">2 - Fácil</option>
+              <option [value]="3">3 - Media</option>
+              <option [value]="4">4 - Difícil</option>
+              <option [value]="5">5 - Muy Difícil</option>
+            </select>
+          </div>
+
+          <div class="form-group half">
+            <label for="category_id">
+              <i class="fas fa-folder"></i>
+              Categoría:
+            </label>
+            <select id="category_id" formControlName="category_id" class="form-control">
+              @for (cat of categories(); track cat.id) {
+              <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Options Section -->
+        <div class="options-section">
+          <h4><i class="fas fa-list"></i> Opciones de Respuesta</h4>
+          <p class="options-hint">Selecciona la opción correcta con el radio button</p>
+
+          <div class="options-grid">
+            <!-- Option A -->
+            <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'a'">
+              <div class="option-header">
+                <input type="radio" formControlName="correct_option" value="a" id="correct_a">
+                <label for="correct_a" class="option-label">A</label>
+              </div>
+              <input type="text" formControlName="option_a" class="form-control" placeholder="Opción A"
+                [class.is-invalid]="fullEditForm.get('option_a')?.invalid && fullEditForm.get('option_a')?.touched">
+            </div>
+
+            <!-- Option B -->
+            <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'b'">
+              <div class="option-header">
+                <input type="radio" formControlName="correct_option" value="b" id="correct_b">
+                <label for="correct_b" class="option-label">B</label>
+              </div>
+              <input type="text" formControlName="option_b" class="form-control" placeholder="Opción B"
+                [class.is-invalid]="fullEditForm.get('option_b')?.invalid && fullEditForm.get('option_b')?.touched">
+            </div>
+
+            <!-- Option C -->
+            <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'c'">
+              <div class="option-header">
+                <input type="radio" formControlName="correct_option" value="c" id="correct_c">
+                <label for="correct_c" class="option-label">C</label>
+              </div>
+              <input type="text" formControlName="option_c" class="form-control" placeholder="Opción C"
+                [class.is-invalid]="fullEditForm.get('option_c')?.invalid && fullEditForm.get('option_c')?.touched">
+            </div>
+
+            <!-- Option D -->
+            <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'd'">
+              <div class="option-header">
+                <input type="radio" formControlName="correct_option" value="d" id="correct_d">
+                <label for="correct_d" class="option-label">D</label>
+              </div>
+              <input type="text" formControlName="option_d" class="form-control" placeholder="Opción D"
+                [class.is-invalid]="fullEditForm.get('option_d')?.invalid && fullEditForm.get('option_d')?.touched">
+            </div>
+          </div>
+        </div>
+
+        <!-- Explanations Section -->
+        <div class="explanations-section">
+          <h4><i class="fas fa-lightbulb"></i> Explicaciones (Opcionales)</h4>
+
+          <div class="form-group">
+            <label for="exp_correct">
+              <i class="fas fa-check-circle text-success"></i>
+              Cuando el jugador acierta:
+            </label>
+            <textarea id="exp_correct" formControlName="explanation_correct" class="form-control" rows="2"
+              placeholder="Explicación que se muestra cuando responde correctamente...">
+                </textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="exp_incorrect">
+              <i class="fas fa-times-circle text-danger"></i>
+              Cuando el jugador falla:
+            </label>
+            <textarea id="exp_incorrect" formControlName="explanation_incorrect" class="form-control" rows="2"
+              placeholder="Explicación que se muestra cuando responde incorrectamente...">
+                </textarea>
+          </div>
+        </div>
+
+        <!-- Warning -->
+        <div class="edit-warning">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Al guardar, la pregunta quedará pendiente de verificación.</span>
+        </div>
+      </form>
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeFullEditModal()" [disabled]="isSavingQuestion()">
+        Cancelar
+      </button>
+      <button class="btn btn-primary" (click)="saveFullQuestion()"
+        [disabled]="isSavingQuestion() || isLoadingQuestion()">
+        @if (!isSavingQuestion()) {
+        <i class="fas fa-save"></i>
+        Guardar Cambios
+        } @else {
+        <span class="spinner-small"></span>
+        Guardando...
+        }
+      </button>
     </div>
   </div>
+</div>
 }

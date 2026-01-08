@@ -1,13 +1,6 @@
 /*============================================================================
   ADMIN SHARED STYLES
 ============================================================================ */
-.admin-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
 .admin-content {
   max-width: 1400px;
   margin: 0 auto;
@@ -107,15 +100,6 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
-.admin-btn-danger {
-  background: rgba(244, 67, 54, 0.9);
-  color: white;
-}
-
-.admin-btn-danger:hover {
-  background: rgba(244, 67, 54, 1);
-  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
-}
 
 /* Admin Loading */
 .admin-loading-container {
@@ -535,13 +519,34 @@
 }
 
 /* Table Columns */
-.rank-col { width: 100px; }
-.name-col { width: auto; }
-.age-col { width: 80px; }
-.score-col { width: 120px; }
-.games-col { width: 100px; }
-.accuracy-col { width: 120px; }
-.actions-col { width: 100px; text-align: center; }
+.rank-col {
+  width: 100px;
+}
+
+.name-col {
+  width: auto;
+}
+
+.age-col {
+  width: 80px;
+}
+
+.score-col {
+  width: 120px;
+}
+
+.games-col {
+  width: 100px;
+}
+
+.accuracy-col {
+  width: 120px;
+}
+
+.actions-col {
+  width: 100px;
+  text-align: center;
+}
 
 /* Rank Badges */
 .rank-badge {
