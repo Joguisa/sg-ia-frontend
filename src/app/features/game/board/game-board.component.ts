@@ -1,8 +1,10 @@
 import { Component, OnInit, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { GameService } from '../../../core/services/game.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { LanguageService } from '../../../core/services/language.service';
 import {
   QuestionFull,
   AnswerSubmitResponse,
@@ -16,7 +18,7 @@ import { NOTIFICATION_DURATION } from '../../../core/constants/notification-conf
 @Component({
   selector: 'app-game-board',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './game-board.component.html',
   styleUrls: ['./game-board.component.css']
 })
@@ -82,6 +84,7 @@ export class GameBoardComponent implements OnInit {
   constructor(
     private gameService: GameService,
     private notification: NotificationService,
+    private languageService: LanguageService,
     private router: Router
   ) {
     // Watch for game over state

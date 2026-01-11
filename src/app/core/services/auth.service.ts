@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, LoginRequest } from '../models/auth';
+import { AdminRole } from '../models/admin';
 
 /**
  * AuthService
@@ -95,5 +96,49 @@ export class AuthService {
   isAuthenticated(): boolean {
     const token = this.getToken();
     return !!token;
+  }
+
+  /**
+   * Decodifica el JWT y obtiene información del administrador actual
+   *
+   * @returns Datos del admin (id, email, role) o null si no hay token
+   */
+  getCurrentUser(): { id: number; email: string; role: AdminRole } | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      // Decodificar payload del JWT (base64)
+      const payload = token.split('.')[1];
+      const decoded = JSON.parse(atob(payload));
+
+      return {
+        id: decoded.id,
+        email: decoded.email,
+        role: decoded.role
+      };
+    } catch (error) {
+      console.error('Error decodificando token JWT:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Obtiene el rol del administrador actual
+   *
+   * @returns Rol ('admin' | 'superadmin') o null si no hay sesión
+   */
+  getCurrentUserRole(): AdminRole | null {
+    const user = this.getCurrentUser();
+    return user?.role ?? null;
+  }
+
+  /**
+   * Verifica si el administrador actual es superadmin
+   *
+   * @returns true si el rol es 'superadmin'
+   */
+  isSuperAdmin(): boolean {
+    return this.getCurrentUserRole() === 'superadmin';
   }
 }

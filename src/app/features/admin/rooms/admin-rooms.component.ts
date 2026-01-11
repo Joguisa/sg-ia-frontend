@@ -4,12 +4,14 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { TabsComponent, Tab } from '../../../shared/tabs/tabs.component';
 import { RoomService } from '../../../core/services/room.service';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { LanguageService, SupportedLanguage } from '../../../core/services/language.service';
 import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 
 import {
@@ -28,17 +30,21 @@ import { AdminCategory } from '../../../core/models/admin';
 @Component({
   selector: 'app-admin-rooms',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TabsComponent, BaseChartDirective],
+  imports: [CommonModule, ReactiveFormsModule, TabsComponent, BaseChartDirective, TranslatePipe],
   templateUrl: './admin-rooms.component.html',
   styleUrls: ['../shared/styles/admin-styles.css', './admin-rooms.component.css']
 })
 export class AdminRoomsComponent implements OnInit {
 
-  // Tabs configuration
-  readonly tabs: Tab[] = [
-    { id: 'rooms', label: 'Salas', icon: 'fas fa-door-open' },
-    { id: 'detail', label: 'Detalle de Sala', icon: 'fas fa-chart-bar' }
-  ];
+  // Tabs configuration - labels will be translated in template
+  tabs: Tab[] = [];
+
+  private initTabs(): void {
+    this.tabs = [
+      { id: 'rooms', label: this.translate.instant('admin.rooms.tabRooms'), icon: 'fas fa-door-open' },
+      { id: 'detail', label: this.translate.instant('admin.rooms.tabDetail'), icon: 'fas fa-chart-bar' }
+    ];
+  }
 
   activeTab = signal<string>('rooms');
 
@@ -124,6 +130,8 @@ export class AdminRoomsComponent implements OnInit {
     private adminService: AdminService,
     private authService: AuthService,
     private notification: NotificationService,
+    public languageService: LanguageService,
+    private translate: TranslateService,
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder
@@ -132,6 +140,9 @@ export class AdminRoomsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Initialize translated tabs
+    this.initTabs();
+
     // Load categories for filters
     this.loadCategories();
 
@@ -161,6 +172,7 @@ export class AdminRoomsComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       description: ['', [Validators.maxLength(255)]],
       max_players: [50, [Validators.required, Validators.min(1), Validators.max(500)]],
+      language: ['es', [Validators.required]],
       filter_categories: [[]],
       filter_difficulties: [[]]
     });
@@ -232,6 +244,7 @@ export class AdminRoomsComponent implements OnInit {
       name: '',
       description: '',
       max_players: 50,
+      language: 'es',
       filter_categories: [],
       filter_difficulties: []
     });
@@ -245,6 +258,7 @@ export class AdminRoomsComponent implements OnInit {
       name: room.name,
       description: room.description || '',
       max_players: room.max_players,
+      language: room.language || 'es',
       filter_categories: room.filter_categories || [],
       filter_difficulties: room.filter_difficulties || []
     });
@@ -337,6 +351,7 @@ export class AdminRoomsComponent implements OnInit {
         name: formValue.name,
         description: formValue.description || null,
         max_players: formValue.max_players,
+        language: formValue.language,
         filter_categories: formValue.filter_categories.length > 0 ? formValue.filter_categories : null,
         filter_difficulties: formValue.filter_difficulties.length > 0 ? formValue.filter_difficulties : null
       };
@@ -363,6 +378,7 @@ export class AdminRoomsComponent implements OnInit {
         name: formValue.name,
         description: formValue.description || undefined,
         max_players: formValue.max_players,
+        language: formValue.language,
         filter_categories: formValue.filter_categories.length > 0 ? formValue.filter_categories : undefined,
         filter_difficulties: formValue.filter_difficulties.length > 0 ? formValue.filter_difficulties : undefined
       };

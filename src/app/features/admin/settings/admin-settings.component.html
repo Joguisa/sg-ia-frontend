@@ -5,18 +5,18 @@
       <div class="admin-header-title">
         <i class="fas fa-brain"></i>
         <div class="admin-header-text">
-          <h1>Configuración del Modelo IA</h1>
-          <p class="admin-header-subtitle">Ajusta el prompt del sistema, parámetros y proveedores Multi-AI</p>
+          <h1>{{ 'admin.settings.title' | translate }}</h1>
+          <p class="admin-header-subtitle">{{ 'admin.settings.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="admin-header-actions">
         <button class="admin-btn-back" (click)="goToDashboard()">
           <i class="fas fa-arrow-left"></i>
-          Volver al Dashboard
+          {{ 'admin.common.backToDashboard' | translate }}
         </button>
         <button class="admin-btn-logout admin-btn-danger" (click)="logout()">
           <i class="fas fa-sign-out-alt"></i>
-          Cerrar Sesión
+          {{ 'auth.logout' | translate }}
         </button>
       </div>
     </div>
@@ -41,7 +41,7 @@
   @if (isLoading()) {
   <div class="loading-container">
     <div class="spinner"></div>
-    <p>Cargando configuración...</p>
+    <p>{{ 'admin.settings.loadingSettings' | translate }}</p>
   </div>
   }
 
@@ -60,26 +60,26 @@
       <div class="card-header">
         <h2 class="card-title">
           <i class="fas fa-file-text"></i>
-          Instrucción del Sistema
+          {{ 'admin.settings.systemPrompt' | translate }}
         </h2>
-        <p class="card-subtitle">Define la personalidad y reglas estrictas para la generación de preguntas con IA</p>
+        <p class="card-subtitle">{{ 'admin.settings.systemPromptHelp' | translate }}</p>
       </div>
 
       <div class="card-body">
         <form [formGroup]="promptConfigForm">
           <div class="form-group">
             <label for="prompt-textarea" class="form-label">
-              System Prompt
+              {{ 'admin.settings.systemPrompt' | translate }}
               <span class="required">*</span>
             </label>
-            <p class="form-help">Este texto guía a Gemini en cómo generar preguntas. Sé específico y detallado.</p>
+            <p class="form-help">{{ 'admin.settings.systemPromptHelp' | translate }}</p>
 
             <textarea id="prompt-textarea" class="form-control form-textarea" rows="12" formControlName="promptText"
-              placeholder="Escribe el prompt del sistema aquí...">
+              [placeholder]="'admin.settings.promptPlaceholder' | translate">
               </textarea>
 
             <div class="textarea-footer">
-              <span class="char-count">{{ promptTextValue.length }} caracteres</span>
+              <span class="char-count">{{ promptTextValue.length }} {{ 'admin.settings.characters' | translate }}</span>
             </div>
           </div>
         </form>
@@ -91,25 +91,25 @@
       <div class="card-header">
         <h2 class="card-title">
           <i class="fas fa-server"></i>
-          Proveedor de Inteligencia Artificial
+          {{ 'admin.settings.aiProvider' | translate }}
         </h2>
-        <p class="card-subtitle">Selecciona el proveedor de IA preferido para generar preguntas</p>
+        <p class="card-subtitle">{{ 'admin.settings.aiProviderHelp' | translate }}</p>
       </div>
 
       <div class="card-body">
         <form [formGroup]="promptConfigForm">
           <div class="form-group">
             <label for="provider-select" class="form-label">
-              Proveedor Preferido <span class="required">*</span>
+              {{ 'admin.settings.aiProvider' | translate }} <span class="required">*</span>
             </label>
             <p class="form-help">
-              Selecciona un proveedor específico o deja en 'Automático' para failover inteligente
+              {{ 'admin.settings.aiProviderHelp' | translate }}
             </p>
 
             @if (isLoadingProviders()) {
             <div class="loading-small">
               <span class="spinner-small"></span>
-              <span>Cargando proveedores...</span>
+              <span>{{ 'admin.settings.loadingProviders' | translate }}</span>
             </div>
             } @else {
             <select id="provider-select" class="form-control form-select" formControlName="preferredProvider">
@@ -129,7 +129,7 @@
             </div>
 
             <div class="provider-status-section">
-              <p class="provider-status-label">Proveedores Disponibles:</p>
+              <p class="provider-status-label">{{ 'admin.settings.availableProviders' | translate }}</p>
               <div class="provider-badges">
                 @for (provider of availableProviders(); track provider) {
                 @if (provider !== 'auto') {
@@ -153,25 +153,26 @@
       <div class="card-header">
         <h2 class="card-title">
           <i class="fas fa-thermometer-half"></i>
-          Creatividad (Temperatura)
+          {{ 'admin.settings.creativity' | translate }}
         </h2>
-        <p class="card-subtitle">Controla el nivel de variabilidad en las respuestas de la IA</p>
+        <p class="card-subtitle">{{ 'admin.settings.creativityHelp' | translate }}</p>
       </div>
 
       <div class="card-body">
         <form [formGroup]="promptConfigForm">
           <div class="form-group">
             <label for="temperature-slider" class="form-label">
-              Temperatura: <span class="temperature-value">{{ temperatureValue.toFixed(1) }}</span>
+              {{ 'admin.settings.temperatureLabel' | translate }} <span class="temperature-value">{{
+                temperatureValue.toFixed(1) }}</span>
             </label>
 
             <div class="temperature-info">
               <div class="info-card">
-                <span class="info-label">Nivel:</span>
+                <span class="info-label">{{ 'admin.settings.level' | translate }}</span>
                 <span class="info-value">{{ getTemperatureLabel() }}</span>
               </div>
               <div class="info-card">
-                <span class="info-label">Descripción:</span>
+                <span class="info-label">{{ 'admin.settings.description' | translate }}</span>
                 <span class="info-value">{{ getTemperatureDescription() }}</span>
               </div>
             </div>
@@ -180,24 +181,27 @@
             <div class="slider-container">
               <span class="slider-label slider-min">
                 <i class="fas fa-arrow-left"></i>
-                Preciso (0.0)
+                {{ 'admin.settings.precise' | translate }}
               </span>
 
               <input id="temperature-slider" type="range" min="0" max="1" step="0.1" formControlName="temperature"
                 class="form-range">
 
               <span class="slider-label slider-max">
-                Creativo (1.0)
+                {{ 'admin.settings.creative' | translate }}
                 <i class="fas fa-arrow-right"></i>
               </span>
             </div>
 
             <p class="form-help">
-              <strong>0.0 = Determinista:</strong> Respuestas idénticas y predecibles.
+              <strong>{{ 'admin.settings.deterministic' | translate }}</strong> {{ 'admin.settings.deterministicDesc' |
+              translate }}
               <br>
-              <strong>1.0 = Creativo:</strong> Máxima variedad y aleatoriedad.
+              <strong>{{ 'admin.settings.creativeMax' | translate }}</strong> {{ 'admin.settings.creativeMaxDesc' |
+              translate }}
               <br>
-              <strong>Recomendado: 0.7</strong> (Balance entre precisión y diversidad)
+              <strong>{{ 'admin.settings.recommended' | translate }}</strong> {{ 'admin.settings.recommendedDesc' |
+              translate }}
             </p>
           </div>
         </form>
@@ -213,22 +217,24 @@
       <div class="admin-card-header">
         <h2 class="admin-card-title">
           <i class="fas fa-list-ol"></i>
-          Preguntas por Partida
+          {{ 'admin.settings.questionsPerGame' | translate }}
         </h2>
-        <p class="admin-card-subtitle">Define el número máximo de preguntas que se mostrarán en cada juego</p>
+        <p class="admin-card-subtitle">{{ 'admin.settings.questionsPerGameHelp' | translate }}</p>
       </div>
 
       <div class="admin-card-body">
         <form [formGroup]="promptConfigForm">
           <div class="form-group">
             <label for="max-questions-input" class="form-label">
-              Máximo de Preguntas por Juego
+              {{ 'admin.settings.maxQuestionsPerGame' | translate }}
               <span class="required">*</span>
             </label>
             <p class="form-help">
-              Cantidad de preguntas que se presentarán en cada partida.
-              <strong>Mínimo: {{ minimumQuestionsRequired }}</strong> (1 por categoría),
-              <strong>Máximo: {{ totalVerifiedQuestions() }}</strong> (preguntas verificadas disponibles)
+              {{ 'admin.settings.questionsPerGameInfo' | translate }}
+              <strong>{{ 'admin.settings.minimum' | translate }} {{ minimumQuestionsRequired }}</strong> {{
+              'admin.settings.perCategory' | translate }},
+              <strong>{{ 'admin.settings.maximum' | translate }} {{ totalVerifiedQuestions() }}</strong> {{
+              'admin.settings.verifiedQuestionsAvailable' | translate }}
             </p>
 
             <input id="max-questions-input" type="text" class="form-control" formControlName="maxQuestionsPerGame"
@@ -238,16 +244,17 @@
             <div class="input-footer">
               <span class="input-info">
                 <i class="fas fa-circle-info"></i>
-                Valor actual: <strong>{{ maxQuestionsValue > 0 ? maxQuestionsValue : '-' }}</strong> {{
-                maxQuestionsValue > 0 ? 'preguntas' : '' }}
+                {{ 'admin.settings.currentValue' | translate }} <strong>{{ maxQuestionsValue > 0 ? maxQuestionsValue :
+                  '-' }}</strong> {{
+                maxQuestionsValue > 0 ? ('admin.settings.questions' | translate) : '' }}
               </span>
               <span class="input-info" style="margin-left: 1rem;">
                 <i class="fas fa-layer-group"></i>
-                Total categorías: <strong>{{ totalCategoriesCount }}</strong>
+                {{ 'admin.settings.totalCategories' | translate }} <strong>{{ totalCategoriesCount }}</strong>
               </span>
               <span class="input-info" style="margin-left: 1rem;">
                 <i class="fas fa-check-circle"></i>
-                Preguntas verificadas: <strong>{{ totalVerifiedQuestions() }}</strong>
+                {{ 'admin.settings.verifiedQuestions' | translate }} <strong>{{ totalVerifiedQuestions() }}</strong>
               </span>
             </div>
 
@@ -256,10 +263,12 @@
             <div class="admin-alert admin-alert-danger" style="margin-top: 1rem;">
               <i class="fas fa-exclamation-triangle"></i>
               <div>
-                <strong>Error:</strong> Has configurado <strong>{{ maxQuestionsValue }}</strong> preguntas por
-                juego, pero el mínimo requerido es <strong>{{ minimumQuestionsRequired }}</strong> preguntas (1 por cada
-                categoría).
-                Aumenta el límite a al menos <strong>{{ minimumQuestionsRequired }}</strong> preguntas.
+                <strong>{{ 'admin.settings.errorBelowMinimum' | translate }}</strong> {{
+                'admin.settings.errorBelowMinimumMsg' | translate }} <strong>{{ maxQuestionsValue }}</strong> {{
+                'admin.settings.errorBelowMinimumMsg2' | translate }} <strong>{{ minimumQuestionsRequired }}</strong> {{
+                'admin.settings.errorBelowMinimumMsg3' | translate }}
+                {{ 'admin.settings.errorBelowMinimumMsg4' | translate }} <strong>{{ minimumQuestionsRequired }}</strong>
+                {{ 'admin.settings.errorBelowMinimumMsg5' | translate }}
               </div>
             </div>
             }
@@ -269,9 +278,11 @@
             <div class="admin-alert admin-alert-danger" style="margin-top: 1rem;">
               <i class="fas fa-exclamation-triangle"></i>
               <div>
-                <strong>Error:</strong> Has configurado <strong>{{ maxQuestionsValue }}</strong> preguntas por
-                juego, pero solo hay <strong>{{ totalVerifiedQuestions() }}</strong> preguntas verificadas disponibles.
-                Reduce el límite o verifica más preguntas en la sección de "Gestión de Preguntas".
+                <strong>{{ 'admin.settings.errorExceedsAvailable' | translate }}</strong> {{
+                'admin.settings.errorExceedsMsg' | translate }} <strong>{{ maxQuestionsValue }}</strong> {{
+                'admin.settings.errorExceedsMsg2' | translate }} <strong>{{ totalVerifiedQuestions() }}</strong> {{
+                'admin.settings.errorExceedsMsg3' | translate }}
+                {{ 'admin.settings.errorExceedsMsg4' | translate }}
               </div>
             </div>
             }
@@ -282,9 +293,8 @@
                 <i class="fas fa-chart-pie"></i>
               </div>
               <div class="info-content">
-                <h4>Distribución de Preguntas</h4>
-                <p>Las preguntas se distribuyen equitativamente entre todas las categorías activas. Si hay más
-                  categorías que preguntas configuradas, cada categoría recibirá al menos una pregunta.</p>
+                <h4>{{ 'admin.settings.questionDistribution' | translate }}</h4>
+                <p>{{ 'admin.settings.questionDistributionDesc' | translate }}</p>
               </div>
             </div>
           </div>
@@ -297,9 +307,9 @@
       <div class="admin-card-header">
         <h2 class="admin-card-title">
           <i class="fas fa-folder"></i>
-          Gestión de Categorías
+          {{ 'admin.settings.categoryManagement' | translate }}
         </h2>
-        <p class="admin-card-subtitle">Administra las categorías de preguntas del sistema</p>
+        <p class="admin-card-subtitle">{{ 'admin.settings.categoryManagementHelp' | translate }}</p>
       </div>
 
       <div class="admin-card-body">
@@ -308,7 +318,7 @@
           <button class="admin-btn admin-btn-primary" (click)="openCreateCategoryModal()"
             [disabled]="isLoadingCategories()">
             <i class="fas fa-plus"></i>
-            Nueva Categoría
+            {{ 'admin.settings.newCategory' | translate }}
           </button>
         </div>
 
@@ -316,7 +326,7 @@
         @if (isLoadingCategories()) {
         <div class="admin-loading-container admin-loading-container-dark" style="min-height: 100px;">
           <span class="admin-spinner admin-spinner-dark" style="width: 20px; height: 20px;"></span>
-          <span>Cargando categorías...</span>
+          <span>{{ 'admin.settings.loadingCategories' | translate }}</span>
         </div>
         }
 
@@ -338,13 +348,13 @@
               <button class="admin-btn admin-btn-secondary"
                 style="padding: 8px; width: 32px; height: 32px; min-width: unset;"
                 (click)="openEditCategoryModal(category)" [disabled]="isDeletingCategory() === category.id"
-                title="Editar categoría">
+                [title]="'admin.settings.editCategory' | translate">
                 <i class="fas fa-edit"></i>
               </button>
               <button class="admin-btn admin-btn-secondary"
                 style="padding: 8px; width: 32px; height: 32px; min-width: unset; color: #e74c3c;"
                 (click)="deleteCategory(category)" [disabled]="isDeletingCategory() === category.id"
-                title="Eliminar categoría">
+                [title]="'admin.settings.deleteCategory' | translate">
                 @if (isDeletingCategory() !== category.id) {
                 <i class="fas fa-trash"></i>
                 } @else {
@@ -360,7 +370,7 @@
         @if (!isLoadingCategories() && categories().length === 0) {
         <div class="admin-no-data" style="padding: 20px;">
           <i class="fas fa-folder-open"></i>
-          <p>No hay categorías creadas</p>
+          <p>{{ 'admin.settings.noCategoriesCreated' | translate }}</p>
         </div>
         }
       </div>
@@ -373,24 +383,24 @@
       @if (hasChanges()) {
       <button class="btn btn-secondary btn-lg" (click)="discardChanges()" [disabled]="isSaving()">
         <i class="fas fa-times"></i>
-        Descartar Cambios
+        {{ 'admin.settings.discardChanges' | translate }}
       </button>
       }
 
       <!-- Reset to Default -->
       <button class="btn btn-warning btn-lg" (click)="resetToDefault()" [disabled]="isSaving()">
         <i class="fas fa-refresh"></i>
-        Restaurar Predeterminado
+        {{ 'admin.settings.resetToDefault' | translate }}
       </button>
 
       <!-- Save Changes -->
       <button class="btn btn-primary btn-lg" (click)="saveChanges()" [disabled]="!hasChanges() || isSaving()">
         @if (!isSaving()) {
         <i class="fas fa-save"></i>
-        Guardar Cambios
+        {{ 'admin.settings.saveChanges' | translate }}
         } @else {
         <span class="spinner-small"></span>
-        Guardando...
+        {{ 'admin.settings.saving' | translate }}
         }
       </button>
     </div>
@@ -399,7 +409,7 @@
     <div class="info-section">
       <h3 class="info-title">
         <i class="fas fa-circle-info"></i>
-        Información Importante
+        {{ 'admin.settings.importantInfo' | translate }}
       </h3>
 
       <div class="info-cards">
@@ -408,8 +418,8 @@
             <i class="fas fa-lightbulb"></i>
           </span>
           <div class="info-text">
-            <h4>Cambios Inmediatos</h4>
-            <p>Los cambios en el prompt afectarán a todas las nuevas preguntas generadas, no a las existentes.</p>
+            <h4>{{ 'admin.settings.immediateChanges' | translate }}</h4>
+            <p>{{ 'admin.settings.immediateChangesDesc' | translate }}</p>
           </div>
         </div>
 
@@ -418,8 +428,8 @@
             <i class="fas fa-shield-check"></i>
           </span>
           <div class="info-text">
-            <h4>Validación Estricta</h4>
-            <p>Las preguntas generadas se validan según las reglas del prompt. Sé claro y específico.</p>
+            <h4>{{ 'admin.settings.strictValidation' | translate }}</h4>
+            <p>{{ 'admin.settings.strictValidationDesc' | translate }}</p>
           </div>
         </div>
 
@@ -428,8 +438,8 @@
             <i class="fas fa-flask"></i>
           </span>
           <div class="info-text">
-            <h4>Experimenta</h4>
-            <p>Prueba diferentes valores de temperatura para encontrar el balance ideal para tu caso.</p>
+            <h4>{{ 'admin.settings.experiment' | translate }}</h4>
+            <p>{{ 'admin.settings.experimentDesc' | translate }}</p>
           </div>
         </div>
       </div>
@@ -439,7 +449,7 @@
     <div class="settings-footer">
       <p class="footer-text">
         <i class="fas fa-circle-info"></i>
-        Última actualización: En tiempo real | Multi-AI Failover System
+        {{ 'admin.settings.lastUpdate' | translate }}
       </p>
     </div>
   </div>

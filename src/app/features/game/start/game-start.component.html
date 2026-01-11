@@ -10,48 +10,48 @@
         <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
           <i class="fas fa-brain fs-3x text-primary"></i>
         </div>
-        <h1 class="game-title">Sistema Gamificado de Aprendizaje Adaptativo</h1>
-        <p class="game-subtitle">Plataforma educativa con IA adaptativa para evaluación de conocimientos</p>
+        <h1 class="game-title">{{ 'game.start.title' | translate }}</h1>
+        <p class="game-subtitle">{{ 'game.start.subtitle' | translate }}</p>
       </div>
 
       <!-- Form -->
       <form [formGroup]="playerForm" (ngSubmit)="onSubmit()" class="game-form">
         <!-- Name Input -->
         <div class="form-group">
-          <label for="name" class="form-label">¿Cuál es tu nombre?</label>
+          <label for="name" class="form-label">{{ 'game.start.enterName' | translate }}</label>
           <input
             type="text"
             id="name"
             class="form-control"
             formControlName="name"
-            placeholder="Ej: Juan Pérez"
+            [placeholder]="'game.start.namePlaceholder' | translate"
             maxlength="50"
             [class.is-invalid]="playerForm.get('name')?.invalid && playerForm.get('name')?.touched"
           />
           <div class="invalid-feedback" *ngIf="playerForm.get('name')?.invalid && playerForm.get('name')?.touched">
-            <small *ngIf="playerForm.get('name')?.hasError('required')">El nombre es requerido</small>
-            <small *ngIf="playerForm.get('name')?.hasError('minlength')">El nombre debe tener al menos 2 caracteres</small>
-            <small *ngIf="playerForm.get('name')?.hasError('maxlength')">El nombre no puede exceder los 50 caracteres</small>
+            <small *ngIf="playerForm.get('name')?.hasError('required')">{{ 'game.start.errors.nameRequired' | translate }}</small>
+            <small *ngIf="playerForm.get('name')?.hasError('minlength')">{{ 'game.start.errors.nameMinLength' | translate }}</small>
+            <small *ngIf="playerForm.get('name')?.hasError('maxlength')">{{ 'game.start.errors.nameMaxLength' | translate }}</small>
           </div>
         </div>
 
         <!-- Age Input -->
         <div class="form-group">
-          <label for="age" class="form-label">¿Cuántos años tienes?</label>
+          <label for="age" class="form-label">{{ 'game.start.enterAge' | translate }}</label>
           <input
             type="text"
             id="age"
             class="form-control"
             formControlName="age"
             (input)="onAgeInput($event)"
-            placeholder="Ej: 25"
+            [placeholder]="'game.start.agePlaceholder' | translate"
             maxlength="3"
             [class.is-invalid]="playerForm.get('age')?.invalid && playerForm.get('age')?.touched"
           />
           <div class="invalid-feedback" *ngIf="playerForm.get('age')?.invalid && playerForm.get('age')?.touched">
-            <small *ngIf="playerForm.get('age')?.hasError('required')">La edad es requerida</small>
-            <small *ngIf="playerForm.get('age')?.hasError('invalidFormat')">La edad debe contener solo números</small>
-            <small *ngIf="playerForm.get('age')?.hasError('outOfRange')">Ingresa una edad válida (1-120)</small>
+            <small *ngIf="playerForm.get('age')?.hasError('required')">{{ 'game.start.errors.ageRequired' | translate }}</small>
+            <small *ngIf="playerForm.get('age')?.hasError('invalidFormat')">{{ 'game.start.errors.ageInvalidFormat' | translate }}</small>
+            <small *ngIf="playerForm.get('age')?.hasError('outOfRange')">{{ 'game.start.errors.ageOutOfRange' | translate }}</small>
           </div>
         </div>
 
@@ -64,12 +64,12 @@
             [disabled]="isLoading()"
           >
             <i class="fas" [ngClass]="showRoomCode() ? 'fa-chevron-up' : 'fa-door-open'"></i>
-            {{ showRoomCode() ? 'Ocultar código de sala' : '¿Tienes un código de sala?' }}
+            {{ showRoomCode() ? ('game.start.hideRoomCode' | translate) : ('game.start.hasRoomCode' | translate) }}
           </button>
 
           <!-- Room Code Input (collapsed by default) -->
           <div class="room-code-input-wrapper" *ngIf="showRoomCode()">
-            <label for="roomCode" class="form-label">Código de sala</label>
+            <label for="roomCode" class="form-label">{{ 'game.start.roomCodeLabel' | translate }}</label>
             <div class="room-code-input-group">
               <input
                 type="text"
@@ -77,7 +77,7 @@
                 class="form-control room-code-input"
                 formControlName="roomCode"
                 (input)="onRoomCodeInput($event)"
-                placeholder="Ej: ABC123"
+                [placeholder]="'game.start.roomCodePlaceholder' | translate"
                 maxlength="6"
                 [class.is-valid]="roomValidated()"
                 [class.is-invalid]="roomError()"
@@ -89,7 +89,7 @@
                 [disabled]="isValidatingRoom() || isLoading() || roomValidated()"
               >
                 <span *ngIf="isValidatingRoom()" class="spinner-small"></span>
-                <span *ngIf="!isValidatingRoom() && !roomValidated()">Validar</span>
+                <span *ngIf="!isValidatingRoom() && !roomValidated()">{{ 'game.start.validate' | translate }}</span>
                 <span *ngIf="roomValidated()"><i class="fas fa-check"></i></span>
               </button>
             </div>
@@ -101,7 +101,7 @@
               </div>
               <div *ngIf="roomValidated() && validatedRoom()" class="room-success">
                 <i class="fas fa-check-circle"></i>
-                Sala: <strong>{{ validatedRoom()?.name }}</strong>
+                {{ 'game.start.roomLabel' | translate }}: <strong>{{ validatedRoom()?.name }}</strong>
               </div>
             </div>
           </div>
@@ -120,10 +120,10 @@
         >
           <span *ngIf="!isLoading()" class="btn-text d-flex align-items-center justify-content-center gap-2">
             <i class="fas fa-gamepad text-white"></i>
-            ¡Jugar Ahora!
+            {{ 'game.start.startButton' | translate }}
           </span>
           <span *ngIf="isLoading()" class="btn-text">
-            <span class="spinner"></span> Iniciando...
+            <span class="spinner"></span> {{ 'game.start.loading' | translate }}
           </span>
         </button>
       </form>
@@ -131,14 +131,14 @@
       <!-- Footer -->
       <div class="card-footer">
         <p class="footer-text">
-          ¿Eres administrador?
+          {{ 'game.start.isAdmin' | translate }}
           <button
             type="button"
             class="link-button"
             (click)="goToAdmin()"
             [disabled]="isLoading()"
           >
-            Ingresa aquí
+            {{ 'game.start.adminLink' | translate }}
           </button>
         </p>
       </div>
@@ -148,15 +148,15 @@
     <div class="features-section">
       <div class="feature-item">
         <i class="fas fa-bolt fs-2x text-warning"></i>
-        <p class="feature-text">Preguntas dinámicas</p>
+        <p class="feature-text">{{ 'game.start.features.dynamic' | translate }}</p>
       </div>
       <div class="feature-item">
         <i class="fas fa-arrow-up fs-2x text-info"></i>
-        <p class="feature-text">Dificultad adaptativa</p>
+        <p class="feature-text">{{ 'game.start.features.adaptive' | translate }}</p>
       </div>
       <div class="feature-item">
         <i class="fas fa-trophy fs-4x text-success"></i>
-        <p class="feature-text">Compite en el ranking</p>
+        <p class="feature-text">{{ 'game.start.features.compete' | translate }}</p>
       </div>
     </div>
   </div>

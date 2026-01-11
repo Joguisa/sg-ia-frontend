@@ -2,6 +2,7 @@ import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -14,7 +15,7 @@ import { TabsComponent, Tab } from '../../../shared/tabs/tabs.component';
 @Component({
   selector: 'app-admin-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent, TabsComponent],
+  imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent, TabsComponent, TranslatePipe],
   templateUrl: './admin-settings.component.html',
   styleUrls: [
     '../shared/styles/admin-styles.css',

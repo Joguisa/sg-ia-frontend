@@ -10,11 +10,13 @@ import {
 } from '../../core/models/player';
 import { HttpStatus } from '../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../core/constants/notification-config.const';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-player-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './player-profile.component.html',
   styleUrls: ['./player-profile.component.css']
 })
@@ -29,9 +31,10 @@ export class PlayerProfileComponent implements OnInit {
 
   constructor(
     private playerService: PlayerService,
+    private translate: TranslateService,
     private notification: NotificationService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadPlayerStats();

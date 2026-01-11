@@ -5,18 +5,18 @@
       <div class="admin-header-title">
         <i class="fas fa-door-open"></i>
         <div class="admin-header-text">
-          <h1>Gestión de Salas</h1>
-          <p class="admin-header-subtitle">Estadísticas y mantenimientos de salas</p>
+          <h1>{{ 'admin.rooms.title' | translate }}</h1>
+          <p class="admin-header-subtitle">{{ 'admin.rooms.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="admin-header-actions">
         <button class="admin-btn-back" (click)="goToDashboard()">
           <i class="fas fa-arrow-left"></i>
-          Volver al Dashboard
+          {{ 'admin.common.backToDashboard' | translate }}
         </button>
         <button class="admin-btn-logout admin-btn-danger" (click)="logout()">
           <i class="fas fa-sign-out-alt"></i>
-          Cerrar Sesión
+          {{ 'auth.logout' | translate }}
         </button>
       </div>
     </div>
@@ -36,36 +36,36 @@
         <div class="search-filters">
           <div class="search-input-wrapper">
             <i class="fas fa-search"></i>
-            <input type="text" class="search-input" placeholder="Buscar por nombre o código..." [value]="searchQuery()"
-              (input)="onSearchChange($event)" />
+            <input type="text" class="search-input" [placeholder]="'admin.rooms.searchByNameOrCode' | translate"
+              [value]="searchQuery()" (input)="onSearchChange($event)" />
           </div>
           <select class="filter-select" (change)="onStatusFilterChange($event)">
-            <option value="all">Todos los estados</option>
-            <option value="active">Activas</option>
-            <option value="paused">Pausadas</option>
-            <option value="closed">Cerradas</option>
+            <option value="all">{{ 'admin.common.allStatuses' | translate }}</option>
+            <option value="active">{{ 'admin.rooms.status.active' | translate }}</option>
+            <option value="paused">{{ 'admin.rooms.status.paused' | translate }}</option>
+            <option value="closed">{{ 'admin.rooms.status.closed' | translate }}</option>
           </select>
         </div>
         <button class="btn-primary" (click)="openCreateModal()">
           <i class="fas fa-plus"></i>
-          Nueva Sala
+          {{ 'admin.rooms.newRoom' | translate }}
         </button>
       </div>
 
       <!-- Loading -->
       <div *ngIf="isLoadingRooms()" class="loading-container">
         <div class="spinner"></div>
-        <p>Cargando salas...</p>
+        <p>{{ 'admin.rooms.loadingRooms' | translate }}</p>
       </div>
 
       <!-- Empty State -->
       <div *ngIf="!isLoadingRooms() && filteredRooms().length === 0" class="empty-state">
         <i class="fas fa-door-open"></i>
-        <h3>No hay salas</h3>
-        <p>Crea una nueva sala para comenzar a organizar tus sesiones de juego.</p>
+        <h3>{{ 'admin.rooms.noRooms' | translate }}</h3>
+        <p>{{ 'admin.rooms.noRoomsDesc' | translate }}</p>
         <button class="btn-primary" (click)="openCreateModal()">
           <i class="fas fa-plus"></i>
-          Crear Primera Sala
+          {{ 'admin.rooms.createFirstRoom' | translate }}
         </button>
       </div>
 
@@ -73,7 +73,8 @@
       <div *ngIf="!isLoadingRooms() && filteredRooms().length > 0" class="rooms-grid">
         <div *ngFor="let room of filteredRooms()" class="room-card">
           <div class="room-header">
-            <div class="room-code-badge" (click)="copyRoomCode(room.room_code)" title="Click para copiar">
+            <div class="room-code-badge" (click)="copyRoomCode(room.room_code)"
+              [title]="'admin.common.clickToCopy' | translate">
               <i class="fas fa-key"></i>
               {{ room.room_code }}
               <i class="fas fa-copy copy-icon"></i>
@@ -90,44 +91,51 @@
             <div class="room-meta">
               <div class="meta-item">
                 <i class="fas fa-users"></i>
-                <span>Máx: {{ room.max_players }} jugadores</span>
+                <span>{{ 'admin.common.max' | translate }}: {{ room.max_players }} {{ 'admin.common.players' | translate
+                  }}</span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-language"></i>
+                <span>{{ room.language === 'es' ? ('common.spanish' | translate) : ('common.english' | translate)
+                  }}</span>
               </div>
               <div class="meta-item" *ngIf="room.filter_categories?.length">
                 <i class="fas fa-tags"></i>
-                <span>{{ room.filter_categories?.length }} categorías</span>
+                <span>{{ room.filter_categories?.length }} {{ 'admin.common.categories' | translate }}</span>
               </div>
               <div class="meta-item" *ngIf="room.filter_difficulties?.length">
                 <i class="fas fa-signal"></i>
-                <span>{{ room.filter_difficulties?.length }} niveles</span>
+                <span>{{ room.filter_difficulties?.length }} {{ 'admin.common.levels' | translate }}</span>
               </div>
             </div>
           </div>
 
           <div class="room-actions">
-            <button class="btn-icon btn-view" (click)="viewRoomDetail(room)" title="Ver detalles">
+            <button class="btn-icon btn-view" (click)="viewRoomDetail(room)"
+              [title]="'admin.rooms.roomDetails' | translate">
               <i class="fas fa-chart-bar"></i>
             </button>
-            <button class="btn-icon btn-edit" (click)="openEditModal(room)" title="Editar">
+            <button class="btn-icon btn-edit" (click)="openEditModal(room)" [title]="'common.edit' | translate">
               <i class="fas fa-edit"></i>
             </button>
 
             <!-- Status Actions -->
             <div class="status-actions">
               <button *ngIf="room.status !== 'active'" class="btn-icon btn-activate"
-                (click)="updateRoomStatus(room, 'active')" title="Activar">
+                (click)="updateRoomStatus(room, 'active')" [title]="'admin.rooms.activate' | translate">
                 <i class="fas fa-play"></i>
               </button>
               <button *ngIf="room.status === 'active'" class="btn-icon btn-pause"
-                (click)="updateRoomStatus(room, 'paused')" title="Pausar">
+                (click)="updateRoomStatus(room, 'paused')" [title]="'admin.rooms.pause' | translate">
                 <i class="fas fa-pause"></i>
               </button>
               <button *ngIf="room.status !== 'closed'" class="btn-icon btn-close"
-                (click)="updateRoomStatus(room, 'closed')" title="Cerrar">
+                (click)="updateRoomStatus(room, 'closed')" [title]="'admin.rooms.closeRoom' | translate">
                 <i class="fas fa-stop"></i>
               </button>
             </div>
 
-            <button class="btn-icon btn-delete" (click)="deleteRoom(room)" title="Eliminar">
+            <button class="btn-icon btn-delete" (click)="deleteRoom(room)" [title]="'common.delete' | translate">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -140,11 +148,11 @@
       <!-- No Room Selected -->
       <div *ngIf="!selectedRoomId()" class="empty-state">
         <i class="fas fa-chart-bar"></i>
-        <h3>Selecciona una sala</h3>
-        <p>Selecciona una sala de la lista para ver sus estadísticas detalladas.</p>
+        <h3>{{ 'admin.rooms.selectRoom' | translate }}</h3>
+        <p>{{ 'admin.rooms.selectRoomDesc' | translate }}</p>
         <button class="btn-secondary" (click)="onTabChange('rooms')">
           <i class="fas fa-list"></i>
-          Ver Lista de Salas
+          {{ 'admin.rooms.goToList' | translate }}
         </button>
       </div>
 
@@ -153,13 +161,13 @@
         <!-- Back Button -->
         <button class="btn-back-detail" (click)="clearRoomSelection()">
           <i class="fas fa-arrow-left"></i>
-          Volver a la lista
+          {{ 'admin.rooms.goToList' | translate }}
         </button>
 
         <!-- Loading -->
         <div *ngIf="isLoadingDetail()" class="loading-container">
           <div class="spinner"></div>
-          <p>Cargando información de la sala...</p>
+          <p>{{ 'admin.rooms.loadingRooms' | translate }}</p>
         </div>
 
         <!-- Room Info Card -->
@@ -186,11 +194,11 @@
           <div class="export-buttons">
             <button class="btn-export btn-pdf" (click)="exportToPdf()" [disabled]="isExporting()">
               <i class="fas fa-file-pdf"></i>
-              Exportar PDF
+              {{ 'admin.rooms.exportPdf' | translate }}
             </button>
             <button class="btn-export btn-excel" (click)="exportToExcel()" [disabled]="isExporting()">
               <i class="fas fa-file-excel"></i>
-              Exportar Excel
+              {{ 'admin.rooms.exportExcel' | translate }}
             </button>
           </div>
         </div>
@@ -200,27 +208,27 @@
           <div class="stat-card">
             <i class="fas fa-users"></i>
             <div class="stat-value">{{ roomStats()?.unique_players || 0 }}</div>
-            <div class="stat-label">Jugadores</div>
+            <div class="stat-label">{{ 'admin.rooms.totalPlayers' | translate }}</div>
           </div>
           <div class="stat-card">
             <i class="fas fa-gamepad"></i>
             <div class="stat-value">{{ roomStats()?.total_sessions || 0 }}</div>
-            <div class="stat-label">Sesiones</div>
+            <div class="stat-label">{{ 'admin.rooms.totalSessions' | translate }}</div>
           </div>
           <div class="stat-card">
             <i class="fas fa-question-circle"></i>
             <div class="stat-value">{{ roomStats()?.total_answers || 0 }}</div>
-            <div class="stat-label">Respuestas</div>
+            <div class="stat-label">{{ 'admin.rooms.totalAnswers' | translate }}</div>
           </div>
           <div class="stat-card">
             <i class="fas fa-percentage"></i>
             <div class="stat-value">{{ roomStats()?.avg_accuracy || 0 }}%</div>
-            <div class="stat-label">Precisión Promedio</div>
+            <div class="stat-label">{{ 'admin.rooms.avgAccuracy' | translate }}</div>
           </div>
           <div class="stat-card">
             <i class="fas fa-trophy"></i>
             <div class="stat-value">{{ roomStats()?.highest_score || 0 }}</div>
-            <div class="stat-label">Puntuación Máxima</div>
+            <div class="stat-label">{{ 'admin.rooms.highestScore' | translate }}</div>
           </div>
         </div>
 
@@ -228,7 +236,7 @@
         <div class="charts-section">
           <!-- Player Performance Chart -->
           <div class="chart-card" *ngIf="playerStatsChartData()">
-            <h3><i class="fas fa-chart-bar"></i> Rendimiento de Jugadores</h3>
+            <h3><i class="fas fa-chart-bar"></i> {{ 'admin.rooms.playerStats' | translate }}</h3>
             <div class="chart-container">
               <canvas baseChart [data]="playerStatsChartData()!" [options]="playerStatsChartOptions"
                 [type]="playerStatsChartType"></canvas>
@@ -237,7 +245,7 @@
 
           <!-- Category Distribution Chart -->
           <div class="chart-card" *ngIf="categoryStatsChartData()">
-            <h3><i class="fas fa-chart-pie"></i> Distribución por Categoría</h3>
+            <h3><i class="fas fa-chart-pie"></i> {{ 'admin.rooms.categoryStats' | translate }}</h3>
             <div class="chart-container doughnut">
               <canvas baseChart [data]="categoryStatsChartData()!" [options]="categoryStatsChartOptions"
                 [type]="categoryStatsChartType"></canvas>
@@ -247,7 +255,8 @@
 
         <!-- Question Analysis Section -->
         <div class="analytics-section" *ngIf="topHardest().length > 0 || topEasiest().length > 0">
-          <h3 class="section-subtitle"><i class="fas fa-chart-line"></i> Análisis de Preguntas</h3>
+          <h3 class="section-subtitle"><i class="fas fa-chart-line"></i> {{ 'admin.rooms.questionAnalysis' | translate
+            }}</h3>
 
           <div class="analytics-grid">
             <!-- Top Hardest Questions -->
@@ -255,9 +264,9 @@
               <div class="analytics-header">
                 <h4 class="analytics-title">
                   <i class="fas fa-arrow-down"></i>
-                  Top 5 Preguntas Difíciles
+                  {{ 'admin.rooms.highErrorQuestions' | translate }}
                 </h4>
-                <p class="analytics-subtitle">Menor tasa de éxito</p>
+                <p class="analytics-subtitle">{{ 'admin.rooms.lowestSuccessRate' | translate }}</p>
               </div>
 
               <div class="analytics-content">
@@ -268,12 +277,12 @@
                       <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
                       <p class="question-meta">
                         <i class="fas fa-circle-info"></i>
-                        ID: {{ question.id }} | {{ question.times_answered }} respuestas
+                        ID: {{ question.id }} | {{ question.times_answered }} {{ 'admin.rooms.answers' | translate }}
                       </p>
                     </div>
                     <div class="question-rate" [ngClass]="getSuccessRateClass(+question.success_rate)">
                       <p class="rate-value">{{ (+question.success_rate).toFixed(1) }}%</p>
-                      <p class="rate-label">Éxito</p>
+                      <p class="rate-label">{{ 'admin.rooms.success' | translate }}</p>
                     </div>
                   </div>
                 </div>
@@ -285,9 +294,9 @@
               <div class="analytics-header">
                 <h4 class="analytics-title">
                   <i class="fas fa-arrow-up"></i>
-                  Top 5 Preguntas Fáciles
+                  {{ 'admin.rooms.easyQuestions' | translate }}
                 </h4>
-                <p class="analytics-subtitle">Mayor tasa de éxito</p>
+                <p class="analytics-subtitle">{{ 'admin.rooms.highestSuccessRate' | translate }}</p>
               </div>
 
               <div class="analytics-content">
@@ -298,12 +307,12 @@
                       <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
                       <p class="question-meta">
                         <i class="fas fa-circle-info"></i>
-                        ID: {{ question.id }} | {{ question.times_answered }} respuestas
+                        ID: {{ question.id }} | {{ question.times_answered }} {{ 'admin.rooms.answers' | translate }}
                       </p>
                     </div>
                     <div class="question-rate" [ngClass]="getSuccessRateClass(+question.success_rate)">
                       <p class="rate-value">{{ (+question.success_rate).toFixed(1) }}%</p>
-                      <p class="rate-label">Éxito</p>
+                      <p class="rate-label">{{ 'admin.rooms.success' | translate }}</p>
                     </div>
                   </div>
                 </div>
@@ -314,17 +323,17 @@
 
         <!-- Player Stats Table -->
         <div class="data-section" *ngIf="roomPlayerStats().length > 0">
-          <h3><i class="fas fa-users"></i> Estadísticas de Jugadores</h3>
+          <h3><i class="fas fa-users"></i> {{ 'admin.rooms.playerStats' | translate }}</h3>
           <div class="table-container">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Jugador</th>
-                  <th>Sesiones</th>
-                  <th>Respuestas</th>
-                  <th>Precisión</th>
-                  <th>Prom. Punt.</th>
-                  <th>Punt. Máx.</th>
+                  <th>{{ 'admin.rooms.player' | translate }}</th>
+                  <th>{{ 'admin.rooms.sessions' | translate }}</th>
+                  <th>{{ 'admin.rooms.answers' | translate }}</th>
+                  <th>{{ 'admin.rooms.accuracy' | translate }}</th>
+                  <th>{{ 'admin.rooms.avgScore' | translate }}</th>
+                  <th>{{ 'admin.rooms.maxScore' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -349,14 +358,14 @@
 
         <!-- Question Stats Table -->
         <div class="data-section" *ngIf="roomQuestionStats().length > 0">
-          <h3><i class="fas fa-question-circle"></i> Preguntas con Mayor Tasa de Error</h3>
+          <h3><i class="fas fa-question-circle"></i> {{ 'admin.rooms.highErrorQuestions' | translate }}</h3>
           <div class="table-container">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Pregunta</th>
-                  <th>Veces Respondida</th>
-                  <th>Tasa de Error</th>
+                  <th>{{ 'admin.rooms.question' | translate }}</th>
+                  <th>{{ 'admin.rooms.timesAnswered' | translate }}</th>
+                  <th>{{ 'admin.rooms.errorRate' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -383,7 +392,7 @@
   <div class="modal-overlay" *ngIf="showModal()" (click)="closeModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h2>{{ isEditing() ? 'Editar Sala' : 'Nueva Sala' }}</h2>
+        <h2>{{ isEditing() ? ('admin.rooms.editRoom' | translate) : ('admin.rooms.createRoom' | translate) }}</h2>
         <button class="btn-close-modal" (click)="closeModal()">
           <i class="fas fa-times"></i>
         </button>
@@ -392,51 +401,63 @@
       <form [formGroup]="roomForm" (ngSubmit)="saveRoom()" class="modal-body">
         <!-- Name -->
         <div class="form-group">
-          <label for="name">Nombre de la Sala *</label>
+          <label for="name">{{ 'admin.rooms.roomName' | translate }} *</label>
           <input type="text" id="name" formControlName="name"
-            placeholder="Ej: Sesión Educativa - Prevención Cáncer de Colon"
+            [placeholder]="'admin.rooms.roomNamePlaceholder' | translate"
             [class.is-invalid]="roomForm.get('name')?.invalid && roomForm.get('name')?.touched" />
           <div class="invalid-feedback"
             *ngIf="roomForm.get('name')?.hasError('required') && roomForm.get('name')?.touched">
-            El nombre es requerido
+            {{ 'admin.rooms.nameRequired' | translate }}
           </div>
           <div class="invalid-feedback"
             *ngIf="roomForm.get('name')?.hasError('minlength') && roomForm.get('name')?.touched">
-            El nombre debe tener al menos 3 caracteres
+            {{ 'admin.rooms.minNameLength' | translate }}
           </div>
         </div>
 
         <!-- Description -->
         <div class="form-group">
-          <label for="description">Descripción (opcional)</label>
-          <textarea id="description" formControlName="description" placeholder="Describe el propósito de esta sala..."
-            rows="3"></textarea>
+          <label for="description">{{ 'common.description' | translate }} ({{ 'common.optional' | translate }})</label>
+          <textarea id="description" formControlName="description"
+            [placeholder]="'admin.rooms.descriptionPlaceholder' | translate" rows="3"></textarea>
         </div>
 
         <!-- Max Players -->
         <div class="form-group">
-          <label for="max_players">Máximo de Jugadores (1-500)</label>
+          <label for="max_players">{{ 'admin.rooms.maxPlayers' | translate }} ({{ 'admin.rooms.minPlayers' | translate
+            }}-{{ 'admin.rooms.maxPlayersLimit' | translate }})</label>
           <input type="text" id="max_players" formControlName="max_players" placeholder="50"
             (input)="onMaxPlayersInput($event)" (keypress)="preventNonNumeric($event)"
             [class.is-invalid]="roomForm.get('max_players')?.invalid && roomForm.get('max_players')?.touched" />
           <div class="invalid-feedback"
             *ngIf="roomForm.get('max_players')?.hasError('required') && roomForm.get('max_players')?.touched">
-            El número de jugadores es requerido
+            {{ 'admin.rooms.playersRequired' | translate }}
           </div>
           <div class="invalid-feedback"
             *ngIf="roomForm.get('max_players')?.hasError('min') && roomForm.get('max_players')?.touched">
-            Mínimo 1 jugador
+            {{ 'admin.rooms.minPlayersError' | translate }}
           </div>
           <div class="invalid-feedback"
             *ngIf="roomForm.get('max_players')?.hasError('max') && roomForm.get('max_players')?.touched">
-            Máximo 500 jugadores
+            {{ 'admin.rooms.maxPlayersError' | translate }}
           </div>
+        </div>
+
+        <!-- Room Language -->
+        <div class="form-group">
+          <label for="language">{{ 'admin.rooms.roomLanguage' | translate }}</label>
+          <p class="help-text">{{ 'admin.rooms.roomLanguageHelp' | translate }}</p>
+          <select id="language" formControlName="language" class="form-select">
+            <option *ngFor="let lang of languageService.availableLanguages" [value]="lang.code">
+              {{ lang.flag }} {{ lang.name }}
+            </option>
+          </select>
         </div>
 
         <!-- Category Filters -->
         <div class="form-group">
-          <label>Filtrar por Categorías (opcional)</label>
-          <p class="help-text">Deja vacío para incluir todas las categorías</p>
+          <label>{{ 'admin.rooms.filterCategories' | translate }} ({{ 'common.optional' | translate }})</label>
+          <p class="help-text">{{ 'admin.rooms.leaveEmptyForAll' | translate }}</p>
           <div class="checkbox-grid">
             <label *ngFor="let cat of categories()" class="checkbox-item">
               <input type="checkbox" [checked]="isCategorySelected(cat.id!)"
@@ -448,8 +469,8 @@
 
         <!-- Difficulty Filters -->
         <div class="form-group">
-          <label>Filtrar por Dificultad (opcional)</label>
-          <p class="help-text">Deja vacío para incluir todas las dificultades</p>
+          <label>{{ 'admin.rooms.filterDifficulties' | translate }} ({{ 'common.optional' | translate }})</label>
+          <p class="help-text">{{ 'admin.rooms.leaveEmptyForAll' | translate }}</p>
           <div class="checkbox-grid">
             <label *ngFor="let diff of difficulties" class="checkbox-item">
               <input type="checkbox" [checked]="isDifficultySelected(diff)"
@@ -460,10 +481,11 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button type="button" class="btn-secondary" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
           <button type="submit" class="btn-primary" [disabled]="isSaving()">
             <span *ngIf="isSaving()" class="spinner-small"></span>
-            {{ isEditing() ? 'Guardar Cambios' : 'Crear Sala' }}
+            {{ isSaving() ? ('admin.common.saving' | translate) : (isEditing() ? ('common.save' | translate) :
+            ('admin.rooms.createRoom' | translate)) }}
           </button>
         </div>
       </form>

@@ -2,17 +2,19 @@ import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DashboardStatsResponse, BatchStatistics } from '../../../core/models/admin';
 import { HttpStatus } from '../../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
+import { LanguageSelectorComponent } from '../../../shared/components/language-selector/language-selector.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe, LanguageSelectorComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
@@ -43,7 +45,8 @@ export class AdminDashboardComponent implements OnInit {
     private adminService: AdminService,
     private authService: AuthService,
     private notification: NotificationService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -121,6 +124,13 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   /**
+   * Navega a la gestión de administradores
+   */
+  goToAdmins(): void {
+    this.router.navigate(['/admin/admins']);
+  }
+
+  /**
    * Cierra sesión y redirige al login
    */
   logout(): void {
@@ -193,11 +203,11 @@ export class AdminDashboardComponent implements OnInit {
   getBatchStatusText(status: string): string {
     switch (status) {
       case 'complete':
-        return 'Completo';
+        return this.translate.instant('admin.dashboard.complete');
       case 'partial':
-        return 'Parcial';
+        return this.translate.instant('admin.dashboard.partial');
       default:
-        return 'Pendiente';
+        return this.translate.instant('admin.questions.pending');
     }
   }
 

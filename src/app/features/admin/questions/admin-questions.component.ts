@@ -17,11 +17,12 @@ import {
 import { Question } from '../../../core/models/game';
 import { HttpStatus } from '../../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-admin-questions',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './admin-questions.component.html',
   styleUrls: [
     '../shared/styles/admin-styles.css',
@@ -117,6 +118,7 @@ export class AdminQuestionsComponent implements OnInit {
     private adminService: AdminService,
     private authService: AuthService,
     private notification: NotificationService,
+    private translate: TranslateService,
     private router: Router
   ) {
     // Inicializar formulario del generador

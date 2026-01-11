@@ -140,7 +140,22 @@ export const environment = {
       /** GET /admin/rooms/{id}/export/pdf - Exportar reporte PDF */
       exportRoomPdf: (id: number) => `/admin/rooms/${id}/export/pdf`,
       /** GET /admin/rooms/{id}/export/excel - Exportar reporte Excel */
-      exportRoomExcel: (id: number) => `/admin/rooms/${id}/export/excel`
+      exportRoomExcel: (id: number) => `/admin/rooms/${id}/export/excel`,
+
+      // ========== ADMIN USERS MANAGEMENT ==========
+      /** GET /admin/admins - Listar administradores */
+      listAdmins: '/admin/admins',
+      /** GET /admin/admins/:id - Obtener administrador */
+      getAdmin: (id: number) => `/admin/admins/${id}`,
+      /** POST /admin/admins - Crear administrador (superadmin) */
+      createAdmin: '/admin/admins',
+      /** PUT /admin/admins/:id - Actualizar administrador (superadmin) */
+      updateAdmin: (id: number) => `/admin/admins/${id}`,
+      /** DELETE /admin/admins/:id - Borrado lógico (superadmin) */
+      deleteAdmin: (id: number) => `/admin/admins/${id}`,
+      /** PATCH /admin/admins/:id/status - Cambiar estado (superadmin) */
+      toggleAdminStatus: (id: number) => `/admin/admins/${id}/status`
+
     },
 
     // ========== ROOMS PUBLIC ==========

@@ -2,14 +2,16 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { PlayerService } from '../../../core/services/player.service';
 import { RoomService } from '../../../core/services/room.service';
+import { LanguageService } from '../../../core/services/language.service';
 import { GameRoom } from '../../../core/models/room';
 
 @Component({
   selector: 'app-game-start',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './game-start.component.html',
   styleUrls: ['./game-start.component.css']
 })
@@ -29,6 +31,7 @@ export class GameStartComponent {
     private fb: FormBuilder,
     private playerService: PlayerService,
     private roomService: RoomService,
+    private languageService: LanguageService,
     private router: Router
   ) {
     this.playerForm = this.fb.group({
@@ -214,6 +217,11 @@ export class GameStartComponent {
           this.roomValidated.set(true);
           this.validatedRoom.set(response.room);
           this.roomError.set('');
+
+          // Change language based on room language
+          if (response.room.language) {
+            this.languageService.setLanguageForRoom(response.room.language as 'es' | 'en');
+          }
         } else {
           this.roomValidated.set(false);
           this.validatedRoom.set(null);

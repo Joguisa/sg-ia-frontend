@@ -6,11 +6,13 @@ import { NotificationService } from '../../core/services/notification.service';
 import { LeaderboardEntry, LeaderboardResponse } from '../../core/models/player';
 import { HttpStatus } from '../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../core/constants/notification-config.const';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-leaderboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './leaderboard.component.html',
   styleUrls: ['./leaderboard.component.css']
 })
@@ -31,9 +33,10 @@ export class LeaderboardComponent implements OnInit {
 
   constructor(
     private gameService: GameService,
+    private translate: TranslateService,
     private notification: NotificationService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadLeaderboard();

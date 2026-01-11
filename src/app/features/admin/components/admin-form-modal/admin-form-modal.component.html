@@ -1,0 +1,118 @@
+<div class="modal-overlay" (click)="onCancel()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h2>
+                <i class="fas fa-user-cog"></i>
+                {{ (mode === 'create' ? 'admin.admins.createAdmin' : 'admin.admins.editAdmin') | translate }}
+            </h2>
+            <button class="modal-close" (click)="onCancel()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+            <form [formGroup]="adminForm" (ngSubmit)="onSubmit()">
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="email">
+                        {{ 'admin.admins.email' | translate }} <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input id="email" type="email" class="form-control" formControlName="email"
+                            placeholder="ejemplo@dominio.com" [class.invalid]="email?.invalid && email?.touched" />
+                    </div>
+                    @if (email?.invalid && email?.touched) {
+                    <div class="error-message">
+                        @if (email?.errors?.['required']) {
+                        {{ 'errors.required' | translate }}
+                        }
+                        @if (email?.errors?.['email']) {
+                        {{ 'errors.email' | translate }}
+                        }
+                    </div>
+                    }
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="password">
+                        {{ 'admin.admins.password' | translate }}
+                        @if (mode === 'create') {
+                        <span class="required">*</span>
+                        }
+                        @if (mode === 'edit') {
+                        <span class="optional">({{ 'admin.common.optional' | translate }})</span>
+                        }
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input id="password" type="password" class="form-control" formControlName="password"
+                            [placeholder]="mode === 'create' ? ('admin.admins.passwordMinLength' | translate) : ''"
+                            [class.invalid]="password?.invalid && password?.touched" />
+                    </div>
+                    @if (password?.invalid && password?.touched) {
+                    <div class="error-message">
+                        @if (password?.errors?.['required']) {
+                        {{ 'errors.required' | translate }}
+                        }
+                        @if (password?.errors?.['minlength']) {
+                        {{ 'admin.admins.passwordMinLength' | translate }}
+                        }
+                    </div>
+                    }
+                </div>
+
+                <!-- Role Field -->
+                <div class="form-group">
+                    <label for="role">
+                        {{ 'admin.admins.role' | translate }} <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-shield input-icon"></i>
+                        <select id="role" class="form-control" formControlName="role"
+                            [class.invalid]="role?.invalid && role?.touched">
+                            <option value="admin">{{ 'admin.admins.roles.admin' | translate }}</option>
+                            <option value="superadmin">{{ 'admin.admins.roles.superadmin' | translate }}</option>
+                        </select>
+                    </div>
+                    @if (role?.invalid && role?.touched) {
+                    <div class="error-message">
+                        {{ 'errors.required' | translate }}
+                    </div>
+                    }
+                </div>
+
+                <!-- Info Box -->
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>{{ 'admin.admins.role' | translate }}:</strong>
+                        <ul>
+                            <li><strong>{{ 'admin.admins.roles.admin' | translate }}:</strong> Puede ver y gestionar preguntas, jugadores, salas.</li>
+                            <li><strong>{{ 'admin.admins.roles.superadmin' | translate }}:</strong> Tiene todos los permisos incluidos gestión de
+                                administradores.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">
+                        <i class="fas fa-times"></i> {{ 'common.cancel' | translate }}
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="adminForm.invalid || isSubmitting()">
+                        @if (isSubmitting()) {
+                        <i class="fas fa-spinner fa-spin"></i> {{ 'admin.common.saving' | translate }}
+                        } @else {
+                        <i class="fas fa-save"></i>
+                        {{ (mode === 'create' ? 'common.create' : 'common.save') | translate }}
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

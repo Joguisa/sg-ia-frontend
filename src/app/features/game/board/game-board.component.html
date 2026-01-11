@@ -10,7 +10,7 @@
 
     <div class="header-center">
       <div class="difficulty-section">
-        <span class="difficulty-label">Dificultad</span>
+        <span class="difficulty-label">{{ 'game.play.difficulty' | translate }}</span>
         <div class="difficulty-bar">
           <div class="difficulty-progress" [style.width.%]="difficultyPercentage()"></div>
         </div>
@@ -37,10 +37,10 @@
     <div class="progress-header">
       <span class="progress-label">
         <i class="fas fa-list-check"></i>
-        Progreso del Cuestionario
+        {{ 'game.play.quizProgress' | translate }}
       </span>
       <span class="progress-count">
-        {{ questionCount() }} / {{ maxQuestions() }} preguntas
+        {{ questionCount() }} / {{ maxQuestions() }} {{ 'game.play.questionsCount' | translate }}
       </span>
     </div>
 
@@ -54,18 +54,18 @@
     <div class="progress-info">
       <span class="remaining-questions">
         <i class="fas fa-hourglass-half"></i>
-        {{ remainingQuestions() }} restante(s)
+        {{ remainingQuestions() }} {{ 'game.play.remaining' | translate }}
       </span>
 
       @if (lockedLevels().length > 0) {
         <div class="locked-levels">
           <span class="locked-label">
             <i class="fas fa-lock"></i>
-            Niveles completados:
+            {{ 'game.play.completedLevels' | translate }}:
           </span>
           @for (level of lockedLevels(); track level) {
             <span class="level-badge">
-              Nivel {{ level }}
+              {{ 'game.play.level' | translate }} {{ level }}
             </span>
           }
         </div>
@@ -79,7 +79,7 @@
     @if (gameState() === 'loading') {
       <div class="loading-screen">
         <div class="spinner"></div>
-        <p>Cargando pregunta...</p>
+        <p>{{ 'game.play.loadingQuestion' | translate }}</p>
       </div>
     }
 
@@ -90,7 +90,7 @@
         <div class="question-section">
           <div class="question-card">
             <div class="question-header">
-              <span class="question-number">Pregunta #{{ questionCount() }}</span>
+              <span class="question-number">{{ 'game.play.question' | translate }} #{{ questionCount() }}</span>
               <div [class]="'timer ' + getTimerColor()" class="d-flex align-items-center gap-2">
                 <i class="fas fa-clock fs-1 text-primary me-2"></i>
                 <span class="timer-value">{{ questionTimer() }}s</span>
@@ -107,7 +107,7 @@
           <div class="options-grid">
             @for (option of currentQuestion()!.options; track option.id) {
               <button
-                class="option-button" 
+                class="option-button"
                 [ngClass]="getOptionClass(option.id)"
                 (click)="selectOption(option.id)"
                 [disabled]="isAnswering()"
@@ -126,9 +126,9 @@
             (click)="submitAnswer()"
             [disabled]="selectedOptionId() === null || isAnswering()"
           >
-            <span *ngIf="!isAnswering()">Enviar Respuesta</span>
+            <span *ngIf="!isAnswering()">{{ 'game.play.submitAnswer' | translate }}</span>
             <span *ngIf="isAnswering()">
-              <span class="spinner-small"></span> Verificando...
+              <span class="spinner-small"></span> {{ 'game.play.verifying' | translate }}
             </span>
           </button>
         </div>
@@ -148,7 +148,7 @@
               <i class="fas fa-times fs-2x text-danger"></i>
             }
             <h2 class="result-title">
-              {{ isAnswerCorrect() ? '¡Correcto!' : 'Respuesta Incorrecta' }}
+              {{ isAnswerCorrect() ? ('game.play.correct' | translate) : ('game.play.incorrect' | translate) }}
             </h2>
           </div>
 
@@ -165,16 +165,16 @@
           <div class="explanation-section">
             <span class="explanation-label d-flex align-items-center gap-2">
               <i class="fas fa-book fs-1 text-primary"></i>
-              Explicación Médica:
+              {{ 'game.play.medicalExplanation' | translate }}:
             </span>
             <p class="explanation-text">
-              {{ feedbackData()?.explanation || 'No hay explicación disponible' }}
+              {{ feedbackData()?.explanation || ('game.play.noExplanation' | translate) }}
             </p>
           </div>
 
           <!-- Correct Option Info -->
           <div class="correct-answer-section">
-            <span class="correct-label">Respuesta Correcta:</span>
+            <span class="correct-label">{{ 'game.play.correctAnswer' | translate }}:</span>
             <div class="correct-option">
               @for (option of currentQuestion()!.options; track option.id) {
                 @if (option.id === feedbackData()?.correct_option_id) {
@@ -187,15 +187,15 @@
           <!-- Stats Update -->
           <div class="stats-update">
             <div class="stat-update-item">
-              <span class="stat-update-label">Puntuación Total:</span>
+              <span class="stat-update-label">{{ 'game.play.totalScore' | translate }}:</span>
               <span class="stat-update-value">{{ score() }}</span>
             </div>
             <div class="stat-update-item">
-              <span class="stat-update-label">Vidas Restantes:</span>
+              <span class="stat-update-label">{{ 'game.play.remainingLives' | translate }}:</span>
               <span class="stat-update-value">{{ lives() }}/3</span>
             </div>
             <div class="stat-update-item">
-              <span class="stat-update-label">Nueva Dificultad:</span>
+              <span class="stat-update-label">{{ 'game.play.newDifficulty' | translate }}:</span>
               <span class="stat-update-value">{{ difficulty().toFixed(1) }}</span>
             </div>
           </div>
@@ -206,11 +206,11 @@
           @if (lives() === 0) {
             <button class="btn btn-next" disabled>
               <i class="fas fa-heart-broken"></i>
-              Juego Terminado - Redirigiendo...
+              {{ 'game.play.gameOverRedirecting' | translate }}
             </button>
           } @else {
             <button class="btn btn-next" (click)="nextQuestion()">
-              Siguiente Pregunta →
+              {{ 'game.play.nextQuestion' | translate }} →
             </button>
           }
         </div>
@@ -222,31 +222,31 @@
       <div class="gameover-screen">
         <div class="gameover-card d-flex flex-column align-items-center text-center">
           <i class="fas fa-heart-broken fs-2x text-danger mb-4"></i>
-          <h2 class="gameover-title">¡Fin del Juego!</h2>
+          <h2 class="gameover-title">{{ 'game.over.title' | translate }}</h2>
           <p class="gameover-message">
-            Te has quedado sin vidas. Completaste {{ questionCount() }} preguntas con una puntuación de {{ score() }} puntos.
+            {{ 'game.over.outOfLives' | translate }} {{ questionCount() }} {{ 'game.over.questionsWithScore' | translate }} {{ score() }} {{ 'game.over.points' | translate }}.
           </p>
           <div class="final-stats">
             <div class="stat-item">
               <i class="fas fa-trophy text-warning"></i>
               <span class="stat-value">{{ score() }}</span>
-              <span class="stat-label">Puntos</span>
+              <span class="stat-label">{{ 'game.over.points' | translate }}</span>
             </div>
             <div class="stat-item">
               <i class="fas fa-question-circle text-info"></i>
               <span class="stat-value">{{ questionCount() }}</span>
-              <span class="stat-label">Preguntas</span>
+              <span class="stat-label">{{ 'game.over.questions' | translate }}</span>
             </div>
             <div class="stat-item">
               <i class="fas fa-chart-line text-success"></i>
               <span class="stat-value">{{ difficulty().toFixed(1) }}</span>
-              <span class="stat-label">Dificultad</span>
+              <span class="stat-label">{{ 'game.play.difficulty' | translate }}</span>
             </div>
           </div>
           <div class="action-section mt-4">
             <button class="btn btn-profile" (click)="goToProfile()">
               <i class="fas fa-user-circle"></i>
-              Ver Mi Perfil
+              {{ 'game.over.viewProfile' | translate }}
             </button>
           </div>
         </div>
@@ -258,40 +258,40 @@
       <div class="gameover-screen">
         <div class="gameover-card d-flex flex-column align-items-center text-center">
           <i class="fas fa-trophy fs-2x text-success mb-4"></i>
-          <h2 class="gameover-title text-success">¡Felicitaciones!</h2>
+          <h2 class="gameover-title text-success">{{ 'game.over.congratulations' | translate }}</h2>
           <p class="gameover-message">
-            Has completado el cuestionario exitosamente.
+            {{ 'game.over.quizCompleted' | translate }}
           </p>
           <div class="completion-badge">
             <i class="fas fa-medal"></i>
-            <span class="completion-text">Cuestionario Completado</span>
+            <span class="completion-text">{{ 'game.over.quizCompletedBadge' | translate }}</span>
           </div>
           <div class="final-stats">
             <div class="stat-item">
               <i class="fas fa-trophy text-warning"></i>
               <span class="stat-value">{{ score() }}</span>
-              <span class="stat-label">Puntos</span>
+              <span class="stat-label">{{ 'game.over.points' | translate }}</span>
             </div>
             <div class="stat-item">
               <i class="fas fa-check-circle text-success"></i>
               <span class="stat-value">{{ questionCount() }}/{{ maxQuestions() }}</span>
-              <span class="stat-label">Preguntas</span>
+              <span class="stat-label">{{ 'game.over.questions' | translate }}</span>
             </div>
             <div class="stat-item">
               <i class="fas fa-heart text-danger"></i>
               <span class="stat-value">{{ lives() }}/3</span>
-              <span class="stat-label">Vidas</span>
+              <span class="stat-label">{{ 'game.play.lives' | translate }}</span>
             </div>
             <div class="stat-item">
               <i class="fas fa-chart-line text-info"></i>
               <span class="stat-value">{{ difficulty().toFixed(1) }}</span>
-              <span class="stat-label">Dificultad Final</span>
+              <span class="stat-label">{{ 'game.over.finalDifficulty' | translate }}</span>
             </div>
           </div>
           <div class="action-section mt-4">
             <button class="btn btn-profile" (click)="goToProfile()">
               <i class="fas fa-user-circle"></i>
-              Ver Mi Perfil
+              {{ 'game.over.viewProfile' | translate }}
             </button>
           </div>
         </div>
@@ -299,4 +299,3 @@
     }
   </div>
 </div>
-

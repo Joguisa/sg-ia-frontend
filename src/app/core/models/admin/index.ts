@@ -8,6 +8,7 @@ export * from './update-category-response.interface';
 export * from './delete-category-response.interface';
 export * from './generate-batch-response.interface';
 export * from './get-questions-response.interface';
+export * from './delete-question-response.interface';
 export * from './get-categories-response.interface';
 
 // Batch management interfaces
@@ -21,3 +22,7 @@ export * from './question-full.interface';
 
 // AI Providers
 export * from './available-providers-response.interface';
+
+// Admin Users Management
+export * from './admin-user.interface';
+export * from './admin-users-response.interface';

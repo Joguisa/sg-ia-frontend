@@ -1,0 +1,158 @@
+<div class="admin-container">
+  <!-- Header -->
+  <div class="admin-header">
+    <div class="admin-header-content">
+      <div class="admin-header-title">
+        <i class="fas fa-file-text"></i>
+        <div class="admin-header-text">
+          <h1>{{ 'admin.admins.title' | translate }}</h1>
+          <p class="admin-header-subtitle">{{ 'admin.admins.subtitle' | translate }}</p>
+        </div>
+      </div>
+      <div class="admin-header-actions">
+        <button class="admin-btn-back" (click)="goToDashboard()">
+          <i class="fas fa-arrow-left"></i>
+          {{ 'admin.common.backToDashboard' | translate }}
+        </button>
+        <button class="admin-btn-logout admin-btn-danger" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          {{ 'auth.logout' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" [placeholder]="'admin.admins.searchPlaceholder' | translate"
+          [value]="searchQuery()" (input)="onSearchChange($event)" />
+      </div>
+
+      @if (isSuperAdmin()) {
+      <button class="btn btn-primary" (click)="openCreateModal()">
+        <i class="fas fa-plus"></i> {{ 'admin.admins.createAdmin' | translate }}
+      </button>
+      }
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>{{ 'admin.admins.loadingAdmins' | translate }}</p>
+    </div>
+    }
+
+    <!-- Admins Table -->
+    @if (!isLoading()) {
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'admin.admins.id' | translate }}</th>
+            <th>{{ 'admin.admins.email' | translate }}</th>
+            <th>{{ 'admin.admins.role' | translate }}</th>
+            <th>{{ 'admin.admins.status' | translate }}</th>
+            <th>{{ 'admin.admins.created' | translate }}</th>
+            <th>{{ 'admin.admins.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (admin of filteredAdmins(); track admin.id) {
+          <tr>
+            <td>{{ admin.id }}</td>
+            <td>
+              <strong>{{ admin.email }}</strong>
+              @if (admin.id === currentUser()?.id) {
+              <span class="badge badge-info ml-2">{{ 'admin.admins.you' | translate }}</span>
+              }
+            </td>
+            <td>
+              <span [class]="'badge ' + getRoleBadgeClass(admin.role)">
+                @if (admin.role === 'superadmin') {
+                <i class="fas fa-crown"></i> {{ 'admin.admins.roles.superadmin' | translate }}
+                } @else {
+                <i class="fas fa-user-shield"></i> {{ 'admin.admins.roles.admin' | translate }}
+                }
+              </span>
+            </td>
+            <td>
+              <span [class]="'badge ' + getStatusBadgeClass(admin.is_active)">
+                @if (admin.is_active) {
+                <i class="fas fa-check-circle"></i> {{ 'admin.admins.active' | translate }}
+                } @else {
+                <i class="fas fa-times-circle"></i> {{ 'admin.admins.inactive' | translate }}
+                }
+              </span>
+            </td>
+            <td>{{ admin.created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <div class="action-buttons">
+                @if (isSuperAdmin()) {
+                <!-- Edit Button -->
+                <button class="btn-icon btn-icon-primary" (click)="openEditModal(admin)"
+                  [title]="'admin.admins.edit' | translate">
+                  <i class="fas fa-edit"></i>
+                </button>
+
+                <!-- Toggle Status Button -->
+                <button class="btn-icon" [class.btn-icon-success]="!admin.is_active"
+                  [class.btn-icon-warning]="admin.is_active" [disabled]="admin.id === currentUser()?.id"
+                  (click)="confirmToggleStatus(admin)"
+                  [title]="admin.is_active ? ('admin.admins.deactivate' | translate) : ('admin.admins.activate' | translate)">
+                  @if (admin.is_active) {
+                  <i class="fas fa-ban"></i>
+                  } @else {
+                  <i class="fas fa-check"></i>
+                  }
+                </button>
+
+                <!-- Delete Button -->
+                <button class="btn-icon btn-icon-danger" [disabled]="admin.id === currentUser()?.id"
+                  (click)="confirmDelete(admin)" [title]="'admin.admins.delete' | translate">
+                  <i class="fas fa-trash"></i>
+                </button>
+                } @else {
+                <span class="text-muted">{{ 'admin.admins.noPermissions' | translate }}</span>
+                }
+              </div>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="6" class="text-center text-muted">
+              @if (searchQuery()) {
+              {{ 'admin.admins.noAdminsFound' | translate }} "{{ searchQuery() }}"
+              } @else {
+              {{ 'admin.admins.noAdminsRegistered' | translate }}
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-bar">
+      <span>
+        <strong>{{ 'admin.admins.total' | translate }}</strong> {{ filteredAdmins().length }}
+        @if (searchQuery()) {
+        {{ 'admin.admins.of' | translate }} {{ admins().length }}
+        }
+        {{ 'admin.admins.administrators' | translate }}
+      </span>
+    </div>
+    }
+  </main>
+
+  <!-- Modal -->
+  @if (showModal()) {
+  <app-admin-form-modal [mode]="modalMode()" [admin]="selectedAdmin()" (saved)="handleSave($event)"
+    (cancelled)="closeModal()"></app-admin-form-modal>
+  }
+</div>

@@ -13,15 +13,15 @@
         <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
           <i class="fas fa-user-shield fs-2x text-primary"></i>
         </div>
-        <h1 class="login-title">Panel de Control</h1>
-        <p class="login-subtitle">Acceso administrativo</p>
+        <h1 class="login-title">{{ 'admin.login.controlPanel' | translate }}</h1>
+        <p class="login-subtitle">{{ 'admin.login.adminAccess' | translate }}</p>
       </div>
 
       <!-- Form -->
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
         <!-- Email Input -->
         <div class="form-group">
-          <label for="email" class="form-label">Correo Electrónico</label>
+          <label for="email" class="form-label">{{ 'admin.login.email' | translate }}</label>
           <div class="input-wrapper">
             <i class="fas fa-envelope text-primary"></i>
             <input type="email" id="email" class="form-control" formControlName="email" placeholder="admin@sg-ia.com"
@@ -29,16 +29,18 @@
               autocomplete="email" />
           </div>
           <div class="invalid-feedback" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-            <small *ngIf="loginForm.get('email')?.hasError('required')">El correo electrónico es requerido</small>
-            <small *ngIf="loginForm.get('email')?.hasError('invalidEmail')">Ingresa un correo electrónico válido</small>
-            <small *ngIf="loginForm.get('email')?.hasError('maxlength')">El correo no puede exceder los 100
-              caracteres</small>
+            <small *ngIf="loginForm.get('email')?.hasError('required')">{{ 'admin.login.emailRequired' | translate
+              }}</small>
+            <small *ngIf="loginForm.get('email')?.hasError('invalidEmail')">{{ 'admin.login.invalidEmail' | translate
+              }}</small>
+            <small *ngIf="loginForm.get('email')?.hasError('maxlength')">{{ 'admin.login.emailMaxLength' | translate
+              }}</small>
           </div>
         </div>
 
         <!-- Password Input -->
         <div class="form-group">
-          <label for="password" class="form-label">Contraseña</label>
+          <label for="password" class="form-label">{{ 'admin.login.password' | translate }}</label>
           <div class="input-wrapper">
             <i class="fas fa-lock text-primary"></i>
             <input [type]="showPassword() ? 'text' : 'password'" id="password" class="form-control"
@@ -46,7 +48,7 @@
               [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
               autocomplete="current-password" />
             <button type="button" class="toggle-password d-flex align-items-center" (click)="togglePasswordVisibility()"
-              [disabled]="isLoading()" title="Mostrar/Ocultar contraseña">
+              [disabled]="isLoading()" [title]="'admin.login.togglePassword' | translate">
               @if (showPassword()) {
               <i class="fas fa-eye text-primary"></i>
               } @else {
@@ -56,11 +58,12 @@
           </div>
           <div class="invalid-feedback"
             *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-            <small *ngIf="loginForm.get('password')?.hasError('required')">La contraseña es requerida</small>
-            <small *ngIf="loginForm.get('password')?.hasError('minlength')">La contraseña debe tener al menos 6
-              caracteres</small>
-            <small *ngIf="loginForm.get('password')?.hasError('maxlength')">La contraseña no puede exceder los 50
-              caracteres</small>
+            <small *ngIf="loginForm.get('password')?.hasError('required')">{{ 'admin.login.passwordRequired' | translate
+              }}</small>
+            <small *ngIf="loginForm.get('password')?.hasError('minlength')">{{ 'admin.login.passwordMinLength' |
+              translate }}</small>
+            <small *ngIf="loginForm.get('password')?.hasError('maxlength')">{{ 'admin.login.passwordMaxLength' |
+              translate }}</small>
           </div>
         </div>
 
@@ -73,10 +76,10 @@
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary btn-login" [disabled]="isLoading()">
           <span *ngIf="!isLoading()" class="btn-text">
-            Iniciar Sesión
+            {{ 'admin.login.loginButton' | translate }}
           </span>
           <span *ngIf="isLoading()" class="btn-text">
-            <span class="spinner"></span> Verificando...
+            <span class="spinner"></span> {{ 'admin.login.verifying' | translate }}
           </span>
         </button>
       </form>
@@ -84,9 +87,9 @@
       <!-- Footer -->
       <div class="card-footer">
         <p class="footer-text">
-          ¿No eres administrador?
+          {{ 'admin.login.notAdmin' | translate }}
           <button type="button" class="link-button" (click)="goToPlay()" [disabled]="isLoading()">
-            Volver al juego
+            {{ 'admin.login.backToGame' | translate }}
           </button>
         </p>
       </div>
@@ -96,15 +99,15 @@
     <div class="info-box">
       <div class="info-item">
         <i class="fas fa-chart-line fs-2x text-info"></i>
-        <span class="info-text">Gestión de preguntas</span>
+        <span class="info-text">{{ 'admin.login.questionManagement' | translate }}</span>
       </div>
       <div class="info-item">
         <i class="fas fa-gear fs-2x text-warning"></i>
-        <span class="info-text">Configuración de IA</span>
+        <span class="info-text">{{ 'admin.login.aiConfiguration' | translate }}</span>
       </div>
       <div class="info-item">
         <i class="fas fa-arrow-up fs-2x text-success"></i>
-        <span class="info-text">Análisis de datos</span>
+        <span class="info-text">{{ 'admin.login.dataAnalysis' | translate }}</span>
       </div>
     </div>
   </div>

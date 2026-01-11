@@ -16,6 +16,7 @@ export interface GameRoom {
   filter_categories?: number[] | null;
   filter_difficulties?: number[] | null;
   max_players: number;
+  language: 'es' | 'en';
   status: 'active' | 'paused' | 'closed';
   started_at?: string | null;
   ended_at?: string | null;
@@ -32,6 +33,7 @@ export interface CreateRoomPayload {
   filter_categories?: number[];
   filter_difficulties?: number[];
   max_players?: number;
+  language?: 'es' | 'en';
 }
 
 /**
@@ -43,6 +45,7 @@ export interface UpdateRoomPayload {
   filter_categories?: number[];
   filter_difficulties?: number[];
   max_players?: number;
+  language?: 'es' | 'en';
 }
 
 /**

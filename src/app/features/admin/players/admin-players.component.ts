@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { TabsComponent, Tab } from '../../../shared/tabs/tabs.component';
 import { GameService } from '../../../core/services/game.service';
@@ -18,7 +19,7 @@ import { PlayerStatsResponse, PlayerGlobalStats, PlayerTopicStats } from '../../
 @Component({
   selector: 'app-admin-players',
   standalone: true,
-  imports: [CommonModule, FormsModule, TabsComponent, BaseChartDirective],
+  imports: [CommonModule, FormsModule, TabsComponent, BaseChartDirective, TranslatePipe],
   templateUrl: './admin-players.component.html',
   styleUrls: [
     '../shared/styles/admin-styles.css',

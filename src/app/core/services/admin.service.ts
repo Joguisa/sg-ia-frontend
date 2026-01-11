@@ -22,7 +22,12 @@ import {
   QuestionFullResponse,
   UpdateQuestionFullPayload,
   UpdateQuestionFullResponse,
-  AvailableProvidersResponse
+  AvailableProvidersResponse,
+  Admin,
+  CreateAdminDto,
+  UpdateAdminDto,
+  AdminResponse,
+  AdminsListResponse
 } from '../models/admin';
 import { Question, QuestionResponse, DeleteQuestionResponse } from '../models/game';
 
@@ -366,6 +371,90 @@ export class AdminService {
     return this.http.put<UpdateQuestionFullResponse>(
       `${this.apiUrl}${environment.apiEndpoints.admin.updateQuestionFull(questionId)}`,
       data
+    );
+  }
+
+  // ========== ADMIN USERS MANAGEMENT ==========
+
+  /**
+   * Lista todos los administradores del sistema
+   *
+   * Backend: GET /admin/admins
+   * @returns Observable con listado de administradores
+   */
+  listAdmins(): Observable<AdminsListResponse> {
+    return this.http.get<AdminsListResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.listAdmins}`
+    );
+  }
+
+  /**
+   * Obtiene un administrador por ID
+   *
+   * Backend: GET /admin/admins/:id
+   * @param id ID del administrador
+   * @returns Observable con datos del administrador
+   */
+  getAdmin(id: number): Observable<AdminResponse> {
+    return this.http.get<AdminResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.getAdmin(id)}`
+    );
+  }
+
+  /**
+   * Crea un nuevo administrador (solo superadmin)
+   *
+   * Backend: POST /admin/admins
+   * @param dto Datos del administrador a crear
+   * @returns Observable con el administrador creado
+   */
+  createAdmin(dto: CreateAdminDto): Observable<AdminResponse> {
+    return this.http.post<AdminResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.createAdmin}`,
+      dto
+    );
+  }
+
+  /**
+   * Actualiza un administrador existente (solo superadmin)
+   *
+   * Backend: PUT /admin/admins/:id
+   * @param id ID del administrador
+   * @param dto Datos a actualizar
+   * @returns Observable con el administrador actualizado
+   */
+  updateAdmin(id: number, dto: UpdateAdminDto): Observable<AdminResponse> {
+    return this.http.put<AdminResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.updateAdmin(id)}`,
+      dto
+    );
+  }
+
+  /**
+   * Elimina un administrador (borrado lógico) (solo superadmin)
+   *
+   * Backend: DELETE /admin/admins/:id
+   * @param id ID del administrador
+   * @returns Observable con confirmación de eliminación
+   */
+  deleteAdmin(id: number): Observable<AdminResponse> {
+    return this.http.delete<AdminResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.deleteAdmin(id)}`
+    );
+  }
+
+  /**
+   * Activa o desactiva un administrador (solo superadmin)
+   *
+   * Backend: PATCH /admin/admins/:id/status
+   * @param id ID del administrador
+   * @param is_active Estado a establecer (true = activo, false = inactivo)
+   * @returns Observable con el administrador actualizado
+   */
+  toggleAdminStatus(id: number, is_active: boolean): Observable<AdminResponse> {
+    return this.http.patch<AdminResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.toggleAdminStatus(id)}`,
+      { is_active }
     );
   }
 }

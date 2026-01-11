@@ -5,18 +5,18 @@
       <div class="admin-header-title">
         <i class="fas fa-file-text"></i>
         <div class="admin-header-text">
-          <h1>Gestión de Preguntas</h1>
-          <p class="admin-header-subtitle">Administra la base de datos de preguntas y genera nuevas con IA</p>
+          <h1>{{ 'admin.questions.title' | translate }}</h1>
+          <p class="admin-header-subtitle">{{ 'admin.questions.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="admin-header-actions">
         <button class="admin-btn-back" (click)="goToDashboard()">
           <i class="fas fa-arrow-left"></i>
-          Volver al Dashboard
+          {{ 'admin.common.backToDashboard' | translate }}
         </button>
         <button class="admin-btn-logout admin-btn-danger" (click)="logout()">
           <i class="fas fa-sign-out-alt"></i>
-          Cerrar Sesión
+          {{ 'auth.logout' | translate }}
         </button>
       </div>
     </div>
@@ -28,7 +28,7 @@
   @if (isLoading()) {
   <div class="loading-container">
     <div class="spinner"></div>
-    <p>Cargando preguntas...</p>
+    <p>{{ 'admin.questions.loadingQuestions' | translate }}</p>
   </div>
   }
 
@@ -40,7 +40,7 @@
       <div class="generator-header" (click)="toggleGenerator()">
         <div class="generator-title">
           <i class="fas fa-lightbulb"></i>
-          <h2>Generador Automático </h2>
+          <h2>{{ 'admin.questions.automaticGenerator' | translate }}</h2>
         </div>
         <button class="btn-toggle" [ngClass]="{ 'open': isGeneratorOpen() }">
           <i class="fas fa-chevron-down"></i>
@@ -53,23 +53,24 @@
           <div class="form-grid">
             <!-- Categoría -->
             <div class="form-group">
-              <label for="gen-category">Categoría</label>
+              <label for="gen-category">{{ 'admin.questions.category' | translate }}</label>
               <select id="gen-category" class="form-control" formControlName="categoryId"
                 [class.is-invalid]="generatorForm.get('categoryId')?.invalid && generatorForm.get('categoryId')?.touched">
-                <option [value]="null">Selecciona una categoría...</option>
+                <option [value]="null">{{ 'admin.questions.generation.selectCategory' | translate }}</option>
                 @for (cat of categories(); track cat.id) {
                 <option [value]="cat.id">{{ cat.name }}</option>
                 }
               </select>
               <div class="invalid-feedback"
                 *ngIf="generatorForm.get('categoryId')?.invalid && generatorForm.get('categoryId')?.touched">
-                <small *ngIf="generatorForm.get('categoryId')?.hasError('required')">La categoría es requerida</small>
+                <small *ngIf="generatorForm.get('categoryId')?.hasError('required')">{{
+                  'admin.questions.categoryRequired' | translate }}</small>
               </div>
             </div>
 
             <!-- Dificultad -->
             <div class="form-group">
-              <label for="gen-difficulty">Dificultad (1-5)</label>
+              <label for="gen-difficulty">{{ 'admin.questions.difficultyLabel' | translate }}</label>
               <div class="difficulty-input">
                 <input id="gen-difficulty" type="range" min="1" max="5" formControlName="difficulty" class="form-range">
                 <span class="difficulty-value">{{ generatorForm.get('difficulty')?.value }}</span>
@@ -78,24 +79,25 @@
 
             <!-- Cantidad -->
             <div class="form-group">
-              <label for="gen-quantity">Cantidad (1-50)</label>
+              <label for="gen-quantity">{{ 'admin.questions.quantityLabel' | translate }}</label>
               <input id="gen-quantity" type="number" min="1" max="50" formControlName="quantity"
                 [class.is-invalid]="generatorForm.get('quantity')?.invalid && generatorForm.get('quantity')?.touched"
                 class="form-control">
               <div class="invalid-feedback"
                 *ngIf="generatorForm.get('quantity')?.invalid && generatorForm.get('quantity')?.touched">
-                <small *ngIf="generatorForm.get('quantity')?.hasError('required')">La cantidad es requerida</small>
-                <small *ngIf="generatorForm.get('quantity')?.hasError('invalidQuantity')">Cantidad debe ser entre 1 y
-                  50</small>
+                <small *ngIf="generatorForm.get('quantity')?.hasError('required')">{{ 'admin.questions.quantityRequired'
+                  | translate }}</small>
+                <small *ngIf="generatorForm.get('quantity')?.hasError('invalidQuantity')">{{
+                  'admin.questions.quantityRange' | translate }}</small>
               </div>
             </div>
 
             <!-- Idioma -->
             <div class="form-group">
-              <label for="gen-language">Idioma</label>
+              <label for="gen-language">{{ 'admin.questions.language' | translate }}</label>
               <select id="gen-language" class="form-control" formControlName="language">
-                <option value="es">Español</option>
-                <option value="en">English</option>
+                <option value="es">{{ 'common.spanish' | translate }}</option>
+                <option value="en">{{ 'common.english' | translate }}</option>
               </select>
             </div>
           </div>
@@ -107,10 +109,10 @@
         <button class="btn btn-primary btn-generate" (click)="generateQuestionsWithAI()" [disabled]="isGenerating()">
           @if (!isGenerating()) {
           <i class="fas fa-lightbulb"></i>
-          Generar con IA
+          {{ 'admin.questions.generateWithAi' | translate }}
           } @else {
           <span class="spinner-small"></span>
-          Generando...
+          {{ 'admin.questions.generating' | translate }}
           }
         </button>
       </div>
@@ -122,7 +124,7 @@
       <div class="generator-header" (click)="toggleCsvImportSection()">
         <div class="generator-title">
           <i class="fas fa-file-csv"></i>
-          <h2>Importar desde CSV</h2>
+          <h2>{{ 'admin.questions.csvImportTitle' | translate }}</h2>
         </div>
         <button class="btn-toggle" [ngClass]="{ 'open': isCsvImportOpen() }">
           <i class="fas fa-chevron-down"></i>
@@ -132,12 +134,12 @@
       @if (isCsvImportOpen()) {
       <div class="generator-content">
         <div class="csv-info">
-          <p><strong>Formato requerido del CSV:</strong></p>
+          <p><strong>{{ 'admin.questions.csvFormatRequired' | translate }}</strong></p>
           <code
             class="csv-headers">category_id, difficulty, statement, option_1, option_2, option_3, option_4, correct_option_index, explanation_correct, explanation_incorrect, source_citation</code>
           <p class="csv-note">
             <i class="fas fa-info-circle"></i>
-            category_id: ID existente | difficulty: 1-5 | correct_option_index: 0-3 (0=option_1) | Max 5MB
+            {{ 'admin.questions.csvNote' | translate }}
           </p>
         </div>
 
@@ -147,10 +149,10 @@
           <label for="csvFileInput" class="csv-upload-label" [class.disabled]="isImportingCsv()">
             @if (!isImportingCsv()) {
             <i class="fas fa-cloud-upload-alt"></i>
-            <span>Seleccionar archivo CSV</span>
+            <span>{{ 'admin.questions.selectCsvFile' | translate }}</span>
             } @else {
             <span class="spinner-small"></span>
-            <span>Importando...</span>
+            <span>{{ 'admin.questions.importing' | translate }}</span>
             }
           </label>
         </div>
@@ -161,19 +163,19 @@
           <div class="import-summary">
             <span class="import-stat success">
               <i class="fas fa-check-circle"></i>
-              {{ lastImportResult()!.imported }} importadas
+              {{ lastImportResult()!.imported }} {{ 'admin.questions.imported' | translate }}
             </span>
             @if (lastImportResult()!.errors > 0) {
             <span class="import-stat error">
               <i class="fas fa-exclamation-circle"></i>
-              {{ lastImportResult()!.errors }} errores
+              {{ lastImportResult()!.errors }} {{ 'admin.questions.errors' | translate }}
             </span>
             }
           </div>
 
           @if (lastImportResult()!.error_details && lastImportResult()!.error_details.length > 0) {
           <div class="error-details">
-            <p><strong>Detalles de errores:</strong></p>
+            <p><strong>{{ 'admin.questions.errorDetails' | translate }}</strong></p>
             <ul>
               @for (err of lastImportResult()!.error_details; track err) {
               <li>{{ err }}</li>
@@ -189,24 +191,24 @@
 
     <!-- Filters Section -->
     <div class="filters-section">
-      <h3 class="filters-title">Filtros y Búsqueda</h3>
+      <h3 class="filters-title">{{ 'admin.questions.filtersAndSearch' | translate }}</h3>
       <form [formGroup]="filterForm">
         <div class="filters-grid">
           <!-- Search -->
           <div class="filter-item">
-            <label>Búsqueda</label>
+            <label>{{ 'admin.questions.search' | translate }}</label>
             <div class="search-input-wrapper">
               <i class="fas fa-search"></i>
-              <input type="text" placeholder="Buscar por ID o texto..." formControlName="search" maxlength="100"
-                class="search-input">
+              <input type="text" [placeholder]="'admin.questions.searchPlaceholder' | translate"
+                formControlName="search" maxlength="100" class="search-input">
             </div>
           </div>
 
           <!-- Category Filter -->
           <div class="filter-item">
-            <label>Categoría</label>
+            <label>{{ 'admin.questions.category' | translate }}</label>
             <select formControlName="category" class="form-control">
-              <option [value]="null">Todas las categorías</option>
+              <option [value]="null">{{ 'admin.questions.allCategories' | translate }}</option>
               @for (cat of categories(); track cat.id) {
               <option [value]="cat.id">{{ cat.name }}</option>
               }
@@ -215,18 +217,18 @@
 
           <!-- Status Filter -->
           <div class="filter-item">
-            <label>Estado</label>
+            <label>{{ 'admin.questions.status' | translate }}</label>
             <select formControlName="status" class="form-control">
-              <option value="all">Todas</option>
-              <option value="verified">Verificadas</option>
-              <option value="pending">Pendientes</option>
+              <option value="all">{{ 'admin.questions.all' | translate }}</option>
+              <option value="verified">{{ 'admin.questions.filter.verified' | translate }}</option>
+              <option value="pending">{{ 'admin.questions.filter.pending' | translate }}</option>
             </select>
           </div>
 
           <!-- Results Count -->
           <div class="filter-item results-count">
-            <p>{{ filteredQuestions().length }} pregunta{{ filteredQuestions().length !== 1 ? 's' : '' }} encontrada{{
-              filteredQuestions().length !== 1 ? 's' : '' }}</p>
+            <p>{{ filteredQuestions().length }} {{ filteredQuestions().length === 1 ? ('admin.questions.questionFound' |
+              translate) : ('admin.questions.questionsFound' | translate) }}</p>
           </div>
         </div>
       </form>
@@ -238,12 +240,12 @@
       <div class="bulk-actions-header">
         <div class="bulk-info">
           <i class="fas fa-exclamation-circle"></i>
-          <span>{{ pendingQuestionsCount }} pregunta(s) pendiente(s) de verificación</span>
+          <span>{{ pendingQuestionsCount }} {{ 'admin.questions.pendingVerification' | translate }}</span>
         </div>
         <button class="btn btn-verify-all" (click)="verifyAllPending()" [disabled]="isLoading()"
-          title="Verificar todas las preguntas pendientes">
+          [title]="'admin.questions.verifyAllPendingTitle' | translate">
           <i class="fas fa-check-double"></i>
-          Verificar Todas las Pendientes
+          {{ 'admin.questions.verifyAllPending' | translate }}
         </button>
       </div>
     </div>
@@ -256,13 +258,13 @@
         <table class="questions-table">
           <thead>
             <tr class="table-header">
-              <th class="col-id">ID</th>
-              <th class="col-statement">Pregunta</th>
-              <th class="col-category">Categoría</th>
-              <th class="col-difficulty">Dificultad</th>
-              <th class="col-status">Estado</th>
-              <th class="col-ai">IA</th>
-              <th class="col-actions">Acciones</th>
+              <th class="col-id">{{ 'admin.questions.id' | translate }}</th>
+              <th class="col-statement">{{ 'admin.questions.question' | translate }}</th>
+              <th class="col-category">{{ 'admin.questions.category' | translate }}</th>
+              <th class="col-difficulty">{{ 'admin.questions.difficulty' | translate }}</th>
+              <th class="col-status">{{ 'admin.questions.status' | translate }}</th>
+              <th class="col-ai">{{ 'admin.questions.ai' | translate }}</th>
+              <th class="col-actions">{{ 'admin.questions.actions' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -299,12 +301,12 @@
                 @if (question.admin_verified ?? false) {
                 <span class="status-badge status-verified">
                   <i class="fas fa-check"></i>
-                  Verificada
+                  {{ 'admin.questions.verified' | translate }}
                 </span>
                 } @else {
                 <span class="status-badge status-pending">
                   <i class="fas fa-clock"></i>
-                  Pendiente
+                  {{ 'admin.questions.pending' | translate }}
                 </span>
                 }
               </td>
@@ -314,10 +316,10 @@
                 @if (question.is_ai_generated) {
                 <span class="ai-badge">
                   <i class="fas fa-lightbulb"></i>
-                  IA
+                  {{ 'admin.questions.ai' | translate }}
                 </span>
                 } @else {
-                <span class="manual-badge">Manual</span>
+                <span class="manual-badge">{{ 'admin.questions.manual' | translate }}</span>
                 }
               </td>
 
@@ -326,14 +328,14 @@
                 <div class="action-buttons">
                   <!-- Edit Full Question -->
                   <button class="btn-action btn-edit" (click)="openFullEditModal(question.id)"
-                    title="Editar pregunta completa">
+                    [title]="'admin.questions.editFullQuestion' | translate">
                     <i class="fas fa-pen-to-square"></i>
                   </button>
 
                   <!-- Verify/Unverify -->
                   <button class="btn-action btn-verify"
                     (click)="toggleVerifyQuestion(question.id, question.admin_verified ?? false)"
-                    [title]="question.admin_verified ? 'Desverificar' : 'Verificar'">
+                    [title]="question.admin_verified ? ('admin.questions.unverify' | translate) : ('admin.questions.verify' | translate)">
                     @if (question.admin_verified ?? false) {
                     <i class="fas fa-ban text-danger"></i>
                     } @else {
@@ -343,16 +345,18 @@
 
                   <!-- Delete with Confirmation -->
                   @if (deleteConfirmId() !== question.id) {
-                  <button class="btn-action btn-delete" (click)="deleteQuestion(question.id)" title="Eliminar">
+                  <button class="btn-action btn-delete" (click)="deleteQuestion(question.id)"
+                    [title]="'admin.questions.delete' | translate">
                     <i class="fas fa-trash"></i>
                   </button>
                   } @else {
                   <div class="confirm-buttons">
                     <button class="btn-confirm confirm-yes" (click)="confirmDelete(question.id)"
-                      title="Confirmar eliminación">
+                      [title]="'admin.questions.confirmDeletion' | translate">
                       <i class="fas fa-check"></i>
                     </button>
-                    <button class="btn-confirm confirm-no" (click)="cancelDelete()" title="Cancelar">
+                    <button class="btn-confirm confirm-no" (click)="cancelDelete()"
+                      [title]="'admin.questions.cancel' | translate">
                       <i class="fas fa-times"></i>
                     </button>
                   </div>
@@ -367,7 +371,7 @@
       } @else {
       <div class="no-data">
         <i class="fas fa-file"></i>
-        <p>No hay preguntas disponibles. ¡Crea algunas con el generador IA!</p>
+        <p>{{ 'admin.questions.noQuestionsAvailable' | translate }}</p>
       </div>
       }
     </div>
@@ -376,7 +380,8 @@
     <div class="questions-footer">
       <p class="footer-text">
         <i class="fas fa-circle-info"></i>
-        Total: {{ allQuestions().length }} preguntas en base de datos
+        {{ 'admin.questions.totalQuestions' | translate }} {{ allQuestions().length }} {{
+        'admin.questions.questionsInDatabase' | translate }}
       </p>
     </div>
   </div>
@@ -390,7 +395,7 @@
     <div class="modal-header">
       <h3>
         <i class="fas fa-pen-to-square"></i>
-        Editar Pregunta Completa
+        {{ 'admin.questions.editFullQuestionTitle' | translate }}
       </h3>
       <button class="btn-close" (click)="closeFullEditModal()">
         <i class="fas fa-times"></i>
@@ -401,7 +406,7 @@
       @if (isLoadingQuestion()) {
       <div class="loading-small">
         <span class="spinner-small"></span>
-        <span>Cargando pregunta...</span>
+        <span>{{ 'admin.questions.loadingQuestion' | translate }}</span>
       </div>
       } @else if (questionToEdit()) {
       <form [formGroup]="fullEditForm">
@@ -417,14 +422,14 @@
         <div class="form-group">
           <label for="statement">
             <i class="fas fa-question-circle"></i>
-            Enunciado de la pregunta:
+            {{ 'admin.questions.questionStatement' | translate }}
           </label>
           <textarea id="statement" formControlName="statement" class="form-control" rows="3"
-            placeholder="Escribe el enunciado de la pregunta..."
+            [placeholder]="'admin.questions.statementPlaceholder' | translate"
             [class.is-invalid]="fullEditForm.get('statement')?.invalid && fullEditForm.get('statement')?.touched">
               </textarea>
           @if (fullEditForm.get('statement')?.invalid && fullEditForm.get('statement')?.touched) {
-          <div class="invalid-feedback">El enunciado debe tener entre 10 y 1000 caracteres</div>
+          <div class="invalid-feedback">{{ 'admin.questions.statementValidation' | translate }}</div>
           }
         </div>
 
@@ -433,21 +438,21 @@
           <div class="form-group half">
             <label for="difficulty">
               <i class="fas fa-signal"></i>
-              Dificultad:
+              {{ 'admin.questions.difficulty' | translate }}:
             </label>
             <select id="difficulty" formControlName="difficulty" class="form-control">
-              <option [value]="1">1 - Muy Fácil</option>
-              <option [value]="2">2 - Fácil</option>
-              <option [value]="3">3 - Media</option>
-              <option [value]="4">4 - Difícil</option>
-              <option [value]="5">5 - Muy Difícil</option>
+              <option [value]="1">{{ 'admin.questions.difficultyLevels.veryEasy' | translate }}</option>
+              <option [value]="2">{{ 'admin.questions.difficultyLevels.easy' | translate }}</option>
+              <option [value]="3">{{ 'admin.questions.difficultyLevels.medium' | translate }}</option>
+              <option [value]="4">{{ 'admin.questions.difficultyLevels.hard' | translate }}</option>
+              <option [value]="5">{{ 'admin.questions.difficultyLevels.veryHard' | translate }}</option>
             </select>
           </div>
 
           <div class="form-group half">
             <label for="category_id">
               <i class="fas fa-folder"></i>
-              Categoría:
+              {{ 'admin.questions.category' | translate }}:
             </label>
             <select id="category_id" formControlName="category_id" class="form-control">
               @for (cat of categories(); track cat.id) {
@@ -459,8 +464,8 @@
 
         <!-- Options Section -->
         <div class="options-section">
-          <h4><i class="fas fa-list"></i> Opciones de Respuesta</h4>
-          <p class="options-hint">Selecciona la opción correcta con el radio button</p>
+          <h4><i class="fas fa-list"></i> {{ 'admin.questions.answerOptions' | translate }}</h4>
+          <p class="options-hint">{{ 'admin.questions.selectCorrectWithRadio' | translate }}</p>
 
           <div class="options-grid">
             <!-- Option A -->
@@ -469,7 +474,8 @@
                 <input type="radio" formControlName="correct_option" value="a" id="correct_a">
                 <label for="correct_a" class="option-label">A</label>
               </div>
-              <input type="text" formControlName="option_a" class="form-control" placeholder="Opción A"
+              <input type="text" formControlName="option_a" class="form-control"
+                [placeholder]="'admin.questions.optionA' | translate"
                 [class.is-invalid]="fullEditForm.get('option_a')?.invalid && fullEditForm.get('option_a')?.touched">
             </div>
 
@@ -479,7 +485,8 @@
                 <input type="radio" formControlName="correct_option" value="b" id="correct_b">
                 <label for="correct_b" class="option-label">B</label>
               </div>
-              <input type="text" formControlName="option_b" class="form-control" placeholder="Opción B"
+              <input type="text" formControlName="option_b" class="form-control"
+                [placeholder]="'admin.questions.optionB' | translate"
                 [class.is-invalid]="fullEditForm.get('option_b')?.invalid && fullEditForm.get('option_b')?.touched">
             </div>
 
@@ -489,7 +496,8 @@
                 <input type="radio" formControlName="correct_option" value="c" id="correct_c">
                 <label for="correct_c" class="option-label">C</label>
               </div>
-              <input type="text" formControlName="option_c" class="form-control" placeholder="Opción C"
+              <input type="text" formControlName="option_c" class="form-control"
+                [placeholder]="'admin.questions.optionC' | translate"
                 [class.is-invalid]="fullEditForm.get('option_c')?.invalid && fullEditForm.get('option_c')?.touched">
             </div>
 
@@ -499,7 +507,8 @@
                 <input type="radio" formControlName="correct_option" value="d" id="correct_d">
                 <label for="correct_d" class="option-label">D</label>
               </div>
-              <input type="text" formControlName="option_d" class="form-control" placeholder="Opción D"
+              <input type="text" formControlName="option_d" class="form-control"
+                [placeholder]="'admin.questions.optionD' | translate"
                 [class.is-invalid]="fullEditForm.get('option_d')?.invalid && fullEditForm.get('option_d')?.touched">
             </div>
           </div>
@@ -507,25 +516,25 @@
 
         <!-- Explanations Section -->
         <div class="explanations-section">
-          <h4><i class="fas fa-lightbulb"></i> Explicaciones (Opcionales)</h4>
+          <h4><i class="fas fa-lightbulb"></i> {{ 'admin.questions.explanationsOptional' | translate }}</h4>
 
           <div class="form-group">
             <label for="exp_correct">
               <i class="fas fa-check-circle text-success"></i>
-              Cuando el jugador acierta:
+              {{ 'admin.questions.whenPlayerCorrect' | translate }}
             </label>
             <textarea id="exp_correct" formControlName="explanation_correct" class="form-control" rows="2"
-              placeholder="Explicación que se muestra cuando responde correctamente...">
+              [placeholder]="'admin.questions.correctExplanationPlaceholder' | translate">
                 </textarea>
           </div>
 
           <div class="form-group">
             <label for="exp_incorrect">
               <i class="fas fa-times-circle text-danger"></i>
-              Cuando el jugador falla:
+              {{ 'admin.questions.whenPlayerIncorrect' | translate }}
             </label>
             <textarea id="exp_incorrect" formControlName="explanation_incorrect" class="form-control" rows="2"
-              placeholder="Explicación que se muestra cuando responde incorrectamente...">
+              [placeholder]="'admin.questions.incorrectExplanationPlaceholder' | translate">
                 </textarea>
           </div>
         </div>
@@ -533,7 +542,7 @@
         <!-- Warning -->
         <div class="edit-warning">
           <i class="fas fa-exclamation-triangle"></i>
-          <span>Al guardar, la pregunta quedará pendiente de verificación.</span>
+          <span>{{ 'admin.questions.editWarning' | translate }}</span>
         </div>
       </form>
       }
@@ -541,16 +550,16 @@
 
     <div class="modal-footer">
       <button class="btn btn-secondary" (click)="closeFullEditModal()" [disabled]="isSavingQuestion()">
-        Cancelar
+        {{ 'common.cancel' | translate }}
       </button>
       <button class="btn btn-primary" (click)="saveFullQuestion()"
         [disabled]="isSavingQuestion() || isLoadingQuestion()">
         @if (!isSavingQuestion()) {
         <i class="fas fa-save"></i>
-        Guardar Cambios
+        {{ 'admin.questions.saveChanges' | translate }}
         } @else {
         <span class="spinner-small"></span>
-        Guardando...
+        {{ 'admin.questions.saving' | translate }}
         }
       </button>
     </div>

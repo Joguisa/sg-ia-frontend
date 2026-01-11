@@ -7,6 +7,7 @@ import { AdminQuestionsComponent } from './features/admin/questions/admin-questi
 import { AdminSettingsComponent } from './features/admin/settings/admin-settings.component';
 import { AdminPlayersComponent } from './features/admin/players/admin-players.component';
 import { AdminRoomsComponent } from './features/admin/rooms/admin-rooms.component';
+import { AdminManagementComponent } from './features/admin/admin-management/admin-management.component';
 import { PlayerProfileComponent } from './features/profile/player-profile.component';
 import { LeaderboardComponent } from './features/leaderboard/leaderboard.component';
 import { AdminGuard } from './core/guards/admin.guard';
@@ -85,6 +86,14 @@ export const routes: Routes = [
     canActivate: [AdminGuard],
     component: AdminRoomsComponent,
     data: { title: 'Gestión de Salas' }
+  },
+
+  // Admin - Administrators Management (Protected)
+  {
+    path: 'admin/admins',
+    canActivate: [AdminGuard],
+    component: AdminManagementComponent,
+    data: { title: 'Gestión de Administradores' }
   },
 
   {

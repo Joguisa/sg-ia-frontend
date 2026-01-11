@@ -3,7 +3,7 @@
     <div class="modal-header">
       <h3>
         <i class="fas" [class.fa-plus]="!isEditMode" [class.fa-edit]="isEditMode"></i>
-        {{ isEditMode ? 'Editar Categoría' : 'Crear Nueva Categoría' }}
+        {{ isEditMode ? ('admin.categories.editCategory' | translate) : ('admin.categories.createCategory' | translate) }}
       </h3>
       <button class="btn-close" (click)="closeModal()">
         <i class="fas fa-times"></i>
@@ -14,7 +14,7 @@
       <form [formGroup]="categoryForm">
         <div class="form-group">
           <label for="category-name">
-            Nombre <span class="required">*</span>
+            {{ 'admin.categories.name' | translate }} <span class="required">*</span>
           </label>
           <input
             id="category-name"
@@ -24,13 +24,13 @@
             placeholder="Ej: Epidemiología"
             >
           @if (categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched) {
-            <div class="invalid-feedback">El nombre es requerido</div>
+            <div class="invalid-feedback">{{ 'errors.required' | translate }}</div>
           }
         </div>
 
         <div class="form-group">
           <label for="category-description">
-            Descripción
+            {{ 'admin.categories.description' | translate }}
           </label>
           <textarea
             id="category-description"
@@ -49,7 +49,7 @@
         class="btn btn-secondary"
         (click)="closeModal()"
         >
-        Cancelar
+        {{ 'common.cancel' | translate }}
       </button>
       <button
         class="btn btn-primary"
@@ -57,10 +57,10 @@
         [disabled]="isSavingCategory() || categoryForm.invalid">
         @if (!isSavingCategory()) {
           <i class="fas fa-save"></i>
-          {{ isEditMode ? 'Guardar' : 'Crear' }}
+          {{ 'common.save' | translate }}
         } @else {
           <span class="spinner-small"></span>
-          Guardando...
+          {{ 'admin.common.saving' | translate }}
         }
       </button>
     </div>

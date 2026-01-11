@@ -1,0 +1,118 @@
+/* Additional styles for admin management component */
+
+.badge-superadmin {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.badge-admin {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.badge-active {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+}
+
+.badge-inactive {
+  background: linear-gradient(135deg, #868f96 0%, #596164 100%);
+  color: white;
+}
+
+.badge-info {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  color: #333;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.btn-icon {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  color: #495057;
+}
+
+.btn-icon:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-icon-primary {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.btn-icon-primary:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+}
+
+.btn-icon-success {
+  border-color: #38ef7d;
+  color: #38ef7d;
+}
+
+.btn-icon-success:hover:not(:disabled) {
+  background: #38ef7d;
+  color: white;
+}
+
+.btn-icon-warning {
+  border-color: #ffa726;
+  color: #ffa726;
+}
+
+.btn-icon-warning:hover:not(:disabled) {
+  background: #ffa726;
+  color: white;
+}
+
+.btn-icon-danger {
+  border-color: #ef5350;
+  color: #ef5350;
+}
+
+.btn-icon-danger:hover:not(:disabled) {
+  background: #ef5350;
+  color: white;
+}
+
+.summary-bar {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: center;
+}
