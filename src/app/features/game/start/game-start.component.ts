@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PlayerService } from '../../../core/services/player.service';
 import { RoomService } from '../../../core/services/room.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -32,6 +32,7 @@ export class GameStartComponent {
     private playerService: PlayerService,
     private roomService: RoomService,
     private languageService: LanguageService,
+    private translate: TranslateService,
     private router: Router
   ) {
     this.playerForm = this.fb.group({
@@ -86,17 +87,17 @@ export class GameStartComponent {
     // Validar el formulario
     if (this.playerForm.invalid) {
       if (this.playerForm.get('name')?.hasError('required')) {
-        this.errorMessage.set('Por favor ingresa tu nombre');
+        this.errorMessage.set(this.translate.instant('game.notifications.start.name_required'));
       } else if (this.playerForm.get('name')?.hasError('minlength')) {
-        this.errorMessage.set('El nombre debe tener al menos 2 caracteres');
+        this.errorMessage.set(this.translate.instant('game.notifications.start.name_min_length'));
       } else if (this.playerForm.get('name')?.hasError('maxlength')) {
-        this.errorMessage.set('El nombre no puede exceder los 50 caracteres');
+        this.errorMessage.set(this.translate.instant('game.notifications.start.name_max_length'));
       } else if (this.playerForm.get('age')?.hasError('required')) {
-        this.errorMessage.set('Por favor ingresa tu edad');
+        this.errorMessage.set(this.translate.instant('game.notifications.start.age_required'));
       } else if (this.playerForm.get('age')?.hasError('invalidFormat')) {
-        this.errorMessage.set('La edad debe contener solo números');
+        this.errorMessage.set(this.translate.instant('game.notifications.start.age_format'));
       } else if (this.playerForm.get('age')?.hasError('outOfRange')) {
-        this.errorMessage.set('Por favor ingresa una edad válida (1-120)');
+        this.errorMessage.set(this.translate.instant('game.notifications.start.age_range'));
       }
       return;
     }
@@ -105,11 +106,11 @@ export class GameStartComponent {
     if (this.showRoomCode()) {
       const roomCode = this.playerForm.get('roomCode')?.value?.trim();
       if (!roomCode) {
-        this.errorMessage.set('Por favor ingresa el código de sala');
+        this.errorMessage.set(this.translate.instant('game.notifications.start.code_required'));
         return;
       }
       if (!this.roomValidated()) {
-        this.errorMessage.set('Por favor valida el código de sala antes de continuar');
+        this.errorMessage.set(this.translate.instant('game.notifications.start.code_validate'));
         return;
       }
     }
@@ -140,7 +141,7 @@ export class GameStartComponent {
           // Redirigir al tablero de juego
           this.router.navigate(['/game/board']);
         } else {
-          this.errorMessage.set(response.error || 'Error al crear jugador');
+          this.errorMessage.set(response.error || this.translate.instant('game.notifications.start.create_error'));
           this.isLoading.set(false);
           this.playerForm.enable();
         }
@@ -148,7 +149,7 @@ export class GameStartComponent {
       error: (error) => {
         console.error('Error:', error);
         this.errorMessage.set(
-          'Hubo un problema al conectar con el servidor. Intenta de nuevo.'
+          this.translate.instant('game.notifications.start.connection_error')
         );
         this.isLoading.set(false);
         this.playerForm.enable();
@@ -203,7 +204,7 @@ export class GameStartComponent {
     const code = this.playerForm.get('roomCode')?.value?.trim();
 
     if (!code || code.length !== 6) {
-      this.roomError.set('El código de sala debe tener 6 caracteres');
+      this.roomError.set(this.translate.instant('game.notifications.start.code_length'));
       return;
     }
 
@@ -225,7 +226,7 @@ export class GameStartComponent {
         } else {
           this.roomValidated.set(false);
           this.validatedRoom.set(null);
-          this.roomError.set(response.error || 'Código de sala inválido');
+          this.roomError.set(response.error || this.translate.instant('game.notifications.start.code_invalid'));
         }
       },
       error: (error) => {
@@ -233,7 +234,7 @@ export class GameStartComponent {
         this.roomValidated.set(false);
         this.validatedRoom.set(null);
         console.error('Error validating room:', error);
-        this.roomError.set('Error al validar el código de sala');
+        this.roomError.set(this.translate.instant('game.notifications.start.code_validate_error'));
       }
     });
   }

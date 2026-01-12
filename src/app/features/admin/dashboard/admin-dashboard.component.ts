@@ -73,19 +73,19 @@ export class AdminDashboardComponent implements OnInit {
 
           this.isLoading.set(false);
         } else {
-          this.errorMessage.set(response.error || 'Error al cargar el dashboard.');
+          this.errorMessage.set(response.error || this.translate.instant('admin.dashboard.load_error'));
           this.isLoading.set(false);
         }
       },
       error: (error) => {
-        let errorMsg = 'Hubo un problema al cargar el dashboard.';
+        let errorMsg = this.translate.instant('admin.dashboard.load_error');
 
         if (error.status === HttpStatus.UNAUTHORIZED) {
-          errorMsg = 'No autorizado. Por favor, inicia sesión nuevamente.';
+          errorMsg = this.translate.instant('admin.dashboard.unauthorized');
         } else if (error.status === HttpStatus.FORBIDDEN) {
-          errorMsg = 'Acceso denegado. No tienes permisos de administrador.';
+          errorMsg = this.translate.instant('admin.dashboard.forbidden');
         } else if (error.status === 0) {
-          errorMsg = 'No se puede conectar al servidor.';
+          errorMsg = this.translate.instant('admin.dashboard.connection_error');
         }
 
         this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);

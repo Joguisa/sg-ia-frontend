@@ -2,7 +2,7 @@ import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -69,6 +69,7 @@ export class AdminSettingsComponent implements OnInit {
     private adminService: AdminService,
     private authService: AuthService,
     private notification: NotificationService,
+    private translate: TranslateService,
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder
@@ -145,20 +146,21 @@ export class AdminSettingsComponent implements OnInit {
           this.originalMaxQuestions.set(Number(config.max_questions_per_game) || 15);
 
           this.isLoading.set(false);
+          this.isLoading.set(false);
         } else {
-          this.errorMessage.set(response.error || 'Error al cargar la configuración');
+          this.errorMessage.set(response.error || this.translate.instant('admin.settings.notifications.load_error'));
           this.isLoading.set(false);
         }
       },
       error: (error) => {
-        let errorMsg = 'Hubo un problema al cargar la configuración.';
+        let errorMsg = this.translate.instant('admin.settings.notifications.load_error');
 
         if (error.status === HttpStatus.UNAUTHORIZED) {
-          errorMsg = 'No autorizado. Token expirado.';
+          errorMsg = this.translate.instant('admin.settings.notifications.unauthorized');
         } else if (error.status === HttpStatus.NOT_FOUND) {
-          errorMsg = 'Configuración no encontrada.';
+          errorMsg = this.translate.instant('admin.settings.notifications.not_found');
         } else if (error.status === 0) {
-          errorMsg = 'No se puede conectar al servidor.';
+          errorMsg = this.translate.instant('admin.settings.notifications.connection_error');
         }
 
         this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
@@ -234,7 +236,7 @@ export class AdminSettingsComponent implements OnInit {
   saveChanges(): void {
     // Validación del formulario
     if (this.promptConfigForm.invalid) {
-      this.errorMessage.set('Por favor completa todos los campos correctamente');
+      this.errorMessage.set(this.translate.instant('admin.settings.notifications.validation_error'));
       this.promptConfigForm.markAllAsTouched();
       return;
     }
@@ -272,7 +274,8 @@ export class AdminSettingsComponent implements OnInit {
           this.originalPreferredProvider.set(cleanProvider);
           this.originalMaxQuestions.set(cleanMaxQuestions);
           this.hasChanges.set(false);
-          this.successMessage.set('Configuración actualizada exitosamente');
+          this.hasChanges.set(false);
+          this.successMessage.set(this.translate.instant('admin.settings.notifications.save_success'));
 
           // 3. Importante: Habilitar el formulario al terminar
           this.promptConfigForm.enable();
@@ -283,7 +286,7 @@ export class AdminSettingsComponent implements OnInit {
         } else {
           // this.errorMessage.set(response.error || 'Error al guardar la configuración');
           // this.isSaving.set(false);
-          this.errorMessage.set(response.error || 'Error al guardar la configuración');
+          this.errorMessage.set(response.error || this.translate.instant('admin.settings.notifications.save_error'));
 
           // 3. Habilitar en caso de error lógico
           this.promptConfigForm.enable();
@@ -291,14 +294,14 @@ export class AdminSettingsComponent implements OnInit {
         }
       },
       error: (error) => {
-        let errorMsg = 'Error al guardar la configuración.';
+        let errorMsg = this.translate.instant('admin.settings.notifications.save_error');
 
         if (error.status === HttpStatus.UNAUTHORIZED) {
-          errorMsg = 'No autorizado. Por favor, inicia sesión nuevamente.';
+          errorMsg = this.translate.instant('admin.settings.notifications.save_error_unauthorized');
         } else if (error.status === HttpStatus.BAD_REQUEST) {
-          errorMsg = 'Datos inválidos. Verifica los valores.';
+          errorMsg = this.translate.instant('admin.settings.notifications.save_error_bad_request');
         } else if (error.status === HttpStatus.INTERNAL_SERVER_ERROR) {
-          errorMsg = 'Error del servidor. Intenta más tarde.';
+          errorMsg = this.translate.instant('admin.settings.notifications.save_error_server');
         }
 
         this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
@@ -574,12 +577,12 @@ RESTRICCIONES:
         if (response.ok) {
           this.categories.set(response.categories || []);
         } else {
-          this.notification.error(response.error || 'Error al cargar categorías', NOTIFICATION_DURATION.DEFAULT);
+          this.notification.error(response.error || this.translate.instant('admin.settings.notifications.load_categories_error'), NOTIFICATION_DURATION.DEFAULT);
         }
         this.isLoadingCategories.set(false);
       },
       error: (error) => {
-        this.notification.error('Error al cargar categorías', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('admin.settings.notifications.load_categories_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoadingCategories.set(false);
       }
     });
@@ -623,12 +626,12 @@ RESTRICCIONES:
    */
   deleteCategory(category: AdminCategory): void {
     if (!category.id) {
-      this.notification.error('ID de categoría no encontrado', NOTIFICATION_DURATION.DEFAULT);
+      this.notification.error(this.translate.instant('admin.settings.notifications.delete_category_id_error'), NOTIFICATION_DURATION.DEFAULT);
       return;
     }
 
     // Confirmar antes de eliminar
-    if (!confirm(`¿Estás seguro de eliminar la categoría "${category.name}"?\n\nNOTA: No se puede eliminar si tiene preguntas asociadas.`)) {
+    if (!confirm(this.translate.instant('admin.settings.notifications.delete_category_confirm', { name: category.name }))) {
       return;
     }
 
@@ -637,17 +640,17 @@ RESTRICCIONES:
     this.adminService.deleteCategory(category.id).subscribe({
       next: (response) => {
         if (response.ok) {
-          this.notification.success('Categoría eliminada exitosamente', NOTIFICATION_DURATION.SHORT);
+          this.notification.success(this.translate.instant('admin.settings.notifications.delete_category_success'), NOTIFICATION_DURATION.SHORT);
           this.loadCategories();
         } else {
-          this.notification.error(response.error || 'Error al eliminar categoría', NOTIFICATION_DURATION.DEFAULT);
+          this.notification.error(response.error || this.translate.instant('admin.settings.notifications.delete_category_error'), NOTIFICATION_DURATION.DEFAULT);
         }
         this.isDeletingCategory.set(null);
       },
       error: (error) => {
-        let errorMsg = 'Error al eliminar categoría';
+        let errorMsg = this.translate.instant('admin.settings.notifications.delete_category_error');
         if (error.status === HttpStatus.BAD_REQUEST) {
-          errorMsg = 'No se puede eliminar: tiene preguntas asociadas';
+          errorMsg = this.translate.instant('admin.settings.notifications.delete_category_associated_error');
         } else if (error.error?.error) {
           errorMsg = error.error.error;
         }

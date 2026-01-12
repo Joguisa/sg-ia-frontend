@@ -36,10 +36,12 @@ export class AdminFormModalComponent implements OnInit {
             });
         } else {
             // Edit mode
+            const isSuperAdmin = this.admin?.role === 'superadmin';
+
             this.adminForm = this.fb.group({
                 email: [this.admin?.email || '', [Validators.required, Validators.email]],
                 password: [''], // Optional in edit mode
-                role: [this.admin?.role || 'admin', Validators.required]
+                role: [{ value: this.admin?.role || 'admin', disabled: isSuperAdmin }, Validators.required]
             });
         }
     }
@@ -64,7 +66,7 @@ export class AdminFormModalComponent implements OnInit {
 
         this.isSubmitting.set(true);
 
-        const formValue = this.adminForm.value;
+        const formValue = this.adminForm.getRawValue(); // use getRawValue to include disabled fields
 
         if (this.mode === 'create') {
             const dto: CreateAdminDto = {

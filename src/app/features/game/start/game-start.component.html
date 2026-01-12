@@ -19,50 +19,38 @@
         <!-- Name Input -->
         <div class="form-group">
           <label for="name" class="form-label">{{ 'game.start.enterName' | translate }}</label>
-          <input
-            type="text"
-            id="name"
-            class="form-control"
-            formControlName="name"
-            [placeholder]="'game.start.namePlaceholder' | translate"
-            maxlength="50"
-            [class.is-invalid]="playerForm.get('name')?.invalid && playerForm.get('name')?.touched"
-          />
+          <input type="text" id="name" class="form-control" formControlName="name"
+            [placeholder]="'game.start.namePlaceholder' | translate" maxlength="50"
+            [class.is-invalid]="playerForm.get('name')?.invalid && playerForm.get('name')?.touched" />
           <div class="invalid-feedback" *ngIf="playerForm.get('name')?.invalid && playerForm.get('name')?.touched">
-            <small *ngIf="playerForm.get('name')?.hasError('required')">{{ 'game.start.errors.nameRequired' | translate }}</small>
-            <small *ngIf="playerForm.get('name')?.hasError('minlength')">{{ 'game.start.errors.nameMinLength' | translate }}</small>
-            <small *ngIf="playerForm.get('name')?.hasError('maxlength')">{{ 'game.start.errors.nameMaxLength' | translate }}</small>
+            <small *ngIf="playerForm.get('name')?.hasError('required')">{{ 'game.start.errors.nameRequired' | translate
+              }}</small>
+            <small *ngIf="playerForm.get('name')?.hasError('minlength')">{{ 'game.start.errors.nameMinLength' |
+              translate }}</small>
+            <small *ngIf="playerForm.get('name')?.hasError('maxlength')">{{ 'game.start.errors.nameMaxLength' |
+              translate }}</small>
           </div>
         </div>
 
         <!-- Age Input -->
         <div class="form-group">
           <label for="age" class="form-label">{{ 'game.start.enterAge' | translate }}</label>
-          <input
-            type="text"
-            id="age"
-            class="form-control"
-            formControlName="age"
-            (input)="onAgeInput($event)"
-            [placeholder]="'game.start.agePlaceholder' | translate"
-            maxlength="3"
-            [class.is-invalid]="playerForm.get('age')?.invalid && playerForm.get('age')?.touched"
-          />
+          <input type="text" id="age" class="form-control" formControlName="age" (input)="onAgeInput($event)"
+            [placeholder]="'game.start.agePlaceholder' | translate" maxlength="3"
+            [class.is-invalid]="playerForm.get('age')?.invalid && playerForm.get('age')?.touched" />
           <div class="invalid-feedback" *ngIf="playerForm.get('age')?.invalid && playerForm.get('age')?.touched">
-            <small *ngIf="playerForm.get('age')?.hasError('required')">{{ 'game.start.errors.ageRequired' | translate }}</small>
-            <small *ngIf="playerForm.get('age')?.hasError('invalidFormat')">{{ 'game.start.errors.ageInvalidFormat' | translate }}</small>
-            <small *ngIf="playerForm.get('age')?.hasError('outOfRange')">{{ 'game.start.errors.ageOutOfRange' | translate }}</small>
+            <small *ngIf="playerForm.get('age')?.hasError('required')">{{ 'game.start.errors.ageRequired' | translate
+              }}</small>
+            <small *ngIf="playerForm.get('age')?.hasError('invalidFormat')">{{ 'game.start.errors.ageInvalidFormat' |
+              translate }}</small>
+            <small *ngIf="playerForm.get('age')?.hasError('outOfRange')">{{ 'game.start.errors.ageOutOfRange' |
+              translate }}</small>
           </div>
         </div>
 
         <!-- Room Code Toggle -->
         <div class="room-code-section">
-          <button
-            type="button"
-            class="room-code-toggle"
-            (click)="toggleRoomCode()"
-            [disabled]="isLoading()"
-          >
+          <button type="button" class="room-code-toggle" (click)="toggleRoomCode()" [disabled]="isLoading()">
             <i class="fas" [ngClass]="showRoomCode() ? 'fa-chevron-up' : 'fa-door-open'"></i>
             {{ showRoomCode() ? ('game.start.hideRoomCode' | translate) : ('game.start.hasRoomCode' | translate) }}
           </button>
@@ -71,23 +59,11 @@
           <div class="room-code-input-wrapper" *ngIf="showRoomCode()">
             <label for="roomCode" class="form-label">{{ 'game.start.roomCodeLabel' | translate }}</label>
             <div class="room-code-input-group">
-              <input
-                type="text"
-                id="roomCode"
-                class="form-control room-code-input"
-                formControlName="roomCode"
-                (input)="onRoomCodeInput($event)"
-                [placeholder]="'game.start.roomCodePlaceholder' | translate"
-                maxlength="6"
-                [class.is-valid]="roomValidated()"
-                [class.is-invalid]="roomError()"
-              />
-              <button
-                type="button"
-                class="btn btn-outline-primary btn-validate"
-                (click)="validateRoomCode()"
-                [disabled]="isValidatingRoom() || isLoading() || roomValidated()"
-              >
+              <input type="text" id="roomCode" class="form-control room-code-input" formControlName="roomCode"
+                (input)="onRoomCodeInput($event)" [placeholder]="'game.start.roomCodePlaceholder' | translate"
+                maxlength="6" [class.is-valid]="roomValidated()" [class.is-invalid]="roomError()" />
+              <button type="button" class="btn btn-outline-primary btn-validate" (click)="validateRoomCode()"
+                [disabled]="isValidatingRoom() || isLoading() || roomValidated()">
                 <span *ngIf="isValidatingRoom()" class="spinner-small"></span>
                 <span *ngIf="!isValidatingRoom() && !roomValidated()">{{ 'game.start.validate' | translate }}</span>
                 <span *ngIf="roomValidated()"><i class="fas fa-check"></i></span>
@@ -107,17 +83,8 @@
           </div>
         </div>
 
-        <!-- Error Message -->
-        <div *ngIf="errorMessage()" class="alert alert-danger">
-          {{ errorMessage() }}
-        </div>
-
         <!-- Submit Button -->
-        <button
-          type="submit"
-          class="btn btn-primary btn-play"
-          [disabled]="isLoading()"
-        >
+        <button type="submit" class="btn btn-primary btn-play" [disabled]="isLoading()">
           <span *ngIf="!isLoading()" class="btn-text d-flex align-items-center justify-content-center gap-2">
             <i class="fas fa-gamepad text-white"></i>
             {{ 'game.start.startButton' | translate }}
@@ -132,12 +99,7 @@
       <div class="card-footer">
         <p class="footer-text">
           {{ 'game.start.isAdmin' | translate }}
-          <button
-            type="button"
-            class="link-button"
-            (click)="goToAdmin()"
-            [disabled]="isLoading()"
-          >
+          <button type="button" class="link-button" (click)="goToAdmin()" [disabled]="isLoading()">
             {{ 'game.start.adminLink' | translate }}
           </button>
         </p>
@@ -161,4 +123,3 @@
     </div>
   </div>
 </div>
-

@@ -1,7 +1,7 @@
 import { Component, OnInit, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { GameService } from '../../../core/services/game.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -85,6 +85,7 @@ export class GameBoardComponent implements OnInit {
     private gameService: GameService,
     private notification: NotificationService,
     private languageService: LanguageService,
+    private translate: TranslateService,
     private router: Router
   ) {
     // Watch for game over state
@@ -137,7 +138,7 @@ export class GameBoardComponent implements OnInit {
         if (error.error?.error) {
           this.notification.error(error.error.error, NOTIFICATION_DURATION.LONG);
         } else {
-          this.notification.error('Error al iniciar el juego. Intenta de nuevo.', NOTIFICATION_DURATION.LONG);
+          this.notification.error(this.translate.instant('game.notifications.board.start_error'), NOTIFICATION_DURATION.LONG);
         }
         this.router.navigate(['/play']);
       }
@@ -149,7 +150,7 @@ export class GameBoardComponent implements OnInit {
     const difficulty = this.difficulty();
 
     if (!sessionId) {
-      this.showErrorMessage('Error: Sesión inválida');
+      this.showErrorMessage(this.translate.instant('game.notifications.board.invalid_session'));
       return;
     }
 
@@ -175,18 +176,18 @@ export class GameBoardComponent implements OnInit {
           this.startTimer();
         } else if (response.completed) {
           // Cuestionario completado exitosamente
-          this.handleGameCompleted(response.message || '¡Felicitaciones! Completaste el cuestionario');
+          this.handleGameCompleted(response.message || this.translate.instant('game.notifications.board.completed'));
         } else {
           // No hay más preguntas disponibles - fin del juego por completar todas
-          this.handleNoQuestionsAvailable('¡Felicitaciones! Has completado todas las preguntas disponibles.');
+          this.handleNoQuestionsAvailable(this.translate.instant('game.notifications.board.no_questions'));
         }
       },
       error: (error) => {
         // Detectar si es un 404 (no hay preguntas verificadas disponibles)
         if (error.status === HttpStatus.NOT_FOUND) {
-          this.handleNoQuestionsAvailable('¡Felicitaciones! Has respondido todas las preguntas verificadas disponibles.');
+          this.handleNoQuestionsAvailable(this.translate.instant('game.notifications.board.no_verified_questions'));
         } else {
-          this.showErrorMessage('Error de conexión. Por favor, verifica tu conexión a internet.');
+          this.showErrorMessage(this.translate.instant('game.notifications.board.connection_error'));
         }
       }
     });
@@ -229,7 +230,7 @@ export class GameBoardComponent implements OnInit {
     const selectedId = this.selectedOptionId();
 
     if (!sessionId || !question || selectedId === null) {
-      this.notification.warning('Por favor selecciona una opción', NOTIFICATION_DURATION.DEFAULT);
+      this.notification.warning(this.translate.instant('game.notifications.board.select_option'), NOTIFICATION_DURATION.DEFAULT);
       return;
     }
 
@@ -270,7 +271,7 @@ export class GameBoardComponent implements OnInit {
             this.gameState.set('feedback');
             this.isAnswering.set(false);
             setTimeout(() => {
-              this.handleGameCompleted('¡Felicitaciones! Completaste el cuestionario');
+              this.handleGameCompleted(this.translate.instant('game.notifications.board.completed'));
             }, 1000);
             return;
           }
@@ -289,14 +290,14 @@ export class GameBoardComponent implements OnInit {
             }, 3000);
           }
         } else {
-          this.notification.error(response.error || 'Error al enviar respuesta', NOTIFICATION_DURATION.DEFAULT);
+          this.notification.error(response.error || this.translate.instant('game.notifications.board.submit_error'), NOTIFICATION_DURATION.DEFAULT);
           this.isAnswering.set(false);
           this.gameState.set('playing');
           this.startTimer();
         }
       },
       error: (error) => {
-        this.notification.error('Error al procesar tu respuesta', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('game.notifications.board.process_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isAnswering.set(false);
         this.gameState.set('playing');
         this.startTimer();

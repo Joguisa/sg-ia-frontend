@@ -15,6 +15,7 @@ export interface QuestionFull {
   batch_id: number | null;
   options: QuestionOption[];
   explanations: QuestionExplanation[];
+  language?: 'es' | 'en';
 }
 
 export interface QuestionOption {

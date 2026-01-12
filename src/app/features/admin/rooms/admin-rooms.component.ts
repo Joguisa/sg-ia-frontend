@@ -199,12 +199,12 @@ export class AdminRoomsComponent implements OnInit {
         if (response.ok && response.rooms) {
           this.rooms.set(response.rooms);
         } else {
-          this.notification.error('Error al cargar las salas');
+          this.notification.error(response.error || this.translate.instant('admin.rooms.notifications.load_rooms_error'), NOTIFICATION_DURATION.DEFAULT);
         }
         this.isLoadingRooms.set(false);
       },
       error: () => {
-        this.notification.error('Error de conexión al cargar salas');
+        this.notification.error(this.translate.instant('admin.rooms.notifications.load_rooms_connection_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoadingRooms.set(false);
       }
     });
@@ -359,16 +359,16 @@ export class AdminRoomsComponent implements OnInit {
       this.roomService.updateRoom(this.editingRoomId()!, payload).subscribe({
         next: (response) => {
           if (response.ok) {
-            this.notification.success('Sala actualizada correctamente');
+            this.notification.success(this.translate.instant('admin.rooms.notifications.update_success'), NOTIFICATION_DURATION.SHORT);
             this.closeModal();
             this.loadRooms();
           } else {
-            this.notification.error(response.error || 'Error al actualizar la sala');
+            this.notification.error(response.error || this.translate.instant('admin.rooms.notifications.update_error'), NOTIFICATION_DURATION.DEFAULT);
           }
           this.isSaving.set(false);
         },
         error: () => {
-          this.notification.error('Error de conexión');
+          this.notification.error(this.translate.instant('admin.rooms.notifications.load_rooms_connection_error'), NOTIFICATION_DURATION.DEFAULT);
           this.isSaving.set(false);
         }
       });
@@ -386,16 +386,16 @@ export class AdminRoomsComponent implements OnInit {
       this.roomService.createRoom(payload).subscribe({
         next: (response) => {
           if (response.ok && response.room) {
-            this.notification.success(`Sala creada con código: ${response.room.room_code}`);
+            this.notification.success(this.translate.instant('admin.rooms.notifications.create_success', { code: response.room.room_code }), NOTIFICATION_DURATION.DEFAULT);
             this.closeModal();
             this.loadRooms();
           } else {
-            this.notification.error(response.error || 'Error al crear la sala');
+            this.notification.error(response.error || this.translate.instant('admin.rooms.notifications.create_error'), NOTIFICATION_DURATION.DEFAULT);
           }
           this.isSaving.set(false);
         },
         error: () => {
-          this.notification.error('Error de conexión');
+          this.notification.error(this.translate.instant('admin.rooms.notifications.load_rooms_connection_error'), NOTIFICATION_DURATION.DEFAULT);
           this.isSaving.set(false);
         }
       });
@@ -410,14 +410,18 @@ export class AdminRoomsComponent implements OnInit {
     this.roomService.updateRoomStatus(room.id, newStatus).subscribe({
       next: (response) => {
         if (response.ok) {
-          this.notification.success(`Estado de sala actualizado a: ${this.getStatusLabel(newStatus)}`);
+          const statusLabel = this.getStatusLabel(newStatus); // This is internal translation method, can be kept or refactored. Kept for now as it returns string.
+          // Ideally getStatusLabel should return a key, but for now let's assume it returns a string and we use it as param.
+          // Wait, getStatusLabel returns hardcoded Spanish labels. I should probably use translation keys there too or just let it be for now since we focus on notifications.
+          // Let's use the returned label.
+          this.notification.success(this.translate.instant('admin.rooms.notifications.status_update_success', { status: statusLabel }), NOTIFICATION_DURATION.SHORT);
           this.loadRooms();
         } else {
-          this.notification.error(response.error || 'Error al actualizar estado');
+          this.notification.error(response.error || this.translate.instant('admin.rooms.notifications.status_update_error'), NOTIFICATION_DURATION.DEFAULT);
         }
       },
       error: () => {
-        this.notification.error('Error de conexión');
+        this.notification.error(this.translate.instant('admin.rooms.notifications.load_rooms_connection_error'), NOTIFICATION_DURATION.DEFAULT);
       }
     });
   }
@@ -430,14 +434,14 @@ export class AdminRoomsComponent implements OnInit {
     this.roomService.deleteRoom(room.id).subscribe({
       next: (response) => {
         if (response.ok) {
-          this.notification.success('Sala eliminada correctamente');
+          this.notification.success(this.translate.instant('admin.rooms.notifications.delete_success'), NOTIFICATION_DURATION.SHORT);
           this.loadRooms();
         } else {
-          this.notification.error(response.error || 'Error al eliminar la sala');
+          this.notification.error(response.error || this.translate.instant('admin.rooms.notifications.delete_error'), NOTIFICATION_DURATION.DEFAULT);
         }
       },
       error: () => {
-        this.notification.error('Error de conexión');
+        this.notification.error(this.translate.instant('admin.rooms.notifications.load_rooms_connection_error'), NOTIFICATION_DURATION.DEFAULT);
       }
     });
   }
@@ -455,9 +459,9 @@ export class AdminRoomsComponent implements OnInit {
 
   copyRoomCode(code: string): void {
     navigator.clipboard.writeText(code).then(() => {
-      this.notification.success('Código copiado al portapapeles');
+      this.notification.success(this.translate.instant('admin.rooms.notifications.code_copied'), NOTIFICATION_DURATION.SHORT);
     }).catch(() => {
-      this.notification.error('Error al copiar el código');
+      this.notification.error(this.translate.instant('admin.rooms.notifications.code_copy_error'), NOTIFICATION_DURATION.DEFAULT);
     });
   }
 
@@ -478,7 +482,7 @@ export class AdminRoomsComponent implements OnInit {
         this.isLoadingDetail.set(false);
       },
       error: () => {
-        this.notification.error('Error al cargar información de la sala');
+        this.notification.error(this.translate.instant('admin.rooms.notifications.room_detail_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoadingDetail.set(false);
       }
     });
@@ -634,11 +638,11 @@ export class AdminRoomsComponent implements OnInit {
     this.roomService.exportRoomPdf(roomId).subscribe({
       next: (blob) => {
         this.downloadBlob(blob, `sala_${this.selectedRoom()?.room_code}_reporte.pdf`);
-        this.notification.success('PDF generado correctamente');
+        this.notification.success(this.translate.instant('admin.rooms.notifications.pdf_success'), NOTIFICATION_DURATION.SHORT);
         this.isExporting.set(false);
       },
       error: () => {
-        this.notification.error('Error al generar el PDF');
+        this.notification.error(this.translate.instant('admin.rooms.notifications.pdf_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isExporting.set(false);
       }
     });
@@ -652,11 +656,11 @@ export class AdminRoomsComponent implements OnInit {
     this.roomService.exportRoomExcel(roomId).subscribe({
       next: (blob) => {
         this.downloadBlob(blob, `sala_${this.selectedRoom()?.room_code}_reporte.xlsx`);
-        this.notification.success('Excel generado correctamente');
+        this.notification.success(this.translate.instant('admin.rooms.notifications.excel_success'), NOTIFICATION_DURATION.SHORT);
         this.isExporting.set(false);
       },
       error: () => {
-        this.notification.error('Error al generar el Excel');
+        this.notification.error(this.translate.instant('admin.rooms.notifications.excel_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isExporting.set(false);
       }
     });

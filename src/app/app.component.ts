@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NotificationComponent } from './shared/notification/notification.component';
+import { LanguageService } from './core/services/language.service';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,6 @@ import { NotificationComponent } from './shared/notification/notification.compon
 })
 export class AppComponent {
   title = 'sg-ia-frontend';
+
+  constructor(private languageService: LanguageService) { }
 }

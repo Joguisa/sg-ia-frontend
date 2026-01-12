@@ -50,7 +50,7 @@ export class PlayerProfileComponent implements OnInit {
       const playerName = localStorage.getItem('playerName');
 
       if (!playerId) {
-        this.errorMessage.set('No se encontró ID del jugador. Por favor, registrarse primero.');
+        this.errorMessage.set(this.translate.instant('game.notifications.profile.no_id'));
         this.isLoading.set(false);
         // Redirigir a /play después de 2 segundos
         setTimeout(() => this.router.navigate(['/play']), 2000);
@@ -71,17 +71,17 @@ export class PlayerProfileComponent implements OnInit {
             this.topicStats.set(response.topics);
             this.isLoading.set(false);
           } else {
-            this.errorMessage.set(response.error || 'Error al cargar las estadísticas.');
+            this.errorMessage.set(response.error || this.translate.instant('game.notifications.profile.load_error'));
             this.isLoading.set(false);
           }
         },
         error: (error) => {
-          let errorMsg = 'Hubo un problema al cargar las estadísticas.';
+          let errorMsg = this.translate.instant('game.notifications.profile.load_error');
 
           if (error.status === HttpStatus.NOT_FOUND) {
-            errorMsg = 'Jugador no encontrado.';
+            errorMsg = this.translate.instant('game.notifications.profile.not_found');
           } else if (error.status === 0) {
-            errorMsg = 'No se puede conectar al servidor.';
+            errorMsg = this.translate.instant('game.notifications.profile.connection_error');
           }
 
           this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
@@ -90,8 +90,8 @@ export class PlayerProfileComponent implements OnInit {
         }
       });
     } catch (error) {
-      this.notification.error('Error inesperado al cargar el perfil.', NOTIFICATION_DURATION.LONG);
-      this.errorMessage.set('Error inesperado al cargar el perfil.');
+      this.notification.error(this.translate.instant('game.notifications.profile.unexpected_error'), NOTIFICATION_DURATION.LONG);
+      this.errorMessage.set(this.translate.instant('game.notifications.profile.unexpected_error'));
       this.isLoading.set(false);
     }
   }

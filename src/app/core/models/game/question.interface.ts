@@ -6,6 +6,7 @@ export interface Question {
   is_ai_generated?: boolean;
   admin_verified?: boolean;
   batch_id?: number;
+  language?: 'es' | 'en';
 }
 
 export interface QuestionResponse {

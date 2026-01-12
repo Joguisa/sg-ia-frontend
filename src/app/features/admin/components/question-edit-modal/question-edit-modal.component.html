@@ -1,0 +1,174 @@
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <i class="fas fa-pen-to-square"></i>
+        {{ 'admin.questions.editFullQuestionTitle' | translate }}
+      </h3>
+      <button class="btn-close" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      @if (isLoadingQuestion()) {
+      <div class="loading-small">
+        <span class="spinner-small"></span>
+        <span>{{ 'admin.questions.loadingQuestion' | translate }}</span>
+      </div>
+      } @else if (questionToEdit()) {
+      <form [formGroup]="fullEditForm">
+        <!-- Question ID Badge -->
+        <div class="question-id-badge">
+          <span>ID: {{ questionToEdit()!.id }}</span>
+          @if (questionToEdit()!.is_ai_generated) {
+          <span class="ai-tag"><i class="fas fa-robot"></i> IA</span>
+          }
+        </div>
+
+        <!-- Statement -->
+        <div class="form-group">
+          <label for="statement">
+            <i class="fas fa-question-circle"></i>
+            {{ 'admin.questions.questionStatement' | translate }}
+          </label>
+          <textarea id="statement" formControlName="statement" class="form-control" rows="3"
+            [placeholder]="'admin.questions.statementPlaceholder' | translate"
+            [class.is-invalid]="fullEditForm.get('statement')?.invalid && fullEditForm.get('statement')?.touched">
+              </textarea>
+          @if (fullEditForm.get('statement')?.invalid && fullEditForm.get('statement')?.touched) {
+          <div class="invalid-feedback">{{ 'admin.questions.statementValidation' | translate }}</div>
+          }
+        </div>
+
+        <!-- Difficulty and Category Row -->
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="difficulty">
+              <i class="fas fa-signal"></i>
+              {{ 'admin.questions.difficulty' | translate }}:
+            </label>
+            <select id="difficulty" formControlName="difficulty" class="form-control">
+              <option [value]="1">{{ 'admin.questions.difficultyLevels.veryEasy' | translate }}</option>
+              <option [value]="2">{{ 'admin.questions.difficultyLevels.easy' | translate }}</option>
+              <option [value]="3">{{ 'admin.questions.difficultyLevels.medium' | translate }}</option>
+              <option [value]="4">{{ 'admin.questions.difficultyLevels.hard' | translate }}</option>
+              <option [value]="5">{{ 'admin.questions.difficultyLevels.veryHard' | translate }}</option>
+            </select>
+          </div>
+
+          <div class="form-group half">
+            <label for="category_id">
+              <i class="fas fa-folder"></i>
+              {{ 'admin.questions.category' | translate }}:
+            </label>
+            <select id="category_id" formControlName="category_id" class="form-control">
+              @for (cat of categories; track cat.id) {
+              <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Options Section -->
+        <div class="options-section">
+          <h4><i class="fas fa-list"></i> {{ 'admin.questions.answerOptions' | translate }}</h4>
+          <p class="options-hint">{{ 'admin.questions.selectCorrectWithRadio' | translate }}</p>
+
+          <div class="options-grid">
+            <!-- Option A -->
+            <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'a'">
+              <div class="option-header">
+                <input type="radio" formControlName="correct_option" value="a" id="correct_a">
+                <label for="correct_a" class="option-label">A</label>
+              </div>
+              <input type="text" formControlName="option_a" class="form-control"
+                [placeholder]="'admin.questions.optionA' | translate"
+                [class.is-invalid]="fullEditForm.get('option_a')?.invalid && fullEditForm.get('option_a')?.touched">
+            </div>
+
+            <!-- Option B -->
+            <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'b'">
+              <div class="option-header">
+                <input type="radio" formControlName="correct_option" value="b" id="correct_b">
+                <label for="correct_b" class="option-label">B</label>
+              </div>
+              <input type="text" formControlName="option_b" class="form-control"
+                [placeholder]="'admin.questions.optionB' | translate"
+                [class.is-invalid]="fullEditForm.get('option_b')?.invalid && fullEditForm.get('option_b')?.touched">
+            </div>
+
+            <!-- Option C -->
+            <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'c'">
+              <div class="option-header">
+                <input type="radio" formControlName="correct_option" value="c" id="correct_c">
+                <label for="correct_c" class="option-label">C</label>
+              </div>
+              <input type="text" formControlName="option_c" class="form-control"
+                [placeholder]="'admin.questions.optionC' | translate"
+                [class.is-invalid]="fullEditForm.get('option_c')?.invalid && fullEditForm.get('option_c')?.touched">
+            </div>
+
+            <!-- Option D -->
+            <div class="option-item" [class.correct]="fullEditForm.get('correct_option')?.value === 'd'">
+              <div class="option-header">
+                <input type="radio" formControlName="correct_option" value="d" id="correct_d">
+                <label for="correct_d" class="option-label">D</label>
+              </div>
+              <input type="text" formControlName="option_d" class="form-control"
+                [placeholder]="'admin.questions.optionD' | translate"
+                [class.is-invalid]="fullEditForm.get('option_d')?.invalid && fullEditForm.get('option_d')?.touched">
+            </div>
+          </div>
+        </div>
+
+        <!-- Explanations Section -->
+        <div class="explanations-section">
+          <h4><i class="fas fa-lightbulb"></i> {{ 'admin.questions.explanationsOptional' | translate }}</h4>
+
+          <div class="form-group">
+            <label for="exp_correct">
+              <i class="fas fa-check-circle text-success"></i>
+              {{ 'admin.questions.whenPlayerCorrect' | translate }}
+            </label>
+            <textarea id="exp_correct" formControlName="explanation_correct" class="form-control" rows="2"
+              [placeholder]="'admin.questions.correctExplanationPlaceholder' | translate">
+                </textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="exp_incorrect">
+              <i class="fas fa-times-circle text-danger"></i>
+              {{ 'admin.questions.whenPlayerIncorrect' | translate }}
+            </label>
+            <textarea id="exp_incorrect" formControlName="explanation_incorrect" class="form-control" rows="2"
+              [placeholder]="'admin.questions.incorrectExplanationPlaceholder' | translate">
+                </textarea>
+          </div>
+        </div>
+
+        <!-- Warning -->
+        <div class="edit-warning">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>{{ 'admin.questions.editWarning' | translate }}</span>
+        </div>
+      </form>
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeModal()" [disabled]="isSavingQuestion()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button class="btn btn-primary" (click)="saveQuestion()" [disabled]="isSavingQuestion() || isLoadingQuestion()">
+        @if (!isSavingQuestion()) {
+        <i class="fas fa-save"></i>
+        {{ 'admin.questions.saveChanges' | translate }}
+        } @else {
+        <span class="spinner-small"></span>
+        {{ 'admin.questions.saving' | translate }}
+        }
+      </button>
+    </div>
+  </div>
+</div>

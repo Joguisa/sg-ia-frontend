@@ -60,17 +60,17 @@ export class LeaderboardComponent implements OnInit {
           this.leaderboard.set(response.leaderboard);
           this.isLoading.set(false);
         } else {
-          this.errorMessage.set(response.error || 'Error al cargar el leaderboard.');
+          this.errorMessage.set(response.error || this.translate.instant('game.notifications.leaderboard.load_error'));
           this.isLoading.set(false);
         }
       },
       error: (error) => {
-        let errorMsg = 'Hubo un problema al cargar el leaderboard.';
+        let errorMsg = this.translate.instant('game.notifications.leaderboard.load_error');
 
         if (error.status === HttpStatus.NOT_FOUND) {
-          errorMsg = 'No hay datos de leaderboard disponibles.';
+          errorMsg = this.translate.instant('game.notifications.leaderboard.no_data');
         } else if (error.status === 0) {
-          errorMsg = 'No se puede conectar al servidor.';
+          errorMsg = this.translate.instant('game.notifications.leaderboard.connection_error');
         }
 
         this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);

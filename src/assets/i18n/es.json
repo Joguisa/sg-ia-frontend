@@ -115,7 +115,55 @@
       "keepLearning": "¡Sigue aprendiendo!",
       "excellentScore": "¡Excelente puntuación!",
       "goodScore": "¡Buen trabajo!",
-      "tryAgain": "¡Inténtalo de nuevo!"
+      "tryAgain": "¡Inténtalo de nuevo!",
+      "outOfLives": "Te has quedado sin vidas después de",
+      "questionsWithScore": "preguntas con una puntuación de",
+      "points": "puntos",
+      "questions": "preguntas",
+      "viewProfile": "Ver Perfil",
+      "quizCompleted": "¡Has completado todas las preguntas!",
+      "quizCompletedBadge": "Quiz Completado",
+      "finalDifficulty": "Dificultad Final"
+    },
+    "notifications": {
+      "board": {
+        "start_error": "Error al iniciar el juego. Intenta de nuevo.",
+        "invalid_session": "Error: Sesión inválida",
+        "completed": "¡Felicitaciones! Completaste el cuestionario",
+        "no_questions": "¡Felicitaciones! Has completado todas las preguntas disponibles.",
+        "no_verified_questions": "¡Felicitaciones! Has respondido todas las preguntas verificadas disponibles.",
+        "connection_error": "Error de conexión. Por favor, verifica tu conexión a internet.",
+        "select_option": "Por favor selecciona una opción",
+        "submit_error": "Error al enviar respuesta",
+        "process_error": "Error al procesar tu respuesta"
+      },
+      "start": {
+        "name_required": "Por favor ingresa tu nombre",
+        "name_min_length": "El nombre debe tener al menos 2 caracteres",
+        "name_max_length": "El nombre no puede exceder los 50 caracteres",
+        "age_required": "Por favor ingresa tu edad",
+        "age_format": "La edad debe contener solo números",
+        "age_range": "Por favor ingresa una edad válida (1-120)",
+        "code_required": "Por favor ingresa el código de sala",
+        "code_validate": "Por favor valida el código de sala antes de continuar",
+        "create_error": "Error al crear jugador",
+        "connection_error": "Hubo un problema al conectar con el servidor. Intenta de nuevo.",
+        "code_length": "El código de sala debe tener 6 caracteres",
+        "code_invalid": "Código de sala inválido",
+        "code_validate_error": "Error al validar el código de sala"
+      },
+      "leaderboard": {
+        "load_error": "Hubo un problema al cargar el leaderboard.",
+        "no_data": "No hay datos de leaderboard disponibles.",
+        "connection_error": "No se puede conectar al servidor."
+      },
+      "profile": {
+        "no_id": "No se encontró ID del jugador. Por favor, registrarse primero.",
+        "load_error": "Error al cargar las estadísticas.",
+        "not_found": "Jugador no encontrado.",
+        "connection_error": "No se puede conectar al servidor.",
+        "unexpected_error": "Error inesperado al cargar el perfil."
+      }
     }
   },
   "admin": {
@@ -285,7 +333,97 @@
       "easyQuestions": "Preguntas Fáciles",
       "lowestSuccessRate": "Menor tasa de éxito",
       "highestSuccessRate": "Mayor tasa de éxito",
-      "success": "Éxito"
+      "success": "Éxito",
+      "notifications": {
+        "load_rooms_error": "Error al cargar las salas",
+        "load_rooms_connection_error": "Error de conexión al cargar salas",
+        "create_success": "Sala creada con código: {{code}}",
+        "create_error": "Error al crear la sala",
+        "update_success": "Sala actualizada correctamente",
+        "update_error": "Error al actualizar la sala",
+        "delete_success": "Sala eliminada correctamente",
+        "delete_error": "Error al eliminar la sala",
+        "status_update_success": "Estado de sala actualizado a: {{status}}",
+        "status_update_error": "Error al actualizar estado",
+        "room_detail_error": "Error al cargar información de la sala",
+        "code_copied": "Código copiado al portapapeles",
+        "code_copy_error": "Error al copiar el código",
+        "pdf_success": "PDF generado correctamente",
+        "pdf_error": "Error al generar el PDF",
+        "excel_success": "Excel generado correctamente",
+        "excel_error": "Error al generar el Excel"
+      },
+      "players": {
+        "notifications": {
+          "load_leaderboard_error": "Error al cargar el leaderboard",
+          "load_leaderboard_connection_error": "Error de conexión al cargar el leaderboard",
+          "load_players_error": "Error al cargar los jugadores",
+          "load_players_connection_error": "Error de conexión al cargar jugadores",
+          "load_profile_error": "Error al cargar el perfil del jugador",
+          "load_profile_connection_error": "Error de conexión al cargar el perfil"
+        }
+      },
+      "dashboard": {
+        "load_error": "Hubo un problema al cargar el dashboard.",
+        "unauthorized": "No autorizado. Por favor, inicia sesión nuevamente.",
+        "forbidden": "Acceso denegado. No tienes permisos de administrador.",
+        "connection_error": "No se puede conectar al servidor.",
+        "complete": "Completado",
+        "partial": "Parcial"
+      },
+      "settings": {
+        "notifications": {
+          "load_error": "Hubo un problema al cargar la configuración.",
+          "unauthorized": "No autorizado. Token expirado.",
+          "not_found": "Configuración no encontrada.",
+          "connection_error": "No se puede conectar al servidor.",
+          "validation_error": "Por favor completa todos los campos correctamente",
+          "save_success": "Configuración actualizada exitosamente",
+          "save_error": "Error al guardar la configuración",
+          "save_error_unauthorized": "No autorizado. Por favor, inicia sesión nuevamente.",
+          "save_error_bad_request": "Datos inválidos. Verifica los valores.",
+          "save_error_server": "Error del servidor. Intenta más tarde.",
+          "load_categories_error": "Error al cargar categorías",
+          "delete_category_id_error": "ID de categoría no encontrado",
+          "delete_category_confirm": "¿Estás seguro de eliminar la categoría \"{{name}}\"?\n\nNOTA: No se puede eliminar si tiene preguntas asociadas.",
+          "delete_category_success": "Categoría eliminada exitosamente",
+          "delete_category_error": "Error al eliminar categoría",
+          "delete_category_associated_error": "No se puede eliminar: tiene preguntas asociadas",
+          "category_modal": {
+            "notifications": {
+              "name_required": "El nombre de la categoría es requerido",
+              "create_success": "Categoría creada exitosamente",
+              "create_error": "Error al crear categoría",
+              "update_success": "Categoría actualizada exitosamente",
+              "update_error": "Error al actualizar categoría",
+              "id_not_found": "ID de categoría no encontrado",
+              "invalid_data": "Datos inválidos"
+            }
+          }
+        }
+      },
+      "admins": {
+        "notifications": {
+          "load_error": "Error al cargar los administradores",
+          "load_connection_error": "Error de conexión al cargar administradores",
+          "create_permission_error": "Solo superadmins pueden crear administradores",
+          "edit_permission_error": "Solo superadmins pueden editar administradores",
+          "create_success": "Administrador creado exitosamente",
+          "create_error": "Error al crear administrador",
+          "update_success": "Administrador actualizado exitosamente",
+          "update_error": "Error al actualizar administrador",
+          "status_permission_error": "Solo superadmins pueden cambiar el estado",
+          "self_status_error": "No puedes desactivar tu propia cuenta",
+          "status_confirm": "¿Estás seguro de {{action}} a {{email}}?",
+          "status_success": "Administrador {{action}} exitosamente",
+          "status_error": "Error al cambiar estado",
+          "delete_permission_error": "Solo superadmins pueden eliminar administradores",
+          "self_delete_error": "No puedes eliminar tu propia cuenta",
+          "delete_confirm": "¿Estás seguro de eliminar a {{email}}? Esta acción desactivará la cuenta.",
+          "delete_success": "Administrador eliminado exitosamente",
+          "delete_error": "Error al eliminar administrador"
+        }
+      }
     },
     "questions": {
       "title": "Gestión de Preguntas",
@@ -435,6 +573,44 @@
         "importing": "Importando...",
         "success": "Preguntas importadas exitosamente",
         "error": "Error al importar preguntas"
+      },
+      "notifications": {
+        "load_error": "Error al cargar preguntas",
+        "categories_load_error": "No se pudieron cargar categorías, usando valores por defecto",
+        "select_category": "Por favor selecciona una categoría",
+        "enter_quantity": "Por favor ingresa la cantidad",
+        "quantity_range": "Cantidad debe ser entre 1 y 50",
+        "difficulty_range": "Dificultad debe ser entre 1 y 5",
+        "load_batch_stats_error": "Error al cargar estadísticas de batches",
+        "generating": "Generando preguntas con IA...",
+        "generated_success": "{{count}} preguntas generadas exitosamente con IA",
+        "generated_failed": "No se pudieron generar preguntas. {{count}} fallaron.",
+        "generation_error": "Error al generar preguntas",
+        "unauthorized": "No autorizado. Token expirado.",
+        "invalid_params_generation": "Parámetros inválidos para la generación",
+        "verified": "Pregunta verificada",
+        "unverified": "Verificación removida",
+        "verify_error": "Error al cambiar estado de verificación",
+        "no_pending": "No hay preguntas pendientes de verificación",
+        "bulk_verify_success": "{{count}} preguntas verificadas",
+        "bulk_verify_error": "Error al verificar preguntas",
+        "no_pending_batch": "No hay preguntas pendientes en este batch",
+        "verify_batch_confirm": "¿Verificar las {{count}} pregunta(s) pendiente(s) de este batch?",
+        "verify_batch_success": "{{count}} preguntas verificadas exitosamente",
+        "verify_batch_error": "Error al verificar batch",
+        "delete_success": "Pregunta eliminada correctamente",
+        "delete_error": "Error al eliminar la pregunta",
+        "csv_type_error": "El archivo debe ser CSV",
+        "csv_size_error": "El archivo no puede superar 5MB",
+        "csv_importing": "Importando archivo CSV...",
+        "csv_import_partial": "Importación parcial: {{imported}} importadas, {{errors}} errores",
+        "csv_import_success": "{{imported}} preguntas importadas exitosamente",
+        "csv_import_error": "Error al importar CSV",
+        "csv_invalid": "Archivo CSV inválido",
+        "load_full_error": "Error al cargar la pregunta",
+        "form_error": "Por favor corrige los errores del formulario",
+        "update_success": "Pregunta actualizada exitosamente. Estado: Pendiente de verificación.",
+        "update_error": "Error al actualizar la pregunta"
       }
     },
     "batches": {
@@ -616,11 +792,33 @@
       "deactivate": "Desactivar",
       "delete": "Eliminar",
       "noPermissions": "Sin permisos",
+      "listTitle": "Lista de Administradores",
       "noAdminsFound": "No se encontraron administradores que coincidan con",
       "noAdminsRegistered": "No hay administradores registrados",
       "total": "Total:",
-      "of": "de",
-      "administrators": "administrador(es)"
+      "administrators": "administrador(es)",
+      "notifications": {
+        "create_success": "Administrador creado exitosamente",
+        "create_error": "Error al crear el administrador",
+        "update_success": "Administrador actualizado exitosamente",
+        "update_error": "Error al actualizar el administrador",
+        "create_permission_error": "No tienes permisos para crear administradores",
+        "edit_permission_error": "No tienes permisos para editar administradores",
+        "status_permission_error": "No tienes permisos para cambiar el estado",
+        "delete_permission_error": "No tienes permisos para eliminar administradores",
+        "self_status_error": "No puedes cambiar tu propio estado",
+        "self_delete_error": "No puedes eliminar tu propia cuenta",
+        "status_confirm": "¿Confirma que desea {{action}} al usuario {{email}}?",
+        "delete_confirm": "¿Confirma que desea eliminar al usuario {{email}}?",
+        "status_success": "Estado {{action}} exitosamente",
+        "status_error": "Error al cambiar el estado",
+        "delete_success": "Administrador eliminado exitosamente",
+        "delete_error": "Error al eliminar el administrador",
+        "load_error": "Error cargando administradores",
+        "load_connection_error": "Error de conexión al cargar administradores",
+        "superadmin_status_error": "No puedes cambiar el estado de otro Super Administrador",
+        "superadmin_delete_error": "No puedes eliminar a otro Super Administrador"
+      }
     },
     "login": {
       "title": "Panel de Administración",
@@ -673,7 +871,17 @@
     "network": "Error de conexión. Intente de nuevo.",
     "server": "Error del servidor. Intente más tarde.",
     "notFound": "Recurso no encontrado",
-    "unauthorized": "No autorizado. Inicie sesión nuevamente."
+    "unauthorized": "No autorizado. Inicie sesión nuevamente.",
+    "generic": "Ha ocurrido un error inesperado",
+    "api_request_failed": "Error al procesar la solicitud",
+    "network_error": "Error de conexión",
+    "no_response": "No se recibió respuesta del servidor",
+    "login_success": "Inicio de sesión exitoso",
+    "dashboard_access_error": "Error al acceder al panel de administración",
+    "invalid_credentials": "Credenciales inválidas. Intenta de nuevo.",
+    "server_connection_error": "Hubo un problema al conectar con el servidor. Intenta de nuevo.",
+    "check_credentials": "Credenciales inválidas. Verifica tu correo y contraseña.",
+    "check_internet": "No se puede conectar al servidor. Verifica tu conexión a internet."
   },
   "leaderboard": {
     "title": "Clasificación Global",

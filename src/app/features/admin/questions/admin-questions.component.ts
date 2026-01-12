@@ -9,20 +9,18 @@ import {
   AdminCategory,
   GenerationResponse,
   BatchStatistics,
-  CsvImportResponse,
-  QuestionFull,
-  QuestionOption,
-  UpdateQuestionFullPayload
+  CsvImportResponse
 } from '../../../core/models/admin';
 import { Question } from '../../../core/models/game';
 import { HttpStatus } from '../../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { QuestionEditModalComponent } from '../components/question-edit-modal/question-edit-modal.component';
 
 @Component({
   selector: 'app-admin-questions',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, QuestionEditModalComponent],
   templateUrl: './admin-questions.component.html',
   styleUrls: [
     '../shared/styles/admin-styles.css',
@@ -58,10 +56,7 @@ export class AdminQuestionsComponent implements OnInit {
 
   // ========== FULL QUESTION EDIT MODAL ==========
   isFullEditModalOpen = signal<boolean>(false);
-  questionToEdit = signal<QuestionFull | null>(null);
-  isLoadingQuestion = signal<boolean>(false);
-  isSavingQuestion = signal<boolean>(false);
-  fullEditForm: FormGroup;
+  selectedQuestionId = signal<number | null>(null);
 
   // ========== SIGNALS PARA FILTROS ==========
   private filterTrigger = signal<number>(0);
@@ -136,20 +131,6 @@ export class AdminQuestionsComponent implements OnInit {
       status: ['all']
     });
 
-    // Inicializar formulario de edición completa de pregunta
-    this.fullEditForm = this.fb.group({
-      statement: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
-      difficulty: [1, [Validators.required, Validators.min(1), Validators.max(5)]],
-      category_id: [null, [Validators.required]],
-      option_a: ['', [Validators.required, Validators.minLength(1)]],
-      option_b: ['', [Validators.required, Validators.minLength(1)]],
-      option_c: ['', [Validators.required, Validators.minLength(1)]],
-      option_d: ['', [Validators.required, Validators.minLength(1)]],
-      correct_option: ['a', [Validators.required]],
-      explanation_correct: [''],
-      explanation_incorrect: ['']
-    });
-
     // Suscribirse a cambios en los filtros para activar el recomputo
     this.filterForm.valueChanges.subscribe(() => {
       this.filterTrigger.set(this.filterTrigger() + 1);
@@ -190,7 +171,7 @@ export class AdminQuestionsComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (error) => {
-        this.notification.error('Error al cargar preguntas', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('admin.questions.notifications.load_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoading.set(false);
       }
     });
@@ -205,7 +186,7 @@ export class AdminQuestionsComponent implements OnInit {
         this.categories.set(response.categories || []);
       },
       error: (error) => {
-        this.notification.warning('No se pudieron cargar categorías, usando valores por defecto', NOTIFICATION_DURATION.SHORT);
+        this.notification.warning(this.translate.instant('admin.questions.notifications.categories_load_error'), NOTIFICATION_DURATION.SHORT);
         // Fallback categorías por defecto
         this.categories.set([
           { id: 1, name: 'Epidemiología y Generalidades' },
@@ -228,19 +209,19 @@ export class AdminQuestionsComponent implements OnInit {
     // Validar el formulario
     if (this.generatorForm.invalid) {
       if (this.generatorForm.get('categoryId')?.hasError('required')) {
-        this.notification.warning('Por favor selecciona una categoría', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.warning(this.translate.instant('admin.questions.notifications.select_category'), NOTIFICATION_DURATION.DEFAULT);
       } else if (this.generatorForm.get('quantity')?.hasError('required')) {
-        this.notification.warning('Por favor ingresa la cantidad', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.warning(this.translate.instant('admin.questions.notifications.enter_quantity'), NOTIFICATION_DURATION.DEFAULT);
       } else if (this.generatorForm.get('quantity')?.hasError('invalidQuantity')) {
-        this.notification.warning('Cantidad debe ser entre 1 y 50', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.warning(this.translate.instant('admin.questions.notifications.quantity_range'), NOTIFICATION_DURATION.DEFAULT);
       } else if (this.generatorForm.get('difficulty')?.hasError('min') || this.generatorForm.get('difficulty')?.hasError('max')) {
-        this.notification.warning('Dificultad debe ser entre 1 y 5', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.warning(this.translate.instant('admin.questions.notifications.difficulty_range'), NOTIFICATION_DURATION.DEFAULT);
       }
       return;
     }
 
     this.isGenerating.set(true);
-    this.notification.info('Generando preguntas con IA...', NOTIFICATION_DURATION.LONG);
+    this.notification.info(this.translate.instant('admin.questions.notifications.generating'), NOTIFICATION_DURATION.LONG);
     this.generatorForm.disable();
 
     const formValues = this.generatorForm.getRawValue();
@@ -258,7 +239,7 @@ export class AdminQuestionsComponent implements OnInit {
         if (response.ok && generatedCount > 0) {
           // Éxito: se generaron preguntas
           this.notification.success(
-            `${generatedCount} pregunta${generatedCount !== 1 ? 's' : ''} generada${generatedCount !== 1 ? 's' : ''} exitosamente con IA`,
+            response.message || this.translate.instant('admin.questions.notifications.generated_success', { count: generatedCount }),
             NOTIFICATION_DURATION.DEFAULT
           );
           this.isGenerating.set(false);
@@ -278,24 +259,25 @@ export class AdminQuestionsComponent implements OnInit {
         } else if (response.ok && generatedCount === 0) {
           // Respuesta OK pero no se generaron preguntas
           const failedCount = response.failed ?? 0;
-          const errorMsg = response.message || response.error || `No se pudieron generar preguntas. ${failedCount} fallaron.`;
+          const errorMsg = response.message || response.error || this.translate.instant('admin.questions.notifications.generated_failed', { count: failedCount });
           this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
           this.isGenerating.set(false);
           this.generatorForm.enable();
         } else {
           // Error general
-          this.notification.error(response.error || 'Error al generar preguntas', NOTIFICATION_DURATION.DEFAULT);
+          const errorMsg = response.error || this.translate.instant('admin.questions.notifications.generation_error');
+          this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
           this.isGenerating.set(false);
           this.generatorForm.enable();
         }
       },
       error: (error) => {
-        let errorMsg = 'Error al generar preguntas con IA';
+        let errorMsg = this.translate.instant('admin.questions.notifications.generation_error');
 
         if (error.status === HttpStatus.UNAUTHORIZED) {
-          errorMsg = 'No autorizado. Token expirado.';
+          errorMsg = this.translate.instant('admin.questions.notifications.unauthorized');
         } else if (error.status === HttpStatus.BAD_REQUEST) {
-          errorMsg = 'Parámetros inválidos para la generación';
+          errorMsg = this.translate.instant('admin.questions.notifications.invalid_params_generation');
         }
 
         this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
@@ -322,15 +304,15 @@ export class AdminQuestionsComponent implements OnInit {
           }
 
           this.notification.success(
-            !currentState ? 'Pregunta verificada' : 'Verificación removida',
+            !currentState ? this.translate.instant('admin.questions.notifications.verified') : this.translate.instant('admin.questions.notifications.unverified'),
             NOTIFICATION_DURATION.SHORT
           );
         } else {
-          this.notification.error(response.error || 'Error al cambiar estado de verificación', NOTIFICATION_DURATION.DEFAULT);
+          this.notification.error(response.error || this.translate.instant('admin.questions.notifications.verify_error'), NOTIFICATION_DURATION.DEFAULT);
         }
       },
       error: (error) => {
-        this.notification.error('Error al cambiar estado de verificación', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('admin.questions.notifications.verify_error'), NOTIFICATION_DURATION.DEFAULT);
       }
     });
   }
@@ -342,7 +324,7 @@ export class AdminQuestionsComponent implements OnInit {
     const pendingCount = this.allQuestions().filter(q => !q.admin_verified).length;
 
     if (pendingCount === 0) {
-      this.notification.info('No hay preguntas pendientes de verificación', NOTIFICATION_DURATION.SHORT);
+      this.notification.info(this.translate.instant('admin.questions.notifications.no_pending'), NOTIFICATION_DURATION.SHORT);
       return;
     }
 
@@ -351,15 +333,16 @@ export class AdminQuestionsComponent implements OnInit {
     this.adminService.verifyBulk({ verify_all_pending: true }).subscribe({
       next: (response) => {
         if (response.ok) {
-          this.notification.success(response.message || `${response.verified_count} preguntas verificadas`, NOTIFICATION_DURATION.DEFAULT);
+          console.log('aa', response.message);
+          this.notification.success(response.message || this.translate.instant('admin.questions.notifications.bulk_verify_success', { count: response.verified_count }), NOTIFICATION_DURATION.DEFAULT);
           this.loadQuestions(); // Recargar preguntas
         } else {
-          this.notification.error('Error al verificar preguntas', NOTIFICATION_DURATION.DEFAULT);
+          this.notification.error(this.translate.instant('admin.questions.notifications.verify_error'), NOTIFICATION_DURATION.DEFAULT);
         }
         this.isLoading.set(false);
       },
       error: (error) => {
-        this.notification.error('Error al verificar preguntas masivamente', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('admin.questions.notifications.bulk_verify_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoading.set(false);
       }
     });
@@ -373,11 +356,11 @@ export class AdminQuestionsComponent implements OnInit {
     const pendingCount = batchQuestions.length;
 
     if (pendingCount === 0) {
-      this.notification.info('No hay preguntas pendientes en este batch', NOTIFICATION_DURATION.SHORT);
+      this.notification.info(this.translate.instant('admin.questions.notifications.no_pending_batch'), NOTIFICATION_DURATION.SHORT);
       return;
     }
 
-    if (!confirm(`¿Verificar las ${pendingCount} pregunta(s) pendiente(s) de este batch?`)) {
+    if (!confirm(this.translate.instant('admin.questions.notifications.verify_batch_confirm', { count: pendingCount }))) {
       return;
     }
 
@@ -386,15 +369,15 @@ export class AdminQuestionsComponent implements OnInit {
     this.adminService.verifyBulk({ batch_id: batchId }).subscribe({
       next: (response) => {
         if (response.ok) {
-          this.notification.success(response.message || `${response.verified_count} preguntas verificadas`, NOTIFICATION_DURATION.DEFAULT);
+          this.notification.success(response.message || this.translate.instant('admin.questions.notifications.bulk_verify_success', { count: response.verified_count }), NOTIFICATION_DURATION.DEFAULT);
           this.loadQuestions(); // Recargar preguntas
         } else {
-          this.notification.error('Error al verificar batch', NOTIFICATION_DURATION.DEFAULT);
+          this.notification.error(this.translate.instant('admin.questions.notifications.verify_batch_error'), NOTIFICATION_DURATION.DEFAULT);
         }
         this.isLoading.set(false);
       },
       error: (error) => {
-        this.notification.error('Error al verificar batch', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('admin.questions.notifications.verify_batch_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoading.set(false);
       }
     });
@@ -420,15 +403,15 @@ export class AdminQuestionsComponent implements OnInit {
         if (response.ok) {
           const questions = this.allQuestions().filter(q => q.id !== questionId);
           this.allQuestions.set(questions);
-          this.notification.success('Pregunta eliminada correctamente', NOTIFICATION_DURATION.SHORT);
+          this.notification.success(this.translate.instant('admin.questions.notifications.delete_success'), NOTIFICATION_DURATION.SHORT);
           this.deleteConfirmId.set(null);
         } else {
-          this.notification.error(response.error || 'Error al eliminar la pregunta', NOTIFICATION_DURATION.DEFAULT);
+          this.notification.error(response.error || this.translate.instant('admin.questions.notifications.delete_error'), NOTIFICATION_DURATION.DEFAULT);
           this.deleteConfirmId.set(null);
         }
       },
       error: (error) => {
-        this.notification.error('Error al eliminar pregunta', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('admin.questions.notifications.delete_error'), NOTIFICATION_DURATION.DEFAULT);
         this.deleteConfirmId.set(null);
       }
     });
@@ -497,11 +480,11 @@ export class AdminQuestionsComponent implements OnInit {
         if (response.ok) {
           this.batchStatistics.set(response.batches || []);
         } else {
-          this.notification.error(response.error || 'Error al cargar estadísticas de batches', NOTIFICATION_DURATION.DEFAULT);
+          this.notification.error(response.error || this.translate.instant('admin.questions.notifications.load_batch_stats_error'), NOTIFICATION_DURATION.DEFAULT);
         }
       },
       error: (error) => {
-        this.notification.error('Error al cargar estadísticas de batches', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('admin.questions.notifications.load_batch_stats_error'), NOTIFICATION_DURATION.DEFAULT);
       }
     });
   }
@@ -516,18 +499,18 @@ export class AdminQuestionsComponent implements OnInit {
       next: (response) => {
         if (response.ok) {
           this.notification.success(
-            `${response.verified_count} preguntas verificadas exitosamente`,
+            response.message || this.translate.instant('admin.questions.notifications.verify_batch_success', { count: response.verified_count }),
             NOTIFICATION_DURATION.DEFAULT
           );
           this.loadBatchStatistics();
           this.loadQuestions();
         } else {
-          this.notification.error(response.error || 'Error al verificar batch', NOTIFICATION_DURATION.DEFAULT);
+          this.notification.error(response.error || this.translate.instant('admin.questions.notifications.verify_batch_error'), NOTIFICATION_DURATION.DEFAULT);
         }
         this.isVerifyingBatch.set(false);
       },
       error: (error) => {
-        this.notification.error('Error al verificar batch', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('admin.questions.notifications.verify_batch_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isVerifyingBatch.set(false);
       }
     });
@@ -546,7 +529,7 @@ export class AdminQuestionsComponent implements OnInit {
 
     // Validar tipo de archivo
     if (!file.name.toLowerCase().endsWith('.csv')) {
-      this.notification.warning('El archivo debe ser CSV', NOTIFICATION_DURATION.DEFAULT);
+      this.notification.warning(this.translate.instant('admin.questions.notifications.csv_type_error'), NOTIFICATION_DURATION.DEFAULT);
       input.value = '';
       return;
     }
@@ -554,7 +537,7 @@ export class AdminQuestionsComponent implements OnInit {
     // Validar tamaño (máximo 5MB)
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      this.notification.warning('El archivo no puede superar 5MB', NOTIFICATION_DURATION.DEFAULT);
+      this.notification.warning(this.translate.instant('admin.questions.notifications.csv_size_error'), NOTIFICATION_DURATION.DEFAULT);
       input.value = '';
       return;
     }
@@ -569,7 +552,7 @@ export class AdminQuestionsComponent implements OnInit {
   importCsvFile(file: File): void {
     this.isImportingCsv.set(true);
     this.lastImportResult.set(null);
-    this.notification.info('Importando archivo CSV...', NOTIFICATION_DURATION.LONG);
+    this.notification.info(this.translate.instant('admin.questions.notifications.csv_importing'), NOTIFICATION_DURATION.LONG);
 
     this.adminService.importCsv(file).subscribe({
       next: (response: any) => {
@@ -581,12 +564,12 @@ export class AdminQuestionsComponent implements OnInit {
             console.log('response with errors', response);
 
             this.notification.warning(
-              `Importación parcial: ${response.imported} importadas, ${response.errors} errores`,
+              this.translate.instant('admin.questions.notifications.csv_import_partial', { imported: response.imported, errors: response.errors }),
               NOTIFICATION_DURATION.LONG
             );
           } else {
             this.notification.success(
-              `${response.imported} preguntas importadas exitosamente`,
+              response.message || this.translate.instant('admin.questions.notifications.csv_import_success', { imported: response.imported }),
               NOTIFICATION_DURATION.DEFAULT
             );
           }
@@ -594,14 +577,14 @@ export class AdminQuestionsComponent implements OnInit {
           this.loadQuestions();
           this.loadBatchStatistics();
         } else {
-          this.notification.error(response.error || 'Error al importar CSV', NOTIFICATION_DURATION.LONG);
+          this.notification.error(response.error || this.translate.instant('admin.questions.notifications.csv_import_error'), NOTIFICATION_DURATION.LONG);
         }
         this.isImportingCsv.set(false);
       },
       error: (error) => {
-        let errorMsg = 'Error al importar CSV';
+        let errorMsg = this.translate.instant('admin.questions.notifications.csv_import_error');
         if (error.status === HttpStatus.BAD_REQUEST) {
-          errorMsg = error.error?.error || 'Archivo CSV inválido';
+          errorMsg = error.error?.error || this.translate.instant('admin.questions.notifications.csv_invalid');
         }
         this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
         this.isImportingCsv.set(false);
@@ -624,26 +607,8 @@ export class AdminQuestionsComponent implements OnInit {
    * Abre el modal de edición completa de pregunta
    */
   openFullEditModal(questionId: number): void {
-    this.isLoadingQuestion.set(true);
+    this.selectedQuestionId.set(questionId);
     this.isFullEditModalOpen.set(true);
-
-    this.adminService.getQuestionFull(questionId).subscribe({
-      next: (response) => {
-        if (response.ok && response.question) {
-          this.questionToEdit.set(response.question);
-          this.populateFullEditForm(response.question);
-        } else {
-          this.notification.error(response.error || 'Error al cargar la pregunta', NOTIFICATION_DURATION.DEFAULT);
-          this.closeFullEditModal();
-        }
-        this.isLoadingQuestion.set(false);
-      },
-      error: (error) => {
-        this.notification.error('Error al cargar la pregunta', NOTIFICATION_DURATION.DEFAULT);
-        this.isLoadingQuestion.set(false);
-        this.closeFullEditModal();
-      }
-    });
   }
 
   /**
@@ -651,120 +616,13 @@ export class AdminQuestionsComponent implements OnInit {
    */
   closeFullEditModal(): void {
     this.isFullEditModalOpen.set(false);
-    this.questionToEdit.set(null);
-    this.fullEditForm.reset({
-      statement: '',
-      difficulty: 1,
-      category_id: null,
-      option_a: '',
-      option_b: '',
-      option_c: '',
-      option_d: '',
-      correct_option: 'a',
-      explanation_correct: '',
-      explanation_incorrect: ''
-    });
+    this.selectedQuestionId.set(null);
   }
 
   /**
-   * Pobla el formulario con los datos de la pregunta
+   * Maneja el evento cuando el modal guarda los cambios
    */
-  private populateFullEditForm(question: QuestionFull): void {
-    // Mapear opciones a campos del formulario
-    const options = question.options || [];
-    const optionA = options[0]?.text || '';
-    const optionB = options[1]?.text || '';
-    const optionC = options[2]?.text || '';
-    const optionD = options[3]?.text || '';
-
-    // Determinar cuál es la correcta
-    let correctOption = 'a';
-    options.forEach((opt, index) => {
-      if (opt.is_correct) {
-        correctOption = ['a', 'b', 'c', 'd'][index] || 'a';
-      }
-    });
-
-    // Obtener explicaciones
-    const explanations = question.explanations || [];
-    const correctExp = explanations.find(e => e.type === 'correct')?.text || '';
-    const incorrectExp = explanations.find(e => e.type === 'incorrect')?.text || '';
-
-    this.fullEditForm.patchValue({
-      statement: question.statement,
-      difficulty: question.difficulty,
-      category_id: question.category_id,
-      option_a: optionA,
-      option_b: optionB,
-      option_c: optionC,
-      option_d: optionD,
-      correct_option: correctOption,
-      explanation_correct: correctExp,
-      explanation_incorrect: incorrectExp
-    });
-  }
-
-  /**
-   * Guarda los cambios de la pregunta
-   */
-  saveFullQuestion(): void {
-    const question = this.questionToEdit();
-    if (!question) return;
-
-    this.fullEditForm.markAllAsTouched();
-
-    if (this.fullEditForm.invalid) {
-      this.notification.warning('Por favor corrige los errores del formulario', NOTIFICATION_DURATION.DEFAULT);
-      return;
-    }
-
-    const formValues = this.fullEditForm.value;
-
-    // Construir array de opciones
-    const optionLetters = ['a', 'b', 'c', 'd'];
-    const options: QuestionOption[] = optionLetters.map((letter, index) => ({
-      text: formValues[`option_${letter}`],
-      is_correct: formValues.correct_option === letter
-    }));
-
-    // Construir payload
-    const payload: UpdateQuestionFullPayload = {
-      statement: formValues.statement,
-      difficulty: formValues.difficulty,
-      category_id: formValues.category_id,
-      options: options
-    };
-
-    // Agregar explicaciones si tienen contenido
-    if (formValues.explanation_correct?.trim()) {
-      payload.explanation_correct = formValues.explanation_correct.trim();
-    }
-    if (formValues.explanation_incorrect?.trim()) {
-      payload.explanation_incorrect = formValues.explanation_incorrect.trim();
-    }
-
-    this.isSavingQuestion.set(true);
-
-    this.adminService.updateQuestionFull(question.id, payload).subscribe({
-      next: (response) => {
-        if (response.ok) {
-          this.notification.success('Pregunta actualizada exitosamente. Estado: Pendiente de verificación.', NOTIFICATION_DURATION.DEFAULT);
-          this.closeFullEditModal();
-          // Recargar datos
-          this.loadQuestions();
-        } else {
-          this.notification.error(response.error || 'Error al actualizar la pregunta', NOTIFICATION_DURATION.DEFAULT);
-        }
-        this.isSavingQuestion.set(false);
-      },
-      error: (error) => {
-        let errorMsg = 'Error al actualizar la pregunta';
-        if (error.error?.error) {
-          errorMsg = error.error.error;
-        }
-        this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
-        this.isSavingQuestion.set(false);
-      }
-    });
+  onQuestionSaved(): void {
+    this.loadQuestions();
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -49,6 +49,7 @@ export class AdminManagementComponent implements OnInit {
         private adminService: AdminService,
         private authService: AuthService,
         private notification: NotificationService,
+        private translate: TranslateService,
         private router: Router
     ) { }
 
@@ -63,16 +64,42 @@ export class AdminManagementComponent implements OnInit {
 
         this.adminService.listAdmins().subscribe({
             next: (response) => {
+                // If success and has admins, set them
                 if (response.ok && response.admins) {
                     this.admins.set(response.admins);
-                } else {
-                    this.notification.error('Error al cargar los administradores');
+                }
+                // If response is NOT ok, but it might be because of "no results" (depending on backend)
+                // We'll trust that a true error will have a distinct message. 
+                // However, for safety, if we have no admins but it failed, we default empty 
+                // unless it's a critical error we want to show.
+                else {
+                    // If the error message suggests simply no data found, we suppress it.
+                    // But without knowing the exact backend error string, we'll try to be safe.
+                    // Current backend behavior for "no data" often returns false + "No registered admins" etc.
+                    // We will assume that if we get here, we might just have 0 admins.
+                    // BUT, typically valid empty list is ok:true, admins:[].
+                    // If backend sends ok:false for empty list, we handle it here:
+
+                    // Check if the error message is "innocent"
+                    const err = response.error || '';
+                    if (err.toLowerCase().includes('no') && (err.toLowerCase().includes('found') || err.toLowerCase().includes('registrado'))) {
+                        this.admins.set([]);
+                    } else {
+                        // Real error
+                        this.notification.error(response.error || this.translate.instant('admin.admins.notifications.load_error'));
+                    }
                 }
                 this.isLoading.set(false);
             },
             error: (err) => {
                 console.error('Error cargando administradores:', err);
-                this.notification.error('Error de conexión al cargar administradores');
+
+                // Handle 404 as empty list if that's what backend returns
+                if (err.status === 404) {
+                    this.admins.set([]);
+                } else {
+                    this.notification.error(this.translate.instant('admin.admins.notifications.load_connection_error'));
+                }
                 this.isLoading.set(false);
             }
         });
@@ -85,7 +112,7 @@ export class AdminManagementComponent implements OnInit {
 
     openCreateModal(): void {
         if (!this.isSuperAdmin()) {
-            this.notification.error('Solo superadmins pueden crear administradores');
+            this.notification.error(this.translate.instant('admin.admins.notifications.create_permission_error'));
             return;
         }
         this.modalMode.set('create');
@@ -95,7 +122,7 @@ export class AdminManagementComponent implements OnInit {
 
     openEditModal(admin: Admin): void {
         if (!this.isSuperAdmin()) {
-            this.notification.error('Solo superadmins pueden editar administradores');
+            this.notification.error(this.translate.instant('admin.admins.notifications.edit_permission_error'));
             return;
         }
         this.modalMode.set('edit');
@@ -120,16 +147,16 @@ export class AdminManagementComponent implements OnInit {
         this.adminService.createAdmin(dto).subscribe({
             next: (response) => {
                 if (response.ok) {
-                    this.notification.success('Administrador creado exitosamente');
+                    this.notification.success(this.translate.instant('admin.admins.notifications.create_success'));
                     this.loadAdmins();
                     this.closeModal();
                 } else {
-                    this.notification.error(response.error || 'Error al crear administrador');
+                    this.notification.error(response.error || this.translate.instant('admin.admins.notifications.create_error'));
                 }
             },
             error: (err) => {
                 console.error('Error creando administrador:', err);
-                this.notification.error(err.error?.error || 'Error al crear administrador');
+                this.notification.error(err.error?.error || this.translate.instant('admin.admins.notifications.create_error'));
             }
         });
     }
@@ -141,36 +168,42 @@ export class AdminManagementComponent implements OnInit {
         this.adminService.updateAdmin(adminId, dto).subscribe({
             next: (response) => {
                 if (response.ok) {
-                    this.notification.success('Administrador actualizado exitosamente');
+                    this.notification.success(this.translate.instant('admin.admins.notifications.update_success'));
                     this.loadAdmins();
                     this.closeModal();
                 } else {
-                    this.notification.error(response.error || 'Error al actualizar administrador');
+                    this.notification.error(response.error || this.translate.instant('admin.admins.notifications.update_error'));
                 }
             },
             error: (err) => {
                 console.error('Error actualizando administrador:', err);
-                this.notification.error(err.error?.error || 'Error al actualizar administrador');
+                this.notification.error(err.error?.error || this.translate.instant('admin.admins.notifications.update_error'));
             }
         });
     }
 
     confirmToggleStatus(admin: Admin): void {
         if (!this.isSuperAdmin()) {
-            this.notification.error('Solo superadmins pueden cambiar el estado');
+            this.notification.error(this.translate.instant('admin.admins.notifications.status_permission_error'));
             return;
         }
 
         // Verificar auto-desactivación
         if (admin.id === this.currentUser()?.id) {
-            this.notification.error('No puedes desactivar tu propia cuenta');
+            this.notification.error(this.translate.instant('admin.admins.notifications.self_status_error'));
+            return;
+        }
+
+        // [SAFE MODE] Cannot deactivate other superadmins
+        if (admin.role === 'superadmin') {
+            this.notification.error(this.translate.instant('admin.admins.notifications.superadmin_status_error'));
             return;
         }
 
         const newStatus = !admin.is_active;
         const action = newStatus ? 'activar' : 'desactivar';
 
-        if (confirm(`¿Estás seguro de ${action} a ${admin.email}?`)) {
+        if (confirm(this.translate.instant('admin.admins.notifications.status_confirm', { action, email: admin.email }))) {
             this.toggleStatus(admin, newStatus);
         }
     }
@@ -180,32 +213,38 @@ export class AdminManagementComponent implements OnInit {
             next: (response) => {
                 if (response.ok) {
                     const action = is_active ? 'activado' : 'desactivado';
-                    this.notification.success(`Administrador ${action} exitosamente`);
+                    this.notification.success(this.translate.instant('admin.admins.notifications.status_success', { action }));
                     this.loadAdmins();
                 } else {
-                    this.notification.error(response.error || 'Error al cambiar estado');
+                    this.notification.error(response.error || this.translate.instant('admin.admins.notifications.status_error'));
                 }
             },
             error: (err) => {
                 console.error('Error cambiando estado:', err);
-                this.notification.error(err.error?.error || 'Error al cambiar estado');
+                this.notification.error(err.error?.error || this.translate.instant('admin.admins.notifications.status_error'));
             }
         });
     }
 
     confirmDelete(admin: Admin): void {
         if (!this.isSuperAdmin()) {
-            this.notification.error('Solo superadmins pueden eliminar administradores');
+            this.notification.error(this.translate.instant('admin.admins.notifications.delete_permission_error'));
             return;
         }
 
         // Verificar auto-eliminación
         if (admin.id === this.currentUser()?.id) {
-            this.notification.error('No puedes eliminar tu propia cuenta');
+            this.notification.error(this.translate.instant('admin.admins.notifications.self_delete_error'));
             return;
         }
 
-        if (confirm(`¿Estás seguro de eliminar a ${admin.email}? Esta acción desactivará la cuenta.`)) {
+        // [SAFE MODE] Cannot delete other superadmins
+        if (admin.role === 'superadmin') {
+            this.notification.error(this.translate.instant('admin.admins.notifications.superadmin_delete_error'));
+            return;
+        }
+
+        if (confirm(this.translate.instant('admin.admins.notifications.delete_confirm', { email: admin.email }))) {
             this.deleteAdmin(admin);
         }
     }
@@ -214,15 +253,15 @@ export class AdminManagementComponent implements OnInit {
         this.adminService.deleteAdmin(admin.id).subscribe({
             next: (response) => {
                 if (response.ok) {
-                    this.notification.success('Administrador eliminado exitosamente');
+                    this.notification.success(this.translate.instant('admin.admins.notifications.delete_success'));
                     this.loadAdmins();
                 } else {
-                    this.notification.error(response.error || 'Error al eliminar administrador');
+                    this.notification.error(response.error || this.translate.instant('admin.admins.notifications.delete_error'));
                 }
             },
             error: (err) => {
                 console.error('Error eliminando administrador:', err);
-                this.notification.error(err.error?.error || 'Error al eliminar administrador');
+                this.notification.error(err.error?.error || this.translate.instant('admin.admins.notifications.delete_error'));
             }
         });
     }

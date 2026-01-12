@@ -4,19 +4,19 @@
         <div class="notification-content">
             <div class="notification-icon">
                 @if (notif.type === 'success') {
-                    <i class="fas fa-check-circle"></i>
+                <i class="fas fa-check-circle"></i>
                 }
                 @if (notif.type === 'error') {
-                    <i class="fas fa-exclamation-circle"></i>
+                <i class="fas fa-exclamation-circle"></i>
                 }
                 @if (notif.type === 'warning') {
-                    <i class="fas fa-exclamation-triangle"></i>
+                <i class="fas fa-exclamation-triangle"></i>
                 }
                 @if (notif.type === 'info') {
-                    <i class="fas fa-info-circle"></i>
+                <i class="fas fa-info-circle"></i>
                 }
             </div>
-            <span class="notification-message">{{ notif.message }}</span>
+            <span class="notification-message">{{ notif.message | translate }}</span>
             <button type="button" class="btn-close" (click)="notificationService.clear()" aria-label="Cerrar">
                 <i class="fas fa-times"></i>
             </button>

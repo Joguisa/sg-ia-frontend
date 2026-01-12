@@ -1,12 +1,12 @@
 <div class="modal-overlay" (click)="onCancel()">
-    <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
         <!-- Modal Header -->
         <div class="modal-header">
             <h2>
                 <i class="fas fa-user-cog"></i>
                 {{ (mode === 'create' ? 'admin.admins.createAdmin' : 'admin.admins.editAdmin') | translate }}
             </h2>
-            <button class="modal-close" (click)="onCancel()">
+            <button class="btn-close" (click)="onCancel()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -91,8 +91,10 @@
                     <div>
                         <strong>{{ 'admin.admins.role' | translate }}:</strong>
                         <ul>
-                            <li><strong>{{ 'admin.admins.roles.admin' | translate }}:</strong> Puede ver y gestionar preguntas, jugadores, salas.</li>
-                            <li><strong>{{ 'admin.admins.roles.superadmin' | translate }}:</strong> Tiene todos los permisos incluidos gestión de
+                            <li><strong>{{ 'admin.admins.roles.admin' | translate }}:</strong> Puede ver y gestionar
+                                preguntas, jugadores, salas.</li>
+                            <li><strong>{{ 'admin.admins.roles.superadmin' | translate }}:</strong> Tiene todos los
+                                permisos incluidos gestión de
                                 administradores.</li>
                         </ul>
                     </div>
@@ -100,10 +102,12 @@
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">
+                    <button type="button" class="admin-btn admin-btn-secondary" (click)="onCancel()"
+                        [disabled]="isSubmitting()">
                         <i class="fas fa-times"></i> {{ 'common.cancel' | translate }}
                     </button>
-                    <button type="submit" class="btn btn-primary" [disabled]="adminForm.invalid || isSubmitting()">
+                    <button type="submit" class="admin-btn admin-btn-primary"
+                        [disabled]="adminForm.invalid || isSubmitting()">
                         @if (isSubmitting()) {
                         <i class="fas fa-spinner fa-spin"></i> {{ 'admin.common.saving' | translate }}
                         } @else {

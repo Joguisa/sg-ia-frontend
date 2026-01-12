@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../../../core/services/admin.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AdminCategory } from '../../../../core/models/admin';
@@ -30,6 +30,7 @@ export class CategoryModalComponent implements OnInit, OnChanges {
   constructor(
     private adminService: AdminService,
     private notification: NotificationService,
+    private translate: TranslateService,
     private fb: FormBuilder
   ) {
     this.initForm();
@@ -91,7 +92,7 @@ export class CategoryModalComponent implements OnInit, OnChanges {
   saveCategory(): void {
     // Validación del formulario
     if (this.categoryForm.invalid) {
-      this.notification.warning('El nombre de la categoría es requerido', NOTIFICATION_DURATION.DEFAULT);
+      this.notification.warning(this.translate.instant('admin.settings.notifications.category_modal.notifications.name_required'), NOTIFICATION_DURATION.DEFAULT);
       this.categoryForm.markAllAsTouched();
       return;
     }
@@ -110,19 +111,19 @@ export class CategoryModalComponent implements OnInit, OnChanges {
       this.adminService.createCategory(name, description || undefined).subscribe({
         next: (response) => {
           if (response.ok) {
-            this.notification.success('Categoría creada exitosamente', NOTIFICATION_DURATION.SHORT);
+            this.notification.success(this.translate.instant('admin.settings.notifications.category_modal.notifications.create_success'), NOTIFICATION_DURATION.SHORT);
             this.saved.emit();
             this.closeModal();
           } else {
-            this.notification.error(response.error || 'Error al crear categoría', NOTIFICATION_DURATION.DEFAULT);
+            this.notification.error(response.error || this.translate.instant('admin.settings.notifications.category_modal.notifications.create_error'), NOTIFICATION_DURATION.DEFAULT);
             this.categoryForm.enable();
           }
           this.isSavingCategory.set(false);
         },
         error: (error) => {
-          let errorMsg = 'Error al crear categoría';
+          let errorMsg = this.translate.instant('admin.settings.notifications.category_modal.notifications.create_error');
           if (error.status === HttpStatus.BAD_REQUEST) {
-            errorMsg = error.error?.error || 'Datos inválidos';
+            errorMsg = error.error?.error || this.translate.instant('admin.settings.notifications.category_modal.notifications.invalid_data');
           }
           this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
           this.categoryForm.enable();
@@ -133,7 +134,7 @@ export class CategoryModalComponent implements OnInit, OnChanges {
       // Editar categoría existente
       const categoryId = this.categoryToEdit?.id;
       if (!categoryId) {
-        this.notification.error('ID de categoría no encontrado', NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('admin.settings.notifications.category_modal.notifications.id_not_found'), NOTIFICATION_DURATION.DEFAULT);
         this.categoryForm.enable();
         this.isSavingCategory.set(false);
         return;
@@ -142,19 +143,19 @@ export class CategoryModalComponent implements OnInit, OnChanges {
       this.adminService.updateCategory(categoryId, name, description || undefined).subscribe({
         next: (response) => {
           if (response.ok) {
-            this.notification.success('Categoría actualizada exitosamente', NOTIFICATION_DURATION.SHORT);
+            this.notification.success(this.translate.instant('admin.settings.notifications.category_modal.notifications.update_success'), NOTIFICATION_DURATION.SHORT);
             this.saved.emit();
             this.closeModal();
           } else {
-            this.notification.error(response.error || 'Error al actualizar categoría', NOTIFICATION_DURATION.DEFAULT);
+            this.notification.error(response.error || this.translate.instant('admin.settings.notifications.category_modal.notifications.update_error'), NOTIFICATION_DURATION.DEFAULT);
             this.categoryForm.enable();
           }
           this.isSavingCategory.set(false);
         },
         error: (error) => {
-          let errorMsg = 'Error al actualizar categoría';
+          let errorMsg = this.translate.instant('admin.settings.notifications.category_modal.notifications.update_error');
           if (error.status === HttpStatus.BAD_REQUEST) {
-            errorMsg = error.error?.error || 'Datos inválidos';
+            errorMsg = error.error?.error || this.translate.instant('admin.settings.notifications.category_modal.notifications.invalid_data');
           }
           this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
           this.categoryForm.enable();

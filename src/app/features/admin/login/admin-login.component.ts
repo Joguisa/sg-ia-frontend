@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AuthResponse } from '../../../core/models/auth';
@@ -26,7 +26,8 @@ export class AdminLoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private notification: NotificationService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.maxLength(100), this.emailValidator]],
@@ -92,14 +93,14 @@ export class AdminLoginComponent {
           this.authService.setToken(response.token);
 
           // Notificar éxito
-          this.notification.success('Inicio de sesión exitoso', NOTIFICATION_DURATION.SHORT);
+          this.notification.success(this.translate.instant('errors.login_success'), NOTIFICATION_DURATION.SHORT);
 
           // Esperar un momento para que el token se propague
           setTimeout(() => {
             // Navegar al dashboard
             this.router.navigate(['/admin/dashboard']).then((success) => {
               if (!success) {
-                this.notification.error('Error al acceder al panel de administración', NOTIFICATION_DURATION.DEFAULT);
+                this.notification.error(this.translate.instant('errors.dashboard_access_error'), NOTIFICATION_DURATION.DEFAULT);
                 this.loginForm.enable();
               }
               this.isLoading.set(false);
@@ -107,7 +108,7 @@ export class AdminLoginComponent {
           }, 100);
         } else {
           // Mostrar error si response.ok es false
-          const errorMsg = response.error || 'Credenciales inválidas. Intenta de nuevo.';
+          const errorMsg = response.error || this.translate.instant('errors.invalid_credentials');
           this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
           this.isLoading.set(false);
           this.loginForm.enable();
@@ -115,12 +116,12 @@ export class AdminLoginComponent {
       },
       error: (error) => {
         // Mensaje de error más específico según el tipo de error
-        let errorMsg = 'Hubo un problema al conectar con el servidor. Intenta de nuevo.';
+        let errorMsg = this.translate.instant('errors.server_connection_error');
 
         if (error.status === HttpStatus.UNAUTHORIZED) {
-          errorMsg = 'Credenciales inválidas. Verifica tu correo y contraseña.';
+          errorMsg = this.translate.instant('errors.check_credentials');
         } else if (error.status === 0) {
-          errorMsg = 'No se puede conectar al servidor. Verifica tu conexión a internet.';
+          errorMsg = this.translate.instant('errors.check_internet');
         } else if (error.error?.error) {
           errorMsg = error.error.error;
         }

@@ -124,6 +124,46 @@
       "quizCompleted": "You completed all the questions!",
       "quizCompletedBadge": "Quiz Completed",
       "finalDifficulty": "Final Difficulty"
+    },
+    "notifications": {
+      "board": {
+        "start_error": "Error starting game. Please try again.",
+        "invalid_session": "Error: Invalid session",
+        "completed": "Congratulations! You completed the quiz",
+        "no_questions": "Congratulations! You have completed all available questions.",
+        "no_verified_questions": "Congratulations! You have answered all available verified questions.",
+        "connection_error": "Connection error. Please check your internet connection.",
+        "select_option": "Please select an option",
+        "submit_error": "Error submitting answer",
+        "process_error": "Error processing your answer"
+      },
+      "start": {
+        "name_required": "Please enter your name",
+        "name_min_length": "Name must be at least 2 characters",
+        "name_max_length": "Name cannot exceed 50 characters",
+        "age_required": "Please enter your age",
+        "age_format": "Age must contain only numbers",
+        "age_range": "Please enter a valid age (1-120)",
+        "code_required": "Please enter the room code",
+        "code_validate": "Please validate the room code before continuing",
+        "create_error": "Error creating player",
+        "connection_error": "There was a problem connecting to the server. Try again.",
+        "code_length": "Room code must be 6 characters",
+        "code_invalid": "Invalid room code",
+        "code_validate_error": "Error validating room code"
+      },
+      "leaderboard": {
+        "load_error": "There was a problem loading the leaderboard.",
+        "no_data": "No leaderboard data available.",
+        "connection_error": "Cannot connect to server."
+      },
+      "profile": {
+        "no_id": "Player ID not found. Please register first.",
+        "load_error": "Error loading statistics.",
+        "not_found": "Player not found.",
+        "connection_error": "Cannot connect to server.",
+        "unexpected_error": "Unexpected error loading profile."
+      }
     }
   },
   "admin": {
@@ -295,7 +335,97 @@
       "easyQuestions": "Easy Questions",
       "lowestSuccessRate": "Lowest success rate",
       "highestSuccessRate": "Highest success rate",
-      "success": "Success"
+      "success": "Success",
+      "notifications": {
+        "load_rooms_error": "Error loading rooms",
+        "load_rooms_connection_error": "Connection error loading rooms",
+        "create_success": "Room created with code: {{code}}",
+        "create_error": "Error creating room",
+        "update_success": "Room updated successfully",
+        "update_error": "Error updating room",
+        "delete_success": "Room deleted successfully",
+        "delete_error": "Error deleting room",
+        "status_update_success": "Room status updated to: {{status}}",
+        "status_update_error": "Error updating status",
+        "room_detail_error": "Error loading room information",
+        "code_copied": "Code copied to clipboard",
+        "code_copy_error": "Error copying code",
+        "pdf_success": "PDF generated successfully",
+        "pdf_error": "Error generating PDF",
+        "excel_success": "Excel generated successfully",
+        "excel_error": "Error generating Excel"
+      },
+      "players": {
+        "notifications": {
+          "load_leaderboard_error": "Error loading leaderboard",
+          "load_leaderboard_connection_error": "Connection error loading leaderboard",
+          "load_players_error": "Error loading players",
+          "load_players_connection_error": "Connection error loading players",
+          "load_profile_error": "Error loading player profile",
+          "load_profile_connection_error": "Connection error loading profile"
+        }
+      },
+      "dashboard": {
+        "load_error": "There was a problem loading the dashboard.",
+        "unauthorized": "Unauthorized. Please login again.",
+        "forbidden": "Access denied. You do not have administrator permissions.",
+        "connection_error": "Cannot connect to server.",
+        "complete": "Completed",
+        "partial": "Partial"
+      },
+      "settings": {
+        "notifications": {
+          "load_error": "There was a problem loading the settings.",
+          "unauthorized": "Unauthorized. Token expired.",
+          "not_found": "Settings not found.",
+          "connection_error": "Cannot connect to server.",
+          "validation_error": "Please complete all fields correctly",
+          "save_success": "Settings updated successfully",
+          "save_error": "Error saving settings",
+          "save_error_unauthorized": "Unauthorized. Please login again.",
+          "save_error_bad_request": "Invalid data. Check values.",
+          "save_error_server": "Server error. Try again later.",
+          "load_categories_error": "Error loading categories",
+          "delete_category_id_error": "Category ID not found",
+          "delete_category_confirm": "Are you sure you want to delete category \"{{name}}\"?\n\nNOTE: Cannot delete if it has associated questions.",
+          "delete_category_success": "Category deleted successfully",
+          "delete_category_error": "Error deleting category",
+          "delete_category_associated_error": "Cannot delete: has associated questions"
+        },
+        "category_modal": {
+          "notifications": {
+            "name_required": "Category name is required",
+            "create_success": "Category created successfully",
+            "create_error": "Error creating category",
+            "update_success": "Category updated successfully",
+            "update_error": "Error updating category",
+            "id_not_found": "Category ID not found",
+            "invalid_data": "Invalid data"
+          }
+        }
+      },
+      "admins": {
+        "notifications": {
+          "load_error": "Error loading administrators",
+          "load_connection_error": "Connection error loading administrators",
+          "create_permission_error": "Only superadmins can create administrators",
+          "edit_permission_error": "Only superadmins can edit administrators",
+          "create_success": "Administrator created successfully",
+          "create_error": "Error creating administrator",
+          "update_success": "Administrator updated successfully",
+          "update_error": "Error updating administrator",
+          "status_permission_error": "Only superadmins can change status",
+          "self_status_error": "You cannot deactivate your own account",
+          "status_confirm": "Are you sure you want to {{action}} {{email}}?",
+          "status_success": "Administrator {{action}} successfully",
+          "status_error": "Error changing status",
+          "delete_permission_error": "Only superadmins can delete administrators",
+          "self_delete_error": "You cannot delete your own account",
+          "delete_confirm": "Are you sure you want to delete {{email}}? This action will deactivate the account.",
+          "delete_success": "Administrator deleted successfully",
+          "delete_error": "Error deleting administrator"
+        }
+      }
     },
     "questions": {
       "title": "Question Management",
@@ -445,6 +575,44 @@
         "importing": "Importing...",
         "success": "Questions imported successfully",
         "error": "Error importing questions"
+      },
+      "notifications": {
+        "load_error": "Error loading questions",
+        "categories_load_error": "Could not load categories, using default values",
+        "select_category": "Please select a category",
+        "enter_quantity": "Please enter the quantity",
+        "quantity_range": "Quantity must be between 1 and 50",
+        "difficulty_range": "Difficulty must be between 1 and 5",
+        "load_batch_stats_error": "Error loading batch statistics",
+        "generating": "Generating questions with AI...",
+        "generated_success": "{{count}} questions generated successfully with AI",
+        "generated_failed": "Could not generate questions. {{count}} failed.",
+        "generation_error": "Error generating questions",
+        "unauthorized": "Unauthorized. Token expired.",
+        "invalid_params_generation": "Invalid generation parameters",
+        "verified": "Question verified",
+        "unverified": "Verification removed",
+        "verify_error": "Error changing verification status",
+        "no_pending": "No questions pending verification",
+        "bulk_verify_success": "{{count}} questions verified",
+        "bulk_verify_error": "Error verifying questions",
+        "no_pending_batch": "No questions pending in this batch",
+        "verify_batch_confirm": "Verify the {{count}} pending question(s) in this batch?",
+        "verify_batch_success": "{{count}} questions verified successfully",
+        "verify_batch_error": "Error verifying batch",
+        "delete_success": "Question deleted successfully",
+        "delete_error": "Error deleting the question",
+        "csv_type_error": "The file must be CSV",
+        "csv_size_error": "The file cannot exceed 5MB",
+        "csv_importing": "Importing CSV file...",
+        "csv_import_partial": "Partial import: {{imported}} imported, {{errors}} errors",
+        "csv_import_success": "{{imported}} questions imported successfully",
+        "csv_import_error": "Error importing CSV",
+        "csv_invalid": "Invalid CSV file",
+        "load_full_error": "Error loading the question",
+        "form_error": "Please correct the form errors",
+        "update_success": "Question updated successfully. Status: Pending verification.",
+        "update_error": "Error updating the question"
       }
     },
     "batches": {
@@ -626,11 +794,34 @@
       "deactivate": "Deactivate",
       "delete": "Delete",
       "noPermissions": "No permissions",
+      "listTitle": "Administrators List",
       "noAdminsFound": "No administrators found matching",
       "noAdminsRegistered": "No administrators registered",
       "total": "Total:",
       "of": "of",
-      "administrators": "administrator(s)"
+      "administrators": "administrator(s)",
+      "notifications": {
+        "create_success": "Administrator created successfully",
+        "create_error": "Error creating administrator",
+        "update_success": "Administrator updated successfully",
+        "update_error": "Error updating administrator",
+        "create_permission_error": "You do not have permission to create administrators",
+        "edit_permission_error": "You do not have permission to edit administrators",
+        "status_permission_error": "You do not have permission to change status",
+        "delete_permission_error": "You do not have permission to delete administrators",
+        "self_status_error": "You cannot change your own status",
+        "self_delete_error": "You cannot delete your own account",
+        "status_confirm": "Are you sure you want to {{action}} user {{email}}?",
+        "delete_confirm": "Are you sure you want to delete user {{email}}?",
+        "status_success": "Status {{action}} successfully",
+        "status_error": "Error changing status",
+        "delete_success": "Administrator deleted successfully",
+        "delete_error": "Error deleting administrator",
+        "load_error": "Error loading administrators",
+        "load_connection_error": "Connection error loading administrators",
+        "superadmin_status_error": "Cannot change the status of another Super Admin",
+        "superadmin_delete_error": "Cannot delete another Super Admin"
+      }
     },
     "login": {
       "title": "Administration Panel",
@@ -683,7 +874,17 @@
     "network": "Connection error. Please try again.",
     "server": "Server error. Please try later.",
     "notFound": "Resource not found",
-    "unauthorized": "Unauthorized. Please log in again."
+    "unauthorized": "Unauthorized. Please log in again.",
+    "generic": "An unexpected error occurred",
+    "api_request_failed": "Error processing request",
+    "network_error": "Connection error",
+    "no_response": "No response received from server",
+    "login_success": "Login successful",
+    "dashboard_access_error": "Error accessing the dashboard",
+    "invalid_credentials": "Invalid credentials. Please try again.",
+    "server_connection_error": "There was a problem connecting to the server. Please try again.",
+    "check_credentials": "Invalid credentials. Please check your email and password.",
+    "check_internet": "Cannot connect to server. Please check your internet connection."
   },
   "leaderboard": {
     "title": "Global Leaderboard",

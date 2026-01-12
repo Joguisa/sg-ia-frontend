@@ -4,13 +4,14 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { TabsComponent, Tab } from '../../../shared/tabs/tabs.component';
 import { GameService } from '../../../core/services/game.service';
 import { PlayerService } from '../../../core/services/player.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { NOTIFICATION_DURATION } from '../../../core/constants/notification-config.const';
 
 import { LeaderboardEntry } from '../../../core/models/game/leaderboard.interface';
 import { Player } from '../../../core/models/player/player.interface';
@@ -95,6 +96,7 @@ export class AdminPlayersComponent implements OnInit {
     private playerService: PlayerService,
     private authService: AuthService,
     private notification: NotificationService,
+    private translate: TranslateService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -161,12 +163,12 @@ export class AdminPlayersComponent implements OnInit {
           this.leaderboardData.set(response.leaderboard);
           this.buildLeaderboardChart(response.leaderboard.slice(0, 10)); // Top 10
         } else {
-          this.notification.error('Error al cargar el leaderboard');
+          this.notification.error(response.error || this.translate.instant('admin.players.notifications.load_leaderboard_error'), NOTIFICATION_DURATION.DEFAULT);
         }
         this.isLoadingLeaderboard.set(false);
       },
       error: () => {
-        this.notification.error('Error de conexión al cargar el leaderboard');
+        this.notification.error(this.translate.instant('admin.players.notifications.load_leaderboard_connection_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoadingLeaderboard.set(false);
       }
     });
@@ -210,12 +212,12 @@ export class AdminPlayersComponent implements OnInit {
         if (response.ok && response.players) {
           this.allPlayers.set(response.players);
         } else {
-          this.notification.error('Error al cargar los jugadores');
+          this.notification.error(response.error || this.translate.instant('admin.players.notifications.load_players_error'), NOTIFICATION_DURATION.DEFAULT);
         }
         this.isLoadingPlayers.set(false);
       },
       error: () => {
-        this.notification.error('Error de conexión al cargar jugadores');
+        this.notification.error(this.translate.instant('admin.players.notifications.load_players_connection_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoadingPlayers.set(false);
       }
     });
@@ -252,12 +254,12 @@ export class AdminPlayersComponent implements OnInit {
             this.buildProfileChart(response.topics);
           }
         } else {
-          this.notification.error('Error al cargar el perfil del jugador');
+          this.notification.error(response.error || this.translate.instant('admin.players.notifications.load_profile_error'), NOTIFICATION_DURATION.DEFAULT);
         }
         this.isLoadingProfile.set(false);
       },
       error: () => {
-        this.notification.error('Error de conexión al cargar el perfil');
+        this.notification.error(this.translate.instant('admin.players.notifications.load_profile_connection_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoadingProfile.set(false);
       }
     });
