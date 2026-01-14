@@ -27,17 +27,7 @@
   padding: 2px 6px;
 }
 
-.ml-2 {
-  margin-left: 0.5rem;
-}
-
-.text-muted {
-  color: #6c757d;
-}
-
-.text-center {
-  text-align: center;
-}
+/* Utility classes (.ml-2, .text-muted, .text-center) are now in admin-styles.css */
 
 .action-buttons {
   display: flex;

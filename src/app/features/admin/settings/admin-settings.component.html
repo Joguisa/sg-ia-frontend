@@ -344,21 +344,17 @@
               <p class="category-description">{{ category.description }}</p>
               }
             </div>
-            <div class="category-actions-buttons">
-              <button class="admin-btn admin-btn-secondary"
-                style="padding: 8px; width: 32px; height: 32px; min-width: unset;"
-                (click)="openEditCategoryModal(category)" [disabled]="isDeletingCategory() === category.id"
-                [title]="'admin.settings.editCategory' | translate">
+            <div class="action-buttons">
+              <button class="btn-action btn-edit" (click)="openEditCategoryModal(category)"
+                [disabled]="isDeletingCategory() === category.id" [title]="'admin.settings.editCategory' | translate">
                 <i class="fas fa-edit"></i>
               </button>
-              <button class="admin-btn admin-btn-secondary"
-                style="padding: 8px; width: 32px; height: 32px; min-width: unset; color: #e74c3c;"
-                (click)="deleteCategory(category)" [disabled]="isDeletingCategory() === category.id"
-                [title]="'admin.settings.deleteCategory' | translate">
+              <button class="btn-action btn-delete" (click)="deleteCategory(category)"
+                [disabled]="isDeletingCategory() === category.id" [title]="'admin.settings.deleteCategory' | translate">
                 @if (isDeletingCategory() !== category.id) {
                 <i class="fas fa-trash"></i>
                 } @else {
-                <span class="admin-spinner admin-spinner-dark" style="width: 14px; height: 14px;"></span>
+                <span class="spinner-small"></span>
                 }
               </button>
             </div>

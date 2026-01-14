@@ -385,6 +385,305 @@
 }
 
 /* ============================================================================
+   UTILITY CLASSES - Shared across all admin components
+   ============================================================================ */
+
+/* Text Colors */
+.text-primary {
+    color: #667eea !important;
+}
+
+.text-danger {
+    color: #e74c3c !important;
+}
+
+.text-success {
+    color: #27ae60 !important;
+}
+
+.text-warning {
+    color: #f39c12 !important;
+}
+
+.text-info {
+    color: #3498db !important;
+}
+
+.text-muted {
+    color: #95a5a6 !important;
+}
+
+.text-white {
+    color: white !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Font Sizes */
+.fs-2 {
+    font-size: 18px;
+}
+
+.fs-3 {
+    font-size: 24px;
+}
+
+.fs-2x {
+    font-size: 24px;
+}
+
+.fs-3x {
+    font-size: 32px;
+}
+
+/* Margins */
+.ml-2 {
+    margin-left: 0.5rem;
+}
+
+.mr-2 {
+    margin-right: 0.5rem;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.mb-5 {
+    margin-bottom: 2rem;
+}
+
+.me-2 {
+    margin-right: 8px !important;
+}
+
+/* ============================================================================
+   LOADING STATES - Shared across all admin components
+   ============================================================================ */
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #6b7280;
+    min-height: 200px;
+}
+
+.loading-container p {
+    margin: 16px 0 0;
+    font-size: 14px;
+}
+
+/* ============================================================================
+   EMPTY / NO DATA STATES - Shared across all admin components
+   ============================================================================ */
+
+.empty-state,
+.no-data {
+    text-align: center;
+    padding: 60px 20px;
+    color: #95a5a6;
+}
+
+.empty-state i,
+.no-data i {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+    color: #d1d5db;
+}
+
+.empty-state h3,
+.no-data h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.empty-state p,
+.no-data p {
+    margin: 0;
+    font-size: 14px;
+    color: #95a5a6;
+}
+
+.empty-state span,
+.no-data span {
+    font-size: 14px;
+    color: #95a5a6;
+}
+
+/* ============================================================================
+   DIFFICULTY BADGES - Shared colors for question difficulty
+   ============================================================================ */
+
+.difficulty-badge {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 14px;
+}
+
+.difficulty-1 {
+    background: #27ae60;
+}
+
+.difficulty-2 {
+    background: #3498db;
+}
+
+.difficulty-3 {
+    background: #f39c12;
+}
+
+.difficulty-4 {
+    background: #e74c3c;
+}
+
+.difficulty-5 {
+    background: #c0392b;
+}
+
+/* ============================================================================
+   TABLE STYLES - Shared across all admin components
+   ============================================================================ */
+
+/* Table Container */
+.table-container,
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Base Table Card */
+.table-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    margin-bottom: 30px;
+}
+
+/* Admin Table */
+.admin-table,
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.admin-table thead,
+.data-table thead {
+    background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+}
+
+.admin-table th,
+.data-table th {
+    padding: 14px 12px;
+    text-align: left;
+    font-weight: 700;
+    color: #2c3e50;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e8ecf1;
+    white-space: nowrap;
+}
+
+.admin-table td,
+.data-table td {
+    padding: 14px 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #ecf0f1;
+    color: #4b5563;
+}
+
+.admin-table tbody tr,
+.data-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.admin-table tbody tr:hover,
+.data-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* ============================================================================
+   CHART CONTAINER - Shared across rooms/players/dashboard
+   ============================================================================ */
+
+.chart-container {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    height: 400px;
+}
+
+/* ============================================================================
+   ACCURACY / SUCCESS BADGES - Shared across rooms/questions/dashboard
+   ============================================================================ */
+
+.accuracy-badge,
+.success-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.accuracy-badge.high,
+.success-badge.high {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+}
+
+.accuracy-badge.medium,
+.success-badge.medium {
+    background: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+}
+
+.accuracy-badge.low,
+.success-badge.low {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+/* ============================================================================
+   CODE BLOCKS - For displaying IDs and codes
+   ============================================================================ */
+
+code {
+    background: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Courier New', monospace;
+    color: #667eea;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+/* ============================================================================
    CARDS - Shared across all admin components
    ============================================================================ */
 

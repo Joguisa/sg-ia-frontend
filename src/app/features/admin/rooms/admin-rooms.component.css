@@ -1,48 +1,4 @@
-.btn-back {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-back:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0;
-}
-
-.btn-logout {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-}
-
-.btn-logout:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
+/* Header button styles (.btn-back, .btn-logout) are now in admin-styles.css */
 /* ========== TAB CONTENT ========== */
 .tab-content {
   padding: 30px;
@@ -66,13 +22,9 @@
 
 /* Button styles are now consolidated in admin-styles.css */
 
-/* ========== LOADING & EMPTY STATES ========== */
+/* ========== LOADING & EMPTY STATES (base in admin-styles.css) ========== */
+/* Component-specific overrides only */
 .loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
   color: #6b7280;
 }
 
@@ -663,7 +615,7 @@
   display: block;
 }
 
-/* ========== DATA TABLES ========== */
+/* ========== DATA TABLES (base in admin-styles.css) ========== */
 .data-section {
   background: white;
   border-radius: 12px;
@@ -681,38 +633,7 @@
   gap: 10px;
 }
 
-.table-container {
-  overflow-x: auto;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.data-table th,
-.data-table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.data-table th {
-  background: #f9fafb;
-  font-weight: 600;
-  color: #374151;
-  font-size: 13px;
-  text-transform: uppercase;
-}
-
-.data-table td {
-  color: #4b5563;
-  font-size: 14px;
-}
-
-.data-table tbody tr:hover {
-  background: #f9fafb;
-}
+/* Table styles now in admin-styles.css */
 
 .question-text {
   max-width: 400px;

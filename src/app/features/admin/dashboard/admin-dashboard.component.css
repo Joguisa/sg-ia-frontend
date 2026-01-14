@@ -1,66 +1,7 @@
 /*============================================================================
-  ADMIN DASHBOARD - Main Container
+  ADMIN DASHBOARD - Main Container (uses admin-container from admin-styles.css)
 ============================================================================ */
-.admin-dashboard {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-/*============================================================================
-  HEADER WITH LOGOUT
-============================================================================ */
-.dashboard-header {
-  background: linear-gradient(90deg, #0f3460 0%, #1a1a2e 100%);
-  padding: 30px 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-title {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex: 1;
-  color: white;
-}
-
-.header-title i {
-  font-size: 32px;
-  line-height: 1;
-}
-
-.header-title h1 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  color: white;
-}
-
-.header-subtitle {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 500;
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-}
-
+/* btn-logout styling for dashboard */
 .btn-logout {
   padding: 10px 20px;
   background: rgba(255, 59, 48, 0.9);
@@ -86,37 +27,28 @@
   font-size: 16px;
 }
 
+/* header-subtitle override for dashboard */
+.header-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
 /*============================================================================
-  LOADING STATE
+  LOADING STATE - Component-specific (base in admin-styles.css)
 ============================================================================ */
 .loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   min-height: 500px;
-  gap: 20px;
 }
 
 .spinner {
-  width: 50px;
-  height: 50px;
   border: 4px solid rgba(255, 255, 255, 0.2);
   border-top-color: #00bcd4;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .loading-text {
   color: rgba(255, 255, 255, 0.8);
-  font-size: 16px;
-  font-weight: 500;
 }
 
 /*============================================================================
@@ -530,11 +462,8 @@ button.btn-action i {
   color: #e74c3c;
 }
 
+/* Base .no-data is in admin-styles.css */
 .no-data {
-  text-align: center;
-  color: #95a5a6;
-  font-size: 14px;
-  padding: 30px 20px;
   background: #f8f9fa;
   border-radius: 8px;
 }
@@ -563,30 +492,7 @@ button.btn-action i {
   font-size: 14px;
 }
 
-/*============================================================================
-  UTILITY CLASSES
-============================================================================ */
-.text-white {
-  color: white !important;
-}
-
-.text-danger {
-  color: #e74c3c !important;
-}
-
-.text-success {
-  color: #27ae60 !important;
-}
-
-.fs-2x {
-  font-size: 24px;
-  line-height: 1;
-}
-
-.fs-3x {
-  font-size: 32px;
-  line-height: 1;
-}
+/* Utility classes (.text-*, .fs-*) are now in admin-styles.css */
 
 /*============================================================================
   RESPONSIVE DESIGN
@@ -611,16 +517,16 @@ button.btn-action i {
 }
 
 @media (max-width: 768px) {
-  .header-content {
+  .admin-header-content {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .header-title h1 {
+  .admin-header-title h1 {
     font-size: 24px;
   }
 
-  .header-actions {
+  .admin-header-actions {
     width: 100%;
   }
 
@@ -667,11 +573,11 @@ button.btn-action i {
 }
 
 @media (max-width: 480px) {
-  .header-title h1 {
+  .admin-header-title h1 {
     font-size: 20px;
   }
 
-  .header-title {
+  .admin-header-title {
     gap: 12px;
   }
 
@@ -830,9 +736,7 @@ button.btn-action i {
   color: #7f8c8d;
 }
 
-.text-center {
-  text-align: center;
-}
+/* .text-center is in admin-styles.css */
 
 .progress-bar-container {
   display: flex;

@@ -16,7 +16,10 @@ import { LanguageSelectorComponent } from '../../../shared/components/language-s
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe, LanguageSelectorComponent],
   templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.css']
+  styleUrls: [
+    '../shared/styles/admin-styles.css',
+    './admin-dashboard.component.css'
+  ]
 })
 export class AdminDashboardComponent implements OnInit {
   // Helper para usar en el template

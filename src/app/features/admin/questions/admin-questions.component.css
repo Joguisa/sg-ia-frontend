@@ -1,87 +1,11 @@
-/* ============================================================================
-   HEADER
-   ============================================================================ */
-.questions-header {
-  background: linear-gradient(90deg, #0f3460 0%, #1a1a2e 100%);
-  padding: 30px 20px;
-  border-radius: 8px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-title {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  color: white;
-  flex: 1;
-}
-
-.header-title i {
-  font-size: 32px;
-  line-height: 1;
-}
-
-.header-text h1 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-  color: white;
-}
-
-.header-subtitle {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.btn-sm {
-  padding: 10px 16px;
-  font-size: 13px;
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.btn-danger {
-  background: rgba(244, 67, 54, 0.9);
-  color: white;
-  border: none;
-}
-
-.btn-danger:hover {
-  background: rgba(244, 67, 54, 1);
-}
+/* Header styles (.questions-header, .header-*, .btn-sm, .btn-secondary, .btn-danger) 
+   are now using admin-header classes from admin-styles.css */
 
 /* ============================================================================
-   LOADING
+   LOADING - Component-specific override
    ============================================================================ */
+/* Base .loading-container is in admin-styles.css */
 .loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   min-height: 400px;
   gap: 20px;
   color: white;
@@ -348,21 +272,9 @@
 }
 
 /* ============================================================================
-   TABLE CARD
+   TABLE CARD - Base styles in admin-styles.css
    ============================================================================ */
-.table-card {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  margin-bottom: 30px;
-}
-
-.table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
+/* Component-specific table styles */
 .questions-table {
   width: 100%;
   border-collapse: collapse;
@@ -432,15 +344,7 @@
   vertical-align: middle;
 }
 
-code {
-  background: #f8f9fa;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-family: 'Monaco', 'Courier New', monospace;
-  color: #667eea;
-  font-weight: 600;
-  font-size: 12px;
-}
+/* code styling is now in admin-styles.css */
 
 .question-text {
   color: #2c3e50;
@@ -463,38 +367,7 @@ code {
   color: #667eea;
 }
 
-.difficulty-badge {
-  display: inline-block;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: white;
-  font-size: 14px;
-}
-
-.difficulty-1 {
-  background: #27ae60;
-}
-
-.difficulty-2 {
-  background: #3498db;
-}
-
-.difficulty-3 {
-  background: #f39c12;
-}
-
-.difficulty-4 {
-  background: #e74c3c;
-}
-
-.difficulty-5 {
-  background: #c0392b;
-}
+/* difficulty-badge and difficulty-* colors are now in admin-styles.css */
 
 .status-badge {
   display: inline-flex;
@@ -663,52 +536,7 @@ code {
   font-size: 14px;
 }
 
-/* ============================================================================
-   UTILITY CLASSES
-   ============================================================================ */
-.text-primary {
-  color: #667eea !important;
-}
-
-.text-danger {
-  color: #e74c3c !important;
-}
-
-.text-success {
-  color: #27ae60 !important;
-}
-
-.text-warning {
-  color: #f39c12 !important;
-}
-
-.text-info {
-  color: #3498db !important;
-}
-
-.text-muted {
-  color: #95a5a6 !important;
-}
-
-.fs-2 {
-  font-size: 18px;
-}
-
-.fs-3 {
-  font-size: 24px;
-}
-
-.fs-2x {
-  font-size: 24px;
-}
-
-.fs-3x {
-  font-size: 32px;
-}
-
-.me-2 {
-  margin-right: 8px !important;
-}
+/* Utility classes (.text-*, .fs-*, .me-*) are now in admin-styles.css */
 
 /* ============================================================================
    RESPONSIVE DESIGN

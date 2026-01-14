@@ -1,13 +1,15 @@
-<div class="admin-dashboard">
+<div class="admin-container">
   <!-- Header with Logout -->
-  <div class="dashboard-header">
-    <div class="header-content">
-      <div class="header-title">
+  <div class="admin-header">
+    <div class="admin-header-content">
+      <div class="admin-header-title">
         <i class="fas fa-shield"></i>
-        <h1>{{ 'admin.dashboard.title' | translate }}</h1>
-        <p class="header-subtitle">{{ 'admin.dashboard.subtitle' | translate }}</p>
+        <div class="admin-header-text">
+          <h1>{{ 'admin.dashboard.title' | translate }}</h1>
+          <p class="header-subtitle">{{ 'admin.dashboard.subtitle' | translate }}</p>
+        </div>
       </div>
-      <div class="header-actions">
+      <div class="admin-header-actions">
         <app-language-selector></app-language-selector>
         <button class="btn btn-logout" (click)="logout()">
           <i class="fas fa-sign-out-alt"></i>
@@ -365,7 +367,8 @@
     <div class="dashboard-footer">
       <p class="footer-text">
         <i class="fas fa-circle-info"></i>
-        {{ 'admin.dashboard.statsUpdatedRealtime' | translate }} | {{ 'admin.dashboard.lastLoad' | translate }}: {{ (isLoading() ? ('admin.common.loading' | translate) : ('admin.dashboard.updated' | translate)) }}
+        {{ 'admin.dashboard.statsUpdatedRealtime' | translate }} | {{ 'admin.dashboard.lastLoad' | translate }}: {{
+        (isLoading() ? ('admin.common.loading' | translate) : ('admin.dashboard.updated' | translate)) }}
       </p>
     </div>
   </div>
