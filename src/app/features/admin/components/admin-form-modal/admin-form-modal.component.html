@@ -25,7 +25,7 @@
                             placeholder="ejemplo@dominio.com" [class.invalid]="email?.invalid && email?.touched" />
                     </div>
                     @if (email?.invalid && email?.touched) {
-                    <div class="error-message">
+                    <div class="invalid-feedback">
                         @if (email?.errors?.['required']) {
                         {{ 'errors.required' | translate }}
                         }
@@ -54,7 +54,7 @@
                             [class.invalid]="password?.invalid && password?.touched" />
                     </div>
                     @if (password?.invalid && password?.touched) {
-                    <div class="error-message">
+                    <div class="invalid-feedback">
                         @if (password?.errors?.['required']) {
                         {{ 'errors.required' | translate }}
                         }
@@ -79,37 +79,33 @@
                         </select>
                     </div>
                     @if (role?.invalid && role?.touched) {
-                    <div class="error-message">
+                    <div class="invalid-feedback">
                         {{ 'errors.required' | translate }}
                     </div>
                     }
                 </div>
 
-                <!-- Info Box -->
                 <div class="info-box">
                     <i class="fas fa-info-circle"></i>
                     <div>
                         <strong>{{ 'admin.admins.role' | translate }}:</strong>
                         <ul>
-                            <li><strong>{{ 'admin.admins.roles.admin' | translate }}:</strong> Puede ver y gestionar
-                                preguntas, jugadores, salas.</li>
-                            <li><strong>{{ 'admin.admins.roles.superadmin' | translate }}:</strong> Tiene todos los
-                                permisos incluidos gestión de
-                                administradores.</li>
+                            <li><strong>{{ 'admin.admins.roles.admin' | translate }}:</strong> {{
+                                'admin.admins.roleDescriptions.admin' | translate }}</li>
+                            <li><strong>{{ 'admin.admins.roles.superadmin' | translate }}:</strong> {{
+                                'admin.admins.roleDescriptions.superadmin' | translate }}</li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
-                    <button type="button" class="admin-btn admin-btn-secondary" (click)="onCancel()"
-                        [disabled]="isSubmitting()">
-                        <i class="fas fa-times"></i> {{ 'common.cancel' | translate }}
+                    <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">
+                        {{ 'common.cancel' | translate }}
                     </button>
-                    <button type="submit" class="admin-btn admin-btn-primary"
-                        [disabled]="adminForm.invalid || isSubmitting()">
+                    <button type="submit" class="btn btn-primary" [disabled]="adminForm.invalid || isSubmitting()">
                         @if (isSubmitting()) {
-                        <i class="fas fa-spinner fa-spin"></i> {{ 'admin.common.saving' | translate }}
+                        <span class="spinner-small"></span> {{ 'admin.common.saving' | translate }}
                         } @else {
                         <i class="fas fa-save"></i>
                         {{ (mode === 'create' ? 'common.create' : 'common.save') | translate }}

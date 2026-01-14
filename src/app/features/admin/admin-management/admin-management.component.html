@@ -43,20 +43,18 @@
 
       <div class="admin-card-body">
         <!-- Toolbar & Search -->
-        <div class="row mb-4">
-          <div class="col-md-6">
-            <div class="search-input-wrapper">
-              <i class="fas fa-search"></i>
-              <input type="text" class="search-input" [placeholder]="'admin.admins.searchPlaceholder' | translate"
-                [value]="searchQuery()" (input)="onSearchChange($event)" />
-            </div>
+        <div class="search-container mb-5">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" [placeholder]="'admin.admins.searchPlaceholder' | translate"
+              [value]="searchQuery()" (input)="onSearchChange($event)" />
           </div>
         </div>
 
         <!-- Loading State -->
         @if (isLoading()) {
-        <div class="admin-loading-container">
-          <div class="admin-spinner"></div>
+        <div class="admin-loading-container admin-loading-container-dark">
+          <div class="admin-spinner admin-spinner-dark"></div>
           <p>{{ 'admin.admins.loadingAdmins' | translate }}</p>
         </div>
         }
@@ -109,15 +107,14 @@
                   <div class="action-buttons">
                     @if (isSuperAdmin()) {
                     <!-- Edit Button -->
-                    <button class="admin-btn admin-btn-secondary" (click)="openEditModal(admin)"
-                      [title]="'admin.admins.edit' | translate" style="padding: 6px 12px;">
+                    <button class="btn-action btn-edit" (click)="openEditModal(admin)"
+                      [title]="'admin.admins.edit' | translate">
                       <i class="fas fa-edit"></i>
                     </button>
 
                     <!-- Toggle Status Button -->
-                    <button class="admin-btn" [class.admin-btn-primary]="!admin.is_active"
-                      [class.admin-btn-secondary]="admin.is_active" [disabled]="admin.id === currentUser()?.id"
-                      (click)="confirmToggleStatus(admin)" style="padding: 6px 12px;"
+                    <button class="btn-action btn-toggle" [disabled]="admin.id === currentUser()?.id"
+                      (click)="confirmToggleStatus(admin)"
                       [title]="admin.is_active ? ('admin.admins.deactivate' | translate) : ('admin.admins.activate' | translate)">
                       @if (admin.is_active) {
                       <i class="fas fa-ban"></i>
@@ -127,9 +124,8 @@
                     </button>
 
                     <!-- Delete Button -->
-                    <button class="admin-btn admin-btn-danger" [disabled]="admin.id === currentUser()?.id"
-                      (click)="confirmDelete(admin)" [title]="'admin.admins.delete' | translate"
-                      style="padding: 6px 12px;">
+                    <button class="btn-action btn-delete" [disabled]="admin.id === currentUser()?.id"
+                      (click)="confirmDelete(admin)" [title]="'admin.admins.delete' | translate">
                       <i class="fas fa-trash"></i>
                     </button>
                     } @else {

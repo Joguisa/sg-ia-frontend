@@ -26,11 +26,12 @@ import {
 } from '../../../core/models/room';
 
 import { AdminCategory } from '../../../core/models/admin';
+import { RoomFormModalComponent } from '../components/room-form-modal/room-form-modal.component';
 
 @Component({
   selector: 'app-admin-rooms',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TabsComponent, BaseChartDirective, TranslatePipe],
+  imports: [CommonModule, TabsComponent, BaseChartDirective, TranslatePipe, RoomFormModalComponent],
   templateUrl: './admin-rooms.component.html',
   styleUrls: ['../shared/styles/admin-styles.css', './admin-rooms.component.css']
 })
@@ -74,9 +75,7 @@ export class AdminRoomsComponent implements OnInit {
 
   // Create/Edit Modal
   showModal = signal<boolean>(false);
-  isEditing = signal<boolean>(false);
-  editingRoomId = signal<number | null>(null);
-  roomForm!: FormGroup;
+  roomToEdit = signal<GameRoom | null>(null);
   isSaving = signal<boolean>(false);
 
   // Categories for filters
@@ -102,11 +101,11 @@ export class AdminRoomsComponent implements OnInit {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: true, position: 'top' },
-      title: { display: true, text: 'Rendimiento de Jugadores' }
+      title: { display: true, text: '' }
     },
     scales: {
-      y: { beginAtZero: true, max: 100, title: { display: true, text: 'Precisión (%)' } },
-      x: { title: { display: true, text: 'Jugador' } }
+      y: { beginAtZero: true, max: 100, title: { display: true, text: '' } },
+      x: { title: { display: true, text: '' } }
     }
   };
   playerStatsChartType: ChartType = 'bar';
@@ -117,7 +116,7 @@ export class AdminRoomsComponent implements OnInit {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: true, position: 'right' },
-      title: { display: true, text: 'Respuestas por Categoría' }
+      title: { display: true, text: '' }
     }
   };
   categoryStatsChartType: ChartType = 'doughnut';
@@ -133,13 +132,13 @@ export class AdminRoomsComponent implements OnInit {
     public languageService: LanguageService,
     private translate: TranslateService,
     private router: Router,
-    private route: ActivatedRoute,
-    private fb: FormBuilder
-  ) {
-    this.initForm();
-  }
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
+    // Initialize translations for charts
+    this.updateChartTranslations();
+
     // Initialize translated tabs
     this.initTabs();
 
@@ -165,17 +164,6 @@ export class AdminRoomsComponent implements OnInit {
 
     // Load initial data
     this.loadRooms();
-  }
-
-  private initForm(): void {
-    this.roomForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      description: ['', [Validators.maxLength(255)]],
-      max_players: [50, [Validators.required, Validators.min(1), Validators.max(500)]],
-      language: ['es', [Validators.required]],
-      filter_categories: [[]],
-      filter_difficulties: [[]]
-    });
   }
 
   onTabChange(tabId: string): void {
@@ -238,125 +226,28 @@ export class AdminRoomsComponent implements OnInit {
   // ============================================================================
 
   openCreateModal(): void {
-    this.isEditing.set(false);
-    this.editingRoomId.set(null);
-    this.roomForm.reset({
-      name: '',
-      description: '',
-      max_players: 50,
-      language: 'es',
-      filter_categories: [],
-      filter_difficulties: []
-    });
+    this.roomToEdit.set(null);
     this.showModal.set(true);
   }
 
   openEditModal(room: GameRoom): void {
-    this.isEditing.set(true);
-    this.editingRoomId.set(room.id);
-    this.roomForm.patchValue({
-      name: room.name,
-      description: room.description || '',
-      max_players: room.max_players,
-      language: room.language || 'es',
-      filter_categories: room.filter_categories || [],
-      filter_difficulties: room.filter_difficulties || []
-    });
+    this.roomToEdit.set(room);
     this.showModal.set(true);
   }
 
   closeModal(): void {
     this.showModal.set(false);
-    this.isEditing.set(false);
-    this.editingRoomId.set(null);
+    this.roomToEdit.set(null);
+    this.isSaving.set(false);
   }
 
-  onCategoryToggle(categoryId: number, event: Event): void {
-    const checkbox = event.target as HTMLInputElement;
-    const current: number[] = this.roomForm.get('filter_categories')?.value || [];
-
-    if (checkbox.checked) {
-      this.roomForm.patchValue({ filter_categories: [...current, categoryId] });
-    } else {
-      this.roomForm.patchValue({ filter_categories: current.filter(id => id !== categoryId) });
-    }
-  }
-
-  onDifficultyToggle(difficulty: number, event: Event): void {
-    const checkbox = event.target as HTMLInputElement;
-    const current: number[] = this.roomForm.get('filter_difficulties')?.value || [];
-
-    if (checkbox.checked) {
-      this.roomForm.patchValue({ filter_difficulties: [...current, difficulty] });
-    } else {
-      this.roomForm.patchValue({ filter_difficulties: current.filter(d => d !== difficulty) });
-    }
-  }
-
-  /**
-   * Previene la entrada de caracteres no numéricos en el campo max_players
-   */
-  preventNonNumeric(event: KeyboardEvent): void {
-    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
-    if (allowedKeys.includes(event.key)) {
-      return;
-    }
-
-    // Solo permitir dígitos 0-9
-    if (!/^\d$/.test(event.key)) {
-      event.preventDefault();
-    }
-  }
-
-  /**
-   * Limpia caracteres no numéricos del campo max_players al escribir
-   */
-  onMaxPlayersInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    // Eliminar todo lo que no sea dígito
-    const cleanValue = input.value.replace(/\D/g, '');
-
-    // Actualizar el valor si cambió
-    if (input.value !== cleanValue) {
-      input.value = cleanValue;
-      this.roomForm.get('max_players')?.setValue(cleanValue ? parseInt(cleanValue, 10) : null);
-    } else if (cleanValue) {
-      // Convertir a número para los validadores
-      this.roomForm.get('max_players')?.setValue(parseInt(cleanValue, 10));
-    }
-  }
-
-  isCategorySelected(categoryId: number): boolean {
-    const selected: number[] = this.roomForm.get('filter_categories')?.value || [];
-    return selected.includes(categoryId);
-  }
-
-  isDifficultySelected(difficulty: number): boolean {
-    const selected: number[] = this.roomForm.get('filter_difficulties')?.value || [];
-    return selected.includes(difficulty);
-  }
-
-  saveRoom(): void {
-    if (this.roomForm.invalid) {
-      this.roomForm.markAllAsTouched();
-      return;
-    }
-
+  onSaveRoom(payload: CreateRoomPayload | UpdateRoomPayload): void {
     this.isSaving.set(true);
-    const formValue = this.roomForm.value;
+    const room = this.roomToEdit();
 
-    if (this.isEditing()) {
+    if (room) {
       // Update existing room
-      const payload: UpdateRoomPayload = {
-        name: formValue.name,
-        description: formValue.description || null,
-        max_players: formValue.max_players,
-        language: formValue.language,
-        filter_categories: formValue.filter_categories.length > 0 ? formValue.filter_categories : null,
-        filter_difficulties: formValue.filter_difficulties.length > 0 ? formValue.filter_difficulties : null
-      };
-
-      this.roomService.updateRoom(this.editingRoomId()!, payload).subscribe({
+      this.roomService.updateRoom(room.id, payload as UpdateRoomPayload).subscribe({
         next: (response) => {
           if (response.ok) {
             this.notification.success(this.translate.instant('admin.rooms.notifications.update_success'), NOTIFICATION_DURATION.SHORT);
@@ -374,16 +265,7 @@ export class AdminRoomsComponent implements OnInit {
       });
     } else {
       // Create new room
-      const payload: CreateRoomPayload = {
-        name: formValue.name,
-        description: formValue.description || undefined,
-        max_players: formValue.max_players,
-        language: formValue.language,
-        filter_categories: formValue.filter_categories.length > 0 ? formValue.filter_categories : undefined,
-        filter_difficulties: formValue.filter_difficulties.length > 0 ? formValue.filter_difficulties : undefined
-      };
-
-      this.roomService.createRoom(payload).subscribe({
+      this.roomService.createRoom(payload as CreateRoomPayload).subscribe({
         next: (response) => {
           if (response.ok && response.room) {
             this.notification.success(this.translate.instant('admin.rooms.notifications.create_success', { code: response.room.room_code }), NOTIFICATION_DURATION.DEFAULT);
@@ -427,7 +309,7 @@ export class AdminRoomsComponent implements OnInit {
   }
 
   deleteRoom(room: GameRoom): void {
-    if (!confirm(`¿Estás seguro de eliminar la sala "${room.name}"? Esta acción no se puede deshacer.`)) {
+    if (!confirm(this.translate.instant('admin.rooms.deleteConfirmDynamic', { name: room.name }))) {
       return;
     }
 
@@ -568,7 +450,7 @@ export class AdminRoomsComponent implements OnInit {
       labels,
       datasets: [
         {
-          label: 'Precisión (%)',
+          label: this.translate.instant('admin.rooms.charts.accuracy'),
           data: accuracy,
           backgroundColor: 'rgba(102, 126, 234, 0.6)',
           borderColor: 'rgba(102, 126, 234, 1)',
@@ -682,12 +564,7 @@ export class AdminRoomsComponent implements OnInit {
   // ============================================================================
 
   getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      active: 'Activa',
-      paused: 'Pausada',
-      closed: 'Cerrada'
-    };
-    return labels[status] || status;
+    return `admin.rooms.status.${status}`;
   }
 
   getStatusClass(status: string): string {
@@ -700,14 +577,7 @@ export class AdminRoomsComponent implements OnInit {
   }
 
   getDifficultyLabel(difficulty: number): string {
-    const labels: Record<number, string> = {
-      1: 'Muy Fácil',
-      2: 'Fácil',
-      3: 'Normal',
-      4: 'Difícil',
-      5: 'Muy Difícil'
-    };
-    return labels[difficulty] || `Nivel ${difficulty}`;
+    return `admin.rooms.difficulty.level${difficulty}`;
   }
 
   truncateText(text: string, maxLength: number = 60): string {
@@ -732,5 +602,44 @@ export class AdminRoomsComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/admin/login']);
+  }
+  updateChartTranslations(): void {
+    this.playerStatsChartOptions = {
+      ...this.playerStatsChartOptions,
+      plugins: {
+        ...this.playerStatsChartOptions?.plugins,
+        title: {
+          display: true,
+          text: this.translate.instant('admin.rooms.charts.playerPerformance')
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          title: {
+            display: true,
+            text: this.translate.instant('admin.rooms.charts.accuracy')
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: this.translate.instant('admin.rooms.charts.player')
+          }
+        }
+      }
+    };
+
+    this.categoryStatsChartOptions = {
+      ...this.categoryStatsChartOptions,
+      plugins: {
+        ...this.categoryStatsChartOptions?.plugins,
+        title: {
+          display: true,
+          text: this.translate.instant('admin.rooms.charts.answersByCategory')
+        }
+      }
+    };
   }
 }

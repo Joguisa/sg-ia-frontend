@@ -26,7 +26,8 @@
     "description": "Description",
     "language": "Language",
     "spanish": "Spanish",
-    "english": "English"
+    "english": "English",
+    "optional": "Optional"
   },
   "auth": {
     "login": "Login",
@@ -195,7 +196,8 @@
       "max": "Max",
       "players": "players",
       "categories": "categories",
-      "levels": "levels"
+      "levels": "levels",
+      "description": "description"
     },
     "sidebar": {
       "dashboard": "Dashboard",
@@ -355,6 +357,20 @@
         "excel_success": "Excel generated successfully",
         "excel_error": "Error generating Excel"
       },
+      "charts": {
+        "playerPerformance": "Player Performance",
+        "accuracy": "Accuracy (%)",
+        "player": "Player",
+        "answersByCategory": "Answers by Category"
+      },
+      "difficulty": {
+        "level1": "Very Easy",
+        "level2": "Easy",
+        "level3": "Normal",
+        "level4": "Hard",
+        "level5": "Very Hard"
+      },
+      "deleteConfirmDynamic": "Are you sure you want to delete the room \"{{name}}\"? This action cannot be undone.",
       "players": {
         "notifications": {
           "load_leaderboard_error": "Error loading leaderboard",
@@ -772,6 +788,10 @@
       "roles": {
         "admin": "Administrator",
         "superadmin": "Super Administrator"
+      },
+      "roleDescriptions": {
+        "admin": "Can view and manage questions, players, rooms.",
+        "superadmin": "Has all permissions including administrator management."
       },
       "active": "Active",
       "inactive": "Inactive",

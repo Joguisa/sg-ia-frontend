@@ -1,0 +1,109 @@
+<div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>{{ isEditMode ? ('admin.rooms.editRoom' | translate) : ('admin.rooms.createRoom' | translate) }}</h2>
+            <button class="btn-close-modal" (click)="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form [formGroup]="roomForm" (ngSubmit)="saveRoom()" class="modal-body">
+            <!-- Name -->
+            <div class="form-group">
+                <label for="name">{{ 'admin.rooms.roomName' | translate }} *</label>
+                <input type="text" id="name" formControlName="name" class="form-control"
+                    [placeholder]="'admin.rooms.roomNamePlaceholder' | translate"
+                    [class.is-invalid]="roomForm.get('name')?.invalid && roomForm.get('name')?.touched" />
+                <div class="invalid-feedback"
+                    *ngIf="roomForm.get('name')?.hasError('required') && roomForm.get('name')?.touched">
+                    {{ 'admin.rooms.nameRequired' | translate }}
+                </div>
+                <div class="invalid-feedback"
+                    *ngIf="roomForm.get('name')?.hasError('minlength') && roomForm.get('name')?.touched">
+                    {{ 'admin.rooms.minNameLength' | translate }}
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description">{{ 'common.description' | translate }} ({{ 'common.optional' | translate
+                    }})</label>
+                <textarea id="description" formControlName="description" class="form-control"
+                    [placeholder]="'admin.rooms.descriptionPlaceholder' | translate" rows="3"></textarea>
+            </div>
+
+            <!-- Max Players -->
+            <div class="form-group">
+                <label for="max_players">{{ 'admin.rooms.maxPlayers' | translate }} ({{ 'admin.rooms.minPlayers' |
+                    translate
+                    }}-{{ 'admin.rooms.maxPlayersLimit' | translate }})</label>
+                <input type="text" id="max_players" formControlName="max_players" class="form-control" placeholder="50"
+                    (input)="onMaxPlayersInput($event)" (keypress)="preventNonNumeric($event)"
+                    [class.is-invalid]="roomForm.get('max_players')?.invalid && roomForm.get('max_players')?.touched" />
+                <div class="invalid-feedback"
+                    *ngIf="roomForm.get('max_players')?.hasError('required') && roomForm.get('max_players')?.touched">
+                    {{ 'admin.rooms.playersRequired' | translate }}
+                </div>
+                <div class="invalid-feedback"
+                    *ngIf="roomForm.get('max_players')?.hasError('min') && roomForm.get('max_players')?.touched">
+                    {{ 'admin.rooms.minPlayersError' | translate }}
+                </div>
+                <div class="invalid-feedback"
+                    *ngIf="roomForm.get('max_players')?.hasError('max') && roomForm.get('max_players')?.touched">
+                    {{ 'admin.rooms.maxPlayersError' | translate }}
+                </div>
+            </div>
+
+            <!-- Room Language -->
+            <div class="form-group">
+                <label for="language">{{ 'admin.rooms.roomLanguage' | translate }}</label>
+                <p class="help-text">{{ 'admin.rooms.roomLanguageHelp' | translate }}</p>
+                <select id="language" formControlName="language" class="form-select">
+                    <option *ngFor="let lang of languageService.availableLanguages" [value]="lang.code">
+                        {{ lang.flag }} {{ lang.name }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="form-group">
+                <label>{{ 'admin.rooms.filterCategories' | translate }} ({{ 'common.optional' | translate }})</label>
+                <p class="help-text">{{ 'admin.rooms.leaveEmptyForAll' | translate }}</p>
+                <div class="checkbox-grid">
+                    <label *ngFor="let cat of categories" class="checkbox-item">
+                        <input type="checkbox" [checked]="isCategorySelected(cat.id!)"
+                            (change)="onCategoryToggle(cat.id!, $event)" />
+                        <span>{{ cat.name }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Difficulty Filters -->
+            <div class="form-group">
+                <label>{{ 'admin.rooms.filterDifficulties' | translate }} ({{ 'common.optional' | translate }})</label>
+                <p class="help-text">{{ 'admin.rooms.leaveEmptyForAll' | translate }}</p>
+                <div class="checkbox-grid">
+                    <label *ngFor="let diff of difficulties" class="checkbox-item">
+                        <input type="checkbox" [checked]="isDifficultySelected(diff)"
+                            (change)="onDifficultyToggle(diff, $event)" />
+                        <span>{{ getDifficultyLabel(diff) | translate }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">{{ 'common.cancel' | translate
+                    }}</button>
+                <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+                    @if (isSaving()) {
+                    <span class="spinner-small"></span>
+                    } @else {
+                    <i class="fas fa-save"></i>
+                    }
+                    {{ isSaving() ? ('admin.common.saving' | translate) : (isEditMode ? ('common.save' | translate) :
+                    ('admin.rooms.createRoom' | translate)) }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

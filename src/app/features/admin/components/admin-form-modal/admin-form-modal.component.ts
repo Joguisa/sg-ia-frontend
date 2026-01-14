@@ -9,7 +9,7 @@ import { Admin, CreateAdminDto, UpdateAdminDto, AdminRole } from '../../../../co
     standalone: true,
     imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
     templateUrl: './admin-form-modal.component.html',
-    styleUrls: ['./admin-form-modal.component.css']
+    styleUrls: ['../../shared/styles/admin-styles.css', './admin-form-modal.component.css']
 })
 export class AdminFormModalComponent implements OnInit {
     @Input() mode: 'create' | 'edit' = 'create';

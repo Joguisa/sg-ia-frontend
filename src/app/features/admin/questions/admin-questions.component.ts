@@ -187,13 +187,6 @@ export class AdminQuestionsComponent implements OnInit {
       },
       error: (error) => {
         this.notification.warning(this.translate.instant('admin.questions.notifications.categories_load_error'), NOTIFICATION_DURATION.SHORT);
-        // Fallback categorías por defecto
-        this.categories.set([
-          { id: 1, name: 'Epidemiología y Generalidades' },
-          { id: 2, name: 'Factores de Riesgo' },
-          { id: 3, name: 'Tamizaje y Detección' },
-          { id: 4, name: 'Prevención y Estilos de Vida' }
-        ]);
       }
     });
   }

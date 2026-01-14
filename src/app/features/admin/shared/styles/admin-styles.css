@@ -189,7 +189,8 @@
    BUTTONS - Shared across all admin components
    ============================================================================ */
 
-/* Base Button */
+/* Base Button - Used everywhere for consistent styling */
+.btn,
 .admin-btn {
     padding: 10px 20px;
     border: none;
@@ -202,34 +203,185 @@
     justify-content: center;
     gap: 8px;
     transition: all 0.3s ease;
+    text-decoration: none;
 }
 
+.btn:disabled,
 .admin-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-/* Primary Button - Main actions */
+/* Large Button Variant */
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 16px;
+    min-width: 200px;
+}
+
+/* Primary Button - Main actions (Purple gradient) */
+.btn-primary,
 .admin-btn-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);
 }
 
+.btn-primary:hover:not(:disabled),
 .admin-btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
 }
 
-/* Secondary Button - Less prominent actions */
+/* Secondary Button - Cancel/secondary actions (Gray) */
+.btn-secondary,
 .admin-btn-secondary {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    border: 1px solid rgba(102, 126, 234, 0.3);
+    background-color: #6c757d;
+    color: white;
 }
 
+.btn-secondary:hover:not(:disabled),
 .admin-btn-secondary:hover:not(:disabled) {
-    background: rgba(102, 126, 234, 0.2);
+    background-color: #5a6268;
+}
+
+/* Warning Button - Caution actions (Orange gradient) */
+.btn-warning {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+}
+
+.btn-warning:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(243, 156, 18, 0.4);
+}
+
+/* Danger Button - Destructive actions (Red) */
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(231, 76, 60, 0.4);
+}
+
+/* Button Icon Styling */
+.btn i,
+.admin-btn i {
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* ============================================================================
+   ACTION BUTTONS - Small icon buttons for table row actions
+   ============================================================================ */
+
+/* Base Action Button */
+.btn-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.btn-action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-action i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* Action Buttons Container */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Edit Action */
+.btn-action.btn-edit {
+    color: #667eea;
+}
+
+.btn-action.btn-edit:hover:not(:disabled) {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+/* Verify Action */
+.btn-action.btn-verify {
+    color: #27ae60;
+}
+
+.btn-action.btn-verify:hover:not(:disabled) {
+    background: rgba(39, 174, 96, 0.1);
+}
+
+/* Delete Action */
+.btn-action.btn-delete {
+    color: #e74c3c;
+}
+
+.btn-action.btn-delete:hover:not(:disabled) {
+    background: rgba(231, 76, 60, 0.1);
+}
+
+/* Toggle/Status Action */
+.btn-action.btn-toggle {
+    color: #f39c12;
+}
+
+.btn-action.btn-toggle:hover:not(:disabled) {
+    background: rgba(243, 156, 18, 0.1);
+}
+
+/* Confirm Buttons */
+.confirm-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.btn-confirm {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.btn-confirm i {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.confirm-yes {
+    color: #27ae60;
+}
+
+.confirm-yes:hover {
+    background: rgba(39, 174, 96, 0.1);
+}
+
+.confirm-no {
+    color: #e74c3c;
+}
+
+.confirm-no:hover {
+    background: rgba(231, 76, 60, 0.1);
 }
 
 /* ============================================================================
@@ -700,4 +852,281 @@
 
 .room-code-badge:hover .copy-icon {
     opacity: 1;
+}
+
+/* ============================================================================
+   MODALS - Shared across all admin modal components
+   ============================================================================ */
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-y: hidden;
+    /* FIX: Prevent overlay scroll, keep modal centered */
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal Content - Base container with scrollbar fix */
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 550px;
+    max-height: 90vh;
+    overflow: hidden;
+    /* FIX: Preserves rounded corners */
+    display: flex;
+    flex-direction: column;
+    animation: slideIn 0.3s ease;
+}
+
+/* Large Modal Variant */
+.modal-large {
+    max-width: 800px;
+}
+
+/* Modal Container (alternative naming in some modals) */
+.modal-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    /* FIX: Preserves rounded corners */
+    display: flex;
+    flex-direction: column;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px 12px 0 0;
+    flex-shrink: 0;
+}
+
+.modal-header h2,
+.modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-header h2 i,
+.modal-header h3 i {
+    font-size: 22px;
+}
+
+/* Modal Close Button */
+.btn-close,
+.modal-close,
+.btn-close-modal {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.btn-close:hover,
+.modal-close:hover,
+.btn-close-modal:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Modal Body - Scrollable area with fix */
+.modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    /* FIX: Scroll only in body */
+    flex: 1;
+}
+
+/* Modal Footer */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+    flex-shrink: 0;
+}
+
+
+/* Button styles are now consolidated in the BUTTONS section above */
+/* Modal Form Styles */
+.modal-body .form-group {
+    margin-bottom: 20px;
+}
+
+.modal-body .form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 14px;
+}
+
+.modal-body .form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.modal-body .form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.modal-body .form-control.ng-invalid.ng-touched,
+.modal-body .form-control.is-invalid,
+.modal-body .form-control.invalid {
+    border-color: #dc3545;
+}
+
+.modal-body .form-control.ng-invalid.ng-touched:focus,
+.modal-body .form-control.is-invalid:focus,
+.modal-body .form-control.invalid:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.modal-body textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.modal-body .invalid-feedback,
+.modal-body .error-message {
+    display: block;
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.modal-body .help-text {
+    color: #6b7280;
+    font-size: 12px;
+    margin: 0 0 10px 0;
+}
+
+.modal-body .required {
+    color: #dc3545;
+    margin-left: 4px;
+}
+
+.modal-body .optional {
+    font-weight: normal;
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Form Select */
+.modal-body .form-select,
+.modal-body select.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.modal-body .form-select:focus,
+.modal-body select.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+
+    .modal-content,
+    .modal-container {
+        max-width: 100%;
+        margin: 10px;
+    }
+
+    .modal-large {
+        max-width: 95%;
+        margin: 10px;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 16px;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
 }

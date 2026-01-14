@@ -26,7 +26,8 @@
     "description": "Descripción",
     "language": "Idioma",
     "spanish": "Español",
-    "english": "Inglés"
+    "english": "Inglés",
+    "optional": "Opcional"
   },
   "auth": {
     "login": "Iniciar Sesión",
@@ -195,7 +196,8 @@
       "max": "Máx",
       "players": "jugadores",
       "categories": "categorías",
-      "levels": "niveles"
+      "levels": "niveles",
+      "description": "Descripción"
     },
     "sidebar": {
       "dashboard": "Panel de Control",
@@ -353,6 +355,20 @@
         "excel_success": "Excel generado correctamente",
         "excel_error": "Error al generar el Excel"
       },
+      "charts": {
+        "playerPerformance": "Rendimiento de Jugadores",
+        "accuracy": "Precisión (%)",
+        "player": "Jugador",
+        "answersByCategory": "Respuestas por Categoría"
+      },
+      "difficulty": {
+        "level1": "Muy Fácil",
+        "level2": "Fácil",
+        "level3": "Normal",
+        "level4": "Difícil",
+        "level5": "Muy Difícil"
+      },
+      "deleteConfirmDynamic": "¿Estás seguro de eliminar la sala \"{{name}}\"? Esta acción no se puede deshacer.",
       "players": {
         "notifications": {
           "load_leaderboard_error": "Error al cargar el leaderboard",
@@ -770,6 +786,10 @@
       "roles": {
         "admin": "Administrador",
         "superadmin": "Super Administrador"
+      },
+      "roleDescriptions": {
+        "admin": "Puede ver y gestionar preguntas, jugadores, salas.",
+        "superadmin": "Tiene todos los permisos incluidos gestión de administradores."
       },
       "active": "Activo",
       "inactive": "Inactivo",

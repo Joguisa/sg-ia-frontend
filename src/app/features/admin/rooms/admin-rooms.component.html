@@ -46,7 +46,7 @@
             <option value="closed">{{ 'admin.rooms.status.closed' | translate }}</option>
           </select>
         </div>
-        <button class="btn-primary" (click)="openCreateModal()">
+        <button class="admin-btn admin-btn-primary" (click)="openCreateModal()">
           <i class="fas fa-plus"></i>
           {{ 'admin.rooms.newRoom' | translate }}
         </button>
@@ -63,7 +63,7 @@
         <i class="fas fa-door-open"></i>
         <h3>{{ 'admin.rooms.noRooms' | translate }}</h3>
         <p>{{ 'admin.rooms.noRoomsDesc' | translate }}</p>
-        <button class="btn-primary" (click)="openCreateModal()">
+        <button class="admin-btn admin-btn-primary" (click)="openCreateModal()">
           <i class="fas fa-plus"></i>
           {{ 'admin.rooms.createFirstRoom' | translate }}
         </button>
@@ -80,7 +80,7 @@
               <i class="fas fa-copy copy-icon"></i>
             </div>
             <span class="status-badge" [ngClass]="getStatusClass(room.status)">
-              {{ getStatusLabel(room.status) }}
+              {{ getStatusLabel(room.status) | translate }}
             </span>
           </div>
 
@@ -182,7 +182,7 @@
               </div>
             </div>
             <span class="status-badge large" [ngClass]="getStatusClass(selectedRoom()!.status)">
-              {{ getStatusLabel(selectedRoom()!.status) }}
+              {{ getStatusLabel(selectedRoom()!.status) | translate }}
             </span>
           </div>
 
@@ -389,106 +389,7 @@
   </div>
 
   <!-- CREATE/EDIT MODAL -->
-  <div class="modal-overlay" *ngIf="showModal()" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>{{ isEditing() ? ('admin.rooms.editRoom' | translate) : ('admin.rooms.createRoom' | translate) }}</h2>
-        <button class="btn-close-modal" (click)="closeModal()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <form [formGroup]="roomForm" (ngSubmit)="saveRoom()" class="modal-body">
-        <!-- Name -->
-        <div class="form-group">
-          <label for="name">{{ 'admin.rooms.roomName' | translate }} *</label>
-          <input type="text" id="name" formControlName="name"
-            [placeholder]="'admin.rooms.roomNamePlaceholder' | translate"
-            [class.is-invalid]="roomForm.get('name')?.invalid && roomForm.get('name')?.touched" />
-          <div class="invalid-feedback"
-            *ngIf="roomForm.get('name')?.hasError('required') && roomForm.get('name')?.touched">
-            {{ 'admin.rooms.nameRequired' | translate }}
-          </div>
-          <div class="invalid-feedback"
-            *ngIf="roomForm.get('name')?.hasError('minlength') && roomForm.get('name')?.touched">
-            {{ 'admin.rooms.minNameLength' | translate }}
-          </div>
-        </div>
-
-        <!-- Description -->
-        <div class="form-group">
-          <label for="description">{{ 'common.description' | translate }} ({{ 'common.optional' | translate }})</label>
-          <textarea id="description" formControlName="description"
-            [placeholder]="'admin.rooms.descriptionPlaceholder' | translate" rows="3"></textarea>
-        </div>
-
-        <!-- Max Players -->
-        <div class="form-group">
-          <label for="max_players">{{ 'admin.rooms.maxPlayers' | translate }} ({{ 'admin.rooms.minPlayers' | translate
-            }}-{{ 'admin.rooms.maxPlayersLimit' | translate }})</label>
-          <input type="text" id="max_players" formControlName="max_players" placeholder="50"
-            (input)="onMaxPlayersInput($event)" (keypress)="preventNonNumeric($event)"
-            [class.is-invalid]="roomForm.get('max_players')?.invalid && roomForm.get('max_players')?.touched" />
-          <div class="invalid-feedback"
-            *ngIf="roomForm.get('max_players')?.hasError('required') && roomForm.get('max_players')?.touched">
-            {{ 'admin.rooms.playersRequired' | translate }}
-          </div>
-          <div class="invalid-feedback"
-            *ngIf="roomForm.get('max_players')?.hasError('min') && roomForm.get('max_players')?.touched">
-            {{ 'admin.rooms.minPlayersError' | translate }}
-          </div>
-          <div class="invalid-feedback"
-            *ngIf="roomForm.get('max_players')?.hasError('max') && roomForm.get('max_players')?.touched">
-            {{ 'admin.rooms.maxPlayersError' | translate }}
-          </div>
-        </div>
-
-        <!-- Room Language -->
-        <div class="form-group">
-          <label for="language">{{ 'admin.rooms.roomLanguage' | translate }}</label>
-          <p class="help-text">{{ 'admin.rooms.roomLanguageHelp' | translate }}</p>
-          <select id="language" formControlName="language" class="form-select">
-            <option *ngFor="let lang of languageService.availableLanguages" [value]="lang.code">
-              {{ lang.flag }} {{ lang.name }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Category Filters -->
-        <div class="form-group">
-          <label>{{ 'admin.rooms.filterCategories' | translate }} ({{ 'common.optional' | translate }})</label>
-          <p class="help-text">{{ 'admin.rooms.leaveEmptyForAll' | translate }}</p>
-          <div class="checkbox-grid">
-            <label *ngFor="let cat of categories()" class="checkbox-item">
-              <input type="checkbox" [checked]="isCategorySelected(cat.id!)"
-                (change)="onCategoryToggle(cat.id!, $event)" />
-              <span>{{ cat.name }}</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Difficulty Filters -->
-        <div class="form-group">
-          <label>{{ 'admin.rooms.filterDifficulties' | translate }} ({{ 'common.optional' | translate }})</label>
-          <p class="help-text">{{ 'admin.rooms.leaveEmptyForAll' | translate }}</p>
-          <div class="checkbox-grid">
-            <label *ngFor="let diff of difficulties" class="checkbox-item">
-              <input type="checkbox" [checked]="isDifficultySelected(diff)"
-                (change)="onDifficultyToggle(diff, $event)" />
-              <span>{{ getDifficultyLabel(diff) }}</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn-secondary" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
-          <button type="submit" class="btn-primary" [disabled]="isSaving()">
-            <span *ngIf="isSaving()" class="spinner-small"></span>
-            {{ isSaving() ? ('admin.common.saving' | translate) : (isEditing() ? ('common.save' | translate) :
-            ('admin.rooms.createRoom' | translate)) }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+  <app-room-form-modal *ngIf="showModal()" [roomToEdit]="roomToEdit()" [categories]="categories()"
+    [difficulties]="difficulties" (save)="onSaveRoom($event)" (cancel)="closeModal()">
+  </app-room-form-modal>
 </div>

@@ -12,7 +12,7 @@ import { NOTIFICATION_DURATION } from '../../../../core/constants/notification-c
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './question-edit-modal.component.html',
-  styleUrls: ['./question-edit-modal.component.css']
+  styleUrls: ['../../shared/styles/admin-styles.css', './question-edit-modal.component.css']
 })
 export class QuestionEditModalComponent implements OnInit, OnChanges {
   // ========== INPUTS & OUTPUTS ==========
