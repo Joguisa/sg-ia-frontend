@@ -96,6 +96,33 @@ export class AdminService {
   }
 
   /**
+   * Desverificación masiva de preguntas
+   *
+   * Backend: POST /admin/questions/unverify-bulk
+   * @returns Observable con el conteo de preguntas desverificadas
+   */
+  unverifyBulk(): Observable<{ ok: boolean; message: string; unverified_count: number }> {
+    return this.http.post<{ ok: boolean; message: string; unverified_count: number }>(
+      `${this.apiUrl}/admin/questions/unverify-bulk`,
+      {}
+    );
+  }
+
+  /**
+   * Eliminación masiva de preguntas
+   *
+   * Backend: POST /admin/questions/delete-bulk
+   * @param options Opciones: { delete_all_pending?: boolean, question_ids?: number[], batch_id?: number }
+   * @returns Observable con el conteo de preguntas eliminadas
+   */
+  deleteBulk(options: { delete_all_pending?: boolean; question_ids?: number[]; batch_id?: number }): Observable<{ ok: boolean; message: string; deleted_count: number }> {
+    return this.http.post<{ ok: boolean; message: string; deleted_count: number }>(
+      `${this.apiUrl}/admin/questions/delete-bulk`,
+      options
+    );
+  }
+
+  /**
    * Obtiene la configuración actual del prompt de IA
    *
    * Backend: GET /admin/config/prompt

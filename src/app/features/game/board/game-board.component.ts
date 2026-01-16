@@ -49,6 +49,7 @@ export class GameBoardComponent implements OnInit {
   // Feedback data
   feedbackData = signal<AnswerSubmitResponse | null>(null);
   isAnswerCorrect = signal<boolean>(false);
+  isLastQuestion = signal<boolean>(false);
 
   // Player info
   playerName = signal<string>('Jugador');
@@ -212,6 +213,10 @@ export class GameBoardComponent implements OnInit {
     this.router.navigate(['/profile']);
   }
 
+  viewResults(): void {
+    this.handleGameCompleted(this.translate.instant('game.notifications.board.completed'));
+  }
+
   private showErrorMessage(message: string): void {
     this.notification.error(message, NOTIFICATION_DURATION.LONG);
   }
@@ -268,11 +273,10 @@ export class GameBoardComponent implements OnInit {
 
           // Verificar si alcanzó el límite de preguntas
           if (this.questionCount() >= this.maxQuestions()) {
+            this.isLastQuestion.set(true);
             this.gameState.set('feedback');
             this.isAnswering.set(false);
-            setTimeout(() => {
-              this.handleGameCompleted(this.translate.instant('game.notifications.board.completed'));
-            }, 1000);
+            // El usuario verá el feedback y hará clic en "Ver Resultados"
             return;
           }
 

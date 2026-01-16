@@ -102,7 +102,8 @@
       "totalScore": "Puntuación Total",
       "remainingLives": "Vidas Restantes",
       "newDifficulty": "Nueva Dificultad",
-      "gameOverRedirecting": "Juego Terminado - Redirigiendo..."
+      "gameOverRedirecting": "Juego Terminado - Redirigiendo...",
+      "viewResults": "Ver Resultados"
     },
     "over": {
       "title": "Juego Terminado",
@@ -369,6 +370,8 @@
         "level5": "Muy Difícil"
       },
       "deleteConfirmDynamic": "¿Estás seguro de eliminar la sala \"{{name}}\"? Esta acción no se puede deshacer.",
+      "confirmDeletion": "Confirmar eliminación",
+      "cancel": "Cancelar",
       "players": {
         "notifications": {
           "load_leaderboard_error": "Error al cargar el leaderboard",
@@ -404,18 +407,7 @@
           "delete_category_confirm": "¿Estás seguro de eliminar la categoría \"{{name}}\"?\n\nNOTA: No se puede eliminar si tiene preguntas asociadas.",
           "delete_category_success": "Categoría eliminada exitosamente",
           "delete_category_error": "Error al eliminar categoría",
-          "delete_category_associated_error": "No se puede eliminar: tiene preguntas asociadas",
-          "category_modal": {
-            "notifications": {
-              "name_required": "El nombre de la categoría es requerido",
-              "create_success": "Categoría creada exitosamente",
-              "create_error": "Error al crear categoría",
-              "update_success": "Categoría actualizada exitosamente",
-              "update_error": "Error al actualizar categoría",
-              "id_not_found": "ID de categoría no encontrado",
-              "invalid_data": "Datos inválidos"
-            }
-          }
+          "delete_category_associated_error": "No se puede eliminar: tiene preguntas asociadas"
         }
       },
       "admins": {
@@ -518,6 +510,10 @@
       "pendingVerification": "pregunta(s) pendiente(s) de verificación",
       "verifyAllPending": "Verificar Todas las Pendientes",
       "verifyAllPendingTitle": "Verificar todas las preguntas pendientes",
+      "deleteAllPending": "Eliminar Pendientes",
+      "deleteAllPendingTitle": "Eliminar todas las preguntas pendientes",
+      "unverifyAll": "Desverificar Todas",
+      "unverifyAllTitle": "Desverificar todas las preguntas verificadas",
       "id": "ID",
       "question": "Pregunta",
       "ai": "IA",
@@ -626,7 +622,12 @@
         "load_full_error": "Error al cargar la pregunta",
         "form_error": "Por favor corrige los errores del formulario",
         "update_success": "Pregunta actualizada exitosamente. Estado: Pendiente de verificación.",
-        "update_error": "Error al actualizar la pregunta"
+        "update_error": "Error al actualizar la pregunta",
+        "bulk_delete_success": "{{count}} pregunta(s) eliminada(s) exitosamente",
+        "bulk_delete_error": "Error al eliminar preguntas",
+        "bulk_unverify_success": "{{count}} pregunta(s) desverificada(s) exitosamente",
+        "bulk_unverify_error": "Error al desverificar preguntas",
+        "no_verified": "No hay preguntas verificadas"
       }
     },
     "batches": {
@@ -714,6 +715,8 @@
       "loadingCategories": "Cargando categorías...",
       "editCategory": "Editar categoría",
       "deleteCategory": "Eliminar categoría",
+      "confirmDeletion": "Confirmar eliminación",
+      "cancel": "Cancelar",
       "noCategoriesCreated": "No hay categorías creadas",
       "discardChanges": "Descartar Cambios",
       "resetToDefault": "Restaurar Predeterminado",
@@ -727,7 +730,53 @@
       "experiment": "Experimenta",
       "experimentDesc": "Prueba diferentes valores de temperatura para encontrar el balance ideal para tu caso.",
       "lastUpdate": "Última actualización: En tiempo real | Multi-AI Failover System",
-      "availableProviders": "Proveedores Disponibles:"
+      "availableProviders": "Proveedores Disponibles:",
+      "veryPrecise": "Muy preciso",
+      "precise": "Preciso",
+      "moderate": "Moderado",
+      "creative": "Creativo",
+      "veryCreative": "Muy creativo",
+      "responsesPrecise": "Respuestas predecibles y consistentes",
+      "preciseVariation": "Preciso con variación controlada",
+      "balance": "Balance entre precisión y creatividad",
+      "diversity": "Más diversidad en las respuestas",
+      "maxVariation": "Máxima variación y aleatoriedad",
+      "bestProvider": "El sistema selecciona automáticamente el mejor proveedor disponible",
+      "fastEfficient": "Rápido y eficiente",
+      "highSpeed": "Alta velocidad de inferencia",
+      "economicModel": "Modelo económico y efectivo",
+      "balanceSpeedQuality": "Balance entre velocidad y calidad",
+      "artificialIntelligence": "Inteligencia Artificial",
+      "gameCategories": "Juego y Categorías",
+      "category_modal": {
+        "notifications": {
+          "name_required": "El nombre de la categoría es requerido",
+          "create_success": "Categoría creada exitosamente",
+          "create_error": "Error al crear categoría",
+          "update_success": "Categoría actualizada exitosamente",
+          "update_error": "Error al actualizar categoría",
+          "id_not_found": "ID de categoría no encontrado",
+          "invalid_data": "Datos inválidos"
+        }
+      },
+      "notifications": {
+        "load_error": "Hubo un problema al cargar la configuración.",
+        "unauthorized": "No autorizado. Token expirado.",
+        "not_found": "Configuración no encontrada.",
+        "connection_error": "No se puede conectar al servidor.",
+        "validation_error": "Por favor, complete todos los campos correctamente",
+        "save_success": "Configuración actualizada exitosamente",
+        "save_error": "Error al guardar la configuración",
+        "save_error_unauthorized": "No autorizado. Por favor, inicie sesión de nuevo.",
+        "save_error_bad_request": "Datos inválidos. Verifique los valores.",
+        "save_error_server": "Error del servidor. Intente de nuevo más tarde.",
+        "load_categories_error": "Error al cargar las categorías",
+        "delete_category_id_error": "ID de categoría no encontrado",
+        "delete_category_confirm": "¿Está seguro de que desea eliminar la categoría \"{{name}}\"?\n\nNOTA: No se puede eliminar si tiene preguntas asociadas.",
+        "delete_category_success": "Categoría eliminada exitosamente",
+        "delete_category_error": "Error al eliminar la categoría",
+        "delete_category_associated_error": "No se puede eliminar: tiene preguntas asociadas"
+      }
     },
     "players": {
       "title": "Gestión de Jugadores",
@@ -771,7 +820,10 @@
       "lastPlayed": "Última partida",
       "viewProfile": "Ver perfil",
       "years": "años",
-      "na": "N/A"
+      "na": "N/A",
+      "leaderTop": "Leader Top",
+      "allPlayers": "Todos los Jugadores",
+      "playerProfile": "Perfil de Jugador"
     },
     "admins": {
       "title": "Gestión de Administradores",
@@ -811,6 +863,8 @@
       "activate": "Activar",
       "deactivate": "Desactivar",
       "delete": "Eliminar",
+      "confirmDeletion": "Confirmar eliminación",
+      "cancel": "Cancelar",
       "noPermissions": "Sin permisos",
       "listTitle": "Lista de Administradores",
       "noAdminsFound": "No se encontraron administradores que coincidan con",

@@ -31,9 +31,9 @@ export class AdminPlayersComponent implements OnInit {
 
   // Tabs configuration
   readonly tabs: Tab[] = [
-    { id: 'leaderboard', label: 'Leaderboard Top', icon: 'fas fa-trophy' },
-    { id: 'players', label: 'Todos los Jugadores', icon: 'fas fa-users' },
-    { id: 'profile', label: 'Perfil de Jugador', icon: 'fas fa-user-circle' }
+    { id: 'leaderboard', label: 'admin.players.leaderTop', icon: 'fas fa-trophy' },
+    { id: 'players', label: 'admin.players.allPlayers', icon: 'fas fa-users' },
+    { id: 'profile', label: 'admin.players.playerProfile', icon: 'fas fa-user-circle' }
   ];
 
   activeTab = signal<string>('leaderboard');

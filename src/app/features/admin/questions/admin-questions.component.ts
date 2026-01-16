@@ -108,6 +108,13 @@ export class AdminQuestionsComponent implements OnInit {
     return this.allQuestions().filter(q => !q.admin_verified).length;
   }
 
+  /**
+   * Retorna el número de preguntas verificadas
+   */
+  get verifiedQuestionsCount(): number {
+    return this.allQuestions().filter(q => q.admin_verified).length;
+  }
+
   constructor(
     private fb: FormBuilder,
     private adminService: AdminService,
@@ -371,6 +378,72 @@ export class AdminQuestionsComponent implements OnInit {
       },
       error: (error) => {
         this.notification.error(this.translate.instant('admin.questions.notifications.verify_batch_error'), NOTIFICATION_DURATION.DEFAULT);
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  /**
+   * Desverifica todas las preguntas verificadas
+   */
+  unverifyAll(): void {
+    const verifiedCount = this.verifiedQuestionsCount;
+
+    if (verifiedCount === 0) {
+      this.notification.info(this.translate.instant('admin.questions.notifications.no_verified'), NOTIFICATION_DURATION.SHORT);
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    this.adminService.unverifyBulk().subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.notification.success(
+            response.message || this.translate.instant('admin.questions.notifications.bulk_unverify_success', { count: response.unverified_count }),
+            NOTIFICATION_DURATION.DEFAULT
+          );
+          this.loadQuestions();
+        } else {
+          this.notification.error(this.translate.instant('admin.questions.notifications.bulk_unverify_error'), NOTIFICATION_DURATION.DEFAULT);
+        }
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        this.notification.error(this.translate.instant('admin.questions.notifications.bulk_unverify_error'), NOTIFICATION_DURATION.DEFAULT);
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  /**
+   * Elimina todas las preguntas pendientes (no verificadas)
+   */
+  deleteAllPending(): void {
+    const pendingCount = this.pendingQuestionsCount;
+
+    if (pendingCount === 0) {
+      this.notification.info(this.translate.instant('admin.questions.notifications.no_pending'), NOTIFICATION_DURATION.SHORT);
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    this.adminService.deleteBulk({ delete_all_pending: true }).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.notification.success(
+            response.message || this.translate.instant('admin.questions.notifications.bulk_delete_success', { count: response.deleted_count }),
+            NOTIFICATION_DURATION.DEFAULT
+          );
+          this.loadQuestions();
+        } else {
+          this.notification.error(this.translate.instant('admin.questions.notifications.bulk_delete_error'), NOTIFICATION_DURATION.DEFAULT);
+        }
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        this.notification.error(this.translate.instant('admin.questions.notifications.bulk_delete_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoading.set(false);
       }
     });

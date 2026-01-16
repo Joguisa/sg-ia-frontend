@@ -78,6 +78,9 @@ export class AdminRoomsComponent implements OnInit {
   roomToEdit = signal<GameRoom | null>(null);
   isSaving = signal<boolean>(false);
 
+  // ========== CONFIRMACIÓN DE BORRADO DE SALA ==========
+  deleteRoomConfirmId = signal<number | null>(null);
+
   // Categories for filters
   categories = signal<AdminCategory[]>([]);
   difficulties = [1, 2, 3, 4, 5];
@@ -292,10 +295,9 @@ export class AdminRoomsComponent implements OnInit {
     this.roomService.updateRoomStatus(room.id, newStatus).subscribe({
       next: (response) => {
         if (response.ok) {
-          const statusLabel = this.getStatusLabel(newStatus); // This is internal translation method, can be kept or refactored. Kept for now as it returns string.
-          // Ideally getStatusLabel should return a key, but for now let's assume it returns a string and we use it as param.
-          // Wait, getStatusLabel returns hardcoded Spanish labels. I should probably use translation keys there too or just let it be for now since we focus on notifications.
-          // Let's use the returned label.
+          // Traducir la clave de estado para mostrar el texto correcto
+          const statusKey = this.getStatusLabel(newStatus);
+          const statusLabel = this.translate.instant(statusKey);
           this.notification.success(this.translate.instant('admin.rooms.notifications.status_update_success', { status: statusLabel }), NOTIFICATION_DURATION.SHORT);
           this.loadRooms();
         } else {
@@ -308,24 +310,42 @@ export class AdminRoomsComponent implements OnInit {
     });
   }
 
+  /**
+   * Solicita confirmación para eliminar una sala
+   */
   deleteRoom(room: GameRoom): void {
-    if (!confirm(this.translate.instant('admin.rooms.deleteConfirmDynamic', { name: room.name }))) {
-      return;
-    }
+    // Mostrar confirmación
+    this.deleteRoomConfirmId.set(room.id);
+  }
 
-    this.roomService.deleteRoom(room.id).subscribe({
+  /**
+   * Confirma la eliminación de una sala
+   */
+  confirmDeleteRoom(roomId: number): void {
+    this.roomService.deleteRoom(roomId).subscribe({
       next: (response) => {
         if (response.ok) {
+          const rooms = this.rooms().filter(r => r.id !== roomId);
+          this.rooms.set(rooms);
           this.notification.success(this.translate.instant('admin.rooms.notifications.delete_success'), NOTIFICATION_DURATION.SHORT);
-          this.loadRooms();
+          this.deleteRoomConfirmId.set(null);
         } else {
           this.notification.error(response.error || this.translate.instant('admin.rooms.notifications.delete_error'), NOTIFICATION_DURATION.DEFAULT);
+          this.deleteRoomConfirmId.set(null);
         }
       },
       error: () => {
         this.notification.error(this.translate.instant('admin.rooms.notifications.load_rooms_connection_error'), NOTIFICATION_DURATION.DEFAULT);
+        this.deleteRoomConfirmId.set(null);
       }
     });
+  }
+
+  /**
+   * Cancela la eliminación de sala
+   */
+  cancelDeleteRoom(): void {
+    this.deleteRoomConfirmId.set(null);
   }
 
   viewRoomDetail(room: GameRoom): void {

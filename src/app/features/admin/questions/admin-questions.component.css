@@ -917,8 +917,13 @@
 
 .bulk-info i {
   font-size: 20px;
-  color: #f39c12;
-  animation: pulse-warning 2s ease-in-out infinite;
+  color: #3498db;
+}
+
+.bulk-stats {
+  font-weight: 400;
+  color: #7f8c8d;
+  font-size: 13px;
 }
 
 @keyframes pulse-warning {
@@ -967,6 +972,76 @@
   font-size: 16px;
 }
 
+.bulk-actions-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-unverify-all {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #f39c12, #d68910);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
+}
+
+.btn-unverify-all:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(243, 156, 18, 0.4);
+  background: linear-gradient(135deg, #d68910, #f39c12);
+}
+
+.btn-unverify-all:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-unverify-all i {
+  font-size: 16px;
+}
+
+.btn-delete-all {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.btn-delete-all:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(231, 76, 60, 0.4);
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+}
+
+.btn-delete-all:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-delete-all i {
+  font-size: 16px;
+}
+
 /* Responsive bulk actions */
 @media (max-width: 768px) {
   .bulk-actions-header {
@@ -974,7 +1049,14 @@
     align-items: flex-start;
   }
 
-  .btn-verify-all {
+  .bulk-actions-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-verify-all,
+  .btn-unverify-all,
+  .btn-delete-all {
     width: 100%;
     justify-content: center;
   }

@@ -135,9 +135,23 @@
               </button>
             </div>
 
+            <!-- Delete with Confirmation -->
+            @if (deleteRoomConfirmId() !== room.id) {
             <button class="btn-icon btn-delete" (click)="deleteRoom(room)" [title]="'common.delete' | translate">
               <i class="fas fa-trash"></i>
             </button>
+            } @else {
+            <div class="confirm-buttons">
+              <button class="btn-confirm confirm-yes" (click)="confirmDeleteRoom(room.id)"
+                [title]="'admin.rooms.confirmDeletion' | translate">
+                <i class="fas fa-check"></i>
+              </button>
+              <button class="btn-confirm confirm-no" (click)="cancelDeleteRoom()"
+                [title]="'admin.rooms.cancel' | translate">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            }
           </div>
         </div>
       </div>

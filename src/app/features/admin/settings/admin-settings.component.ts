@@ -28,8 +28,8 @@ export class AdminSettingsComponent implements OnInit {
 
   // ========== TABS CONFIGURATION ==========
   readonly tabs: Tab[] = [
-    { id: 'ia', label: 'Inteligencia Artificial', icon: 'fas fa-brain' },
-    { id: 'juego', label: 'Juego y Categorías', icon: 'fas fa-gamepad' }
+    { id: 'ia', label: 'admin.settings.artificialIntelligence', icon: 'fas fa-brain' },
+    { id: 'juego', label: 'admin.settings.gameCategories', icon: 'fas fa-gamepad' }
   ];
   activeTab = signal<string>('ia');
 
@@ -39,8 +39,6 @@ export class AdminSettingsComponent implements OnInit {
   // ========== UI STATE ==========
   isLoading = signal<boolean>(true);
   isSaving = signal<boolean>(false);
-  errorMessage = signal<string>('');
-  successMessage = signal<string>('');
   hasChanges = signal<boolean>(false);
 
   // ========== ORIGINAL STATE (para detectar cambios) ==========
@@ -57,6 +55,9 @@ export class AdminSettingsComponent implements OnInit {
   categories = signal<AdminCategory[]>([]);
   isLoadingCategories = signal<boolean>(false);
   isDeletingCategory = signal<number | null>(null);
+
+  // ========== CONFIRMACIÓN DE BORRADO DE CATEGORÍA ==========
+  deleteCategoryConfirmId = signal<number | null>(null);
 
   // ========== PREGUNTAS VERIFICADAS ==========
   totalVerifiedQuestions = signal<number>(0);
@@ -148,7 +149,7 @@ export class AdminSettingsComponent implements OnInit {
           this.isLoading.set(false);
           this.isLoading.set(false);
         } else {
-          this.errorMessage.set(response.error || this.translate.instant('admin.settings.notifications.load_error'));
+          this.notification.error(response.error || this.translate.instant('admin.settings.notifications.load_error'), NOTIFICATION_DURATION.DEFAULT);
           this.isLoading.set(false);
         }
       },
@@ -164,7 +165,6 @@ export class AdminSettingsComponent implements OnInit {
         }
 
         this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
-        this.errorMessage.set(errorMsg);
         this.isLoading.set(false);
       }
     });
@@ -236,7 +236,7 @@ export class AdminSettingsComponent implements OnInit {
   saveChanges(): void {
     // Validación del formulario
     if (this.promptConfigForm.invalid) {
-      this.errorMessage.set(this.translate.instant('admin.settings.notifications.validation_error'));
+      this.notification.warning(this.translate.instant('admin.settings.notifications.validation_error'), NOTIFICATION_DURATION.DEFAULT);
       this.promptConfigForm.markAllAsTouched();
       return;
     }
@@ -249,7 +249,6 @@ export class AdminSettingsComponent implements OnInit {
     const cleanMaxQuestions = Number(formValue.maxQuestionsPerGame);
 
     this.isSaving.set(true);
-    this.errorMessage.set('');
 
     // 2. Deshabilitamos el formulario aquí
     this.promptConfigForm.disable();
@@ -274,19 +273,14 @@ export class AdminSettingsComponent implements OnInit {
           this.originalPreferredProvider.set(cleanProvider);
           this.originalMaxQuestions.set(cleanMaxQuestions);
           this.hasChanges.set(false);
-          this.hasChanges.set(false);
-          this.successMessage.set(this.translate.instant('admin.settings.notifications.save_success'));
+          this.notification.success(this.translate.instant('admin.settings.notifications.save_success'), NOTIFICATION_DURATION.DEFAULT);
 
           // 3. Importante: Habilitar el formulario al terminar
           this.promptConfigForm.enable();
           this.isSaving.set(false);
 
-          setTimeout(() => this.successMessage.set(''), 3000);
-
         } else {
-          // this.errorMessage.set(response.error || 'Error al guardar la configuración');
-          // this.isSaving.set(false);
-          this.errorMessage.set(response.error || this.translate.instant('admin.settings.notifications.save_error'));
+          this.notification.error(response.error || this.translate.instant('admin.settings.notifications.save_error'), NOTIFICATION_DURATION.DEFAULT);
 
           // 3. Habilitar en caso de error lógico
           this.promptConfigForm.enable();
@@ -305,7 +299,6 @@ export class AdminSettingsComponent implements OnInit {
         }
 
         this.notification.error(errorMsg, NOTIFICATION_DURATION.LONG);
-        this.errorMessage.set(errorMsg);
         this.promptConfigForm.enable();
         this.isSaving.set(false);
       }
@@ -323,7 +316,6 @@ export class AdminSettingsComponent implements OnInit {
       maxQuestionsPerGame: this.originalMaxQuestions()
     }, { emitEvent: false });
     this.hasChanges.set(false);
-    this.errorMessage.set('');
   }
 
   /**
@@ -372,11 +364,11 @@ RESTRICCIONES:
    */
   getTemperatureLabel(): string {
     const temp = this.promptConfigForm.get('temperature')?.value || 0.7;
-    if (temp < 0.3) return 'Muy preciso';
-    if (temp < 0.5) return 'Preciso';
-    if (temp < 0.7) return 'Moderado';
-    if (temp < 0.9) return 'Creativo';
-    return 'Muy creativo';
+    if (temp < 0.3) return this.translate.instant('admin.settings.veryPrecise');
+    if (temp < 0.5) return this.translate.instant('admin.settings.precise');
+    if (temp < 0.7) return this.translate.instant('admin.settings.moderate');
+    if (temp < 0.9) return this.translate.instant('admin.settings.creative');
+    return this.translate.instant('admin.settings.veryCreative');
   }
 
   /**
@@ -384,11 +376,11 @@ RESTRICCIONES:
    */
   getTemperatureDescription(): string {
     const temp = this.promptConfigForm.get('temperature')?.value || 0.7;
-    if (temp < 0.3) return 'Respuestas predecibles y consistentes';
-    if (temp < 0.5) return 'Preciso con variación controlada';
-    if (temp < 0.7) return 'Balance entre precisión y creatividad';
-    if (temp < 0.9) return 'Más diversidad en las respuestas';
-    return 'Máxima variación y aleatoriedad';
+    if (temp < 0.3) return this.translate.instant('admin.settings.responsesPrecise');
+    if (temp < 0.5) return this.translate.instant('admin.settings.preciseVariation');
+    if (temp < 0.7) return this.translate.instant('admin.settings.balance');
+    if (temp < 0.9) return this.translate.instant('admin.settings.diversity');
+    return this.translate.instant('admin.settings.maxVariation');
   }
 
   /**
@@ -521,7 +513,7 @@ RESTRICCIONES:
    */
   getProviderLabel(provider: string): string {
     const labels: Record<string, string> = {
-      'auto': 'Automático (Failover)',
+      'auto': 'Failover',
       'gemini': 'Google Gemini',
       'groq': 'Groq',
       'deepseek': 'DeepSeek',
@@ -535,11 +527,11 @@ RESTRICCIONES:
    */
   getProviderDescription(provider: string): string {
     const descriptions: Record<string, string> = {
-      'auto': 'El sistema selecciona automáticamente el mejor proveedor disponible',
-      'gemini': 'Google Gemini Flash 1.5 - Rápido y eficiente',
-      'groq': 'Groq Llama 3.3 70B - Alta velocidad de inferencia',
-      'deepseek': 'DeepSeek Chat - Modelo económico y efectivo',
-      'fireworks': 'Fireworks Llama 3.3 70B - Balance entre velocidad y calidad'
+      'auto': this.translate.instant('admin.settings.bestProvider'),
+      'gemini': `Google Gemini Flash 1.5 - ${this.translate.instant('admin.settings.fastEfficient')}`,
+      'groq': `Groq Llama 3.3 70B - ${this.translate.instant('admin.settings.highSpeed')}`,
+      'deepseek': `DeepSeek Chat - ${this.translate.instant('admin.settings.economicModel')}`,
+      'fireworks': `Fireworks Llama 3.3 70B - ${this.translate.instant('admin.settings.balanceSpeedQuality')}`
     };
     return descriptions[provider] || '';
   }
@@ -622,28 +614,34 @@ RESTRICCIONES:
 
 
   /**
-   * Elimina una categoría
+   * Solicita confirmación y borra una categoría
    */
   deleteCategory(category: AdminCategory): void {
     if (!category.id) {
-      this.notification.error(this.translate.instant('admin.settings.notifications.delete_category_id_error'), NOTIFICATION_DURATION.DEFAULT);
+      this.notification.error(this.translate.instant('admin.settings.category_modal.notifications.delete_category_id_error'), NOTIFICATION_DURATION.DEFAULT);
       return;
     }
 
-    // Confirmar antes de eliminar
-    if (!confirm(this.translate.instant('admin.settings.notifications.delete_category_confirm', { name: category.name }))) {
-      return;
-    }
+    // Mostrar confirmación
+    this.deleteCategoryConfirmId.set(category.id);
+  }
 
-    this.isDeletingCategory.set(category.id);
+  /**
+   * Confirma la eliminación de una categoría
+   */
+  confirmDeleteCategory(categoryId: number): void {
+    this.isDeletingCategory.set(categoryId);
 
-    this.adminService.deleteCategory(category.id).subscribe({
+    this.adminService.deleteCategory(categoryId).subscribe({
       next: (response) => {
         if (response.ok) {
+          const cats = this.categories().filter(c => c.id !== categoryId);
+          this.categories.set(cats);
           this.notification.success(this.translate.instant('admin.settings.notifications.delete_category_success'), NOTIFICATION_DURATION.SHORT);
-          this.loadCategories();
+          this.deleteCategoryConfirmId.set(null);
         } else {
           this.notification.error(response.error || this.translate.instant('admin.settings.notifications.delete_category_error'), NOTIFICATION_DURATION.DEFAULT);
+          this.deleteCategoryConfirmId.set(null);
         }
         this.isDeletingCategory.set(null);
       },
@@ -655,8 +653,16 @@ RESTRICCIONES:
           errorMsg = error.error.error;
         }
         this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
+        this.deleteCategoryConfirmId.set(null);
         this.isDeletingCategory.set(null);
       }
     });
+  }
+
+  /**
+   * Cancela la eliminación de categoría
+   */
+  cancelDeleteCategory(): void {
+    this.deleteCategoryConfirmId.set(null);
   }
 }

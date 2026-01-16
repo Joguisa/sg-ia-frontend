@@ -33,6 +33,9 @@ export class AdminManagementComponent implements OnInit {
     modalMode = signal<'create' | 'edit'>('create');
     selectedAdmin = signal<Admin | null>(null);
 
+    // ========== CONFIRMACIÓN DE BORRADO ==========
+    deleteAdminConfirmId = signal<number | null>(null);
+
     // Search
     searchQuery = signal<string>('');
     filteredAdmins = computed(() => {
@@ -226,6 +229,9 @@ export class AdminManagementComponent implements OnInit {
         });
     }
 
+    /**
+     * Solicita confirmación visual para eliminar un admin
+     */
     confirmDelete(admin: Admin): void {
         if (!this.isSuperAdmin()) {
             this.notification.error(this.translate.instant('admin.admins.notifications.delete_permission_error'));
@@ -244,9 +250,39 @@ export class AdminManagementComponent implements OnInit {
             return;
         }
 
-        if (confirm(this.translate.instant('admin.admins.notifications.delete_confirm', { email: admin.email }))) {
-            this.deleteAdmin(admin);
-        }
+        // Mostrar confirmación visual
+        this.deleteAdminConfirmId.set(admin.id);
+    }
+
+    /**
+     * Ejecuta la eliminación del admin tras confirmación
+     */
+    executeDeleteAdmin(adminId: number): void {
+        this.adminService.deleteAdmin(adminId).subscribe({
+            next: (response) => {
+                if (response.ok) {
+                    const admins = this.admins().filter(a => a.id !== adminId);
+                    this.admins.set(admins);
+                    this.notification.success(this.translate.instant('admin.admins.notifications.delete_success'));
+                    this.deleteAdminConfirmId.set(null);
+                } else {
+                    this.notification.error(response.error || this.translate.instant('admin.admins.notifications.delete_error'));
+                    this.deleteAdminConfirmId.set(null);
+                }
+            },
+            error: (err) => {
+                console.error('Error eliminando administrador:', err);
+                this.notification.error(err.error?.error || this.translate.instant('admin.admins.notifications.delete_error'));
+                this.deleteAdminConfirmId.set(null);
+            }
+        });
+    }
+
+    /**
+     * Cancela la eliminación del admin
+     */
+    cancelDeleteAdmin(): void {
+        this.deleteAdminConfirmId.set(null);
     }
 
     deleteAdmin(admin: Admin): void {

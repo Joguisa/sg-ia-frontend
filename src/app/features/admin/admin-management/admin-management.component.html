@@ -123,11 +123,24 @@
                       }
                     </button>
 
-                    <!-- Delete Button -->
+                    <!-- Delete with Confirmation -->
+                    @if (deleteAdminConfirmId() !== admin.id) {
                     <button class="btn-action btn-delete" [disabled]="admin.id === currentUser()?.id"
                       (click)="confirmDelete(admin)" [title]="'admin.admins.delete' | translate">
                       <i class="fas fa-trash"></i>
                     </button>
+                    } @else {
+                    <div class="confirm-buttons">
+                      <button class="btn-confirm confirm-yes" (click)="executeDeleteAdmin(admin.id)"
+                        [title]="'admin.admins.confirmDeletion' | translate">
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button class="btn-confirm confirm-no" (click)="cancelDeleteAdmin()"
+                        [title]="'admin.admins.cancel' | translate">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                    }
                     } @else {
                     <span class="text-muted">{{ 'admin.admins.noPermissions' | translate }}</span>
                     }

@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export interface Tab {
   id: string;
@@ -10,7 +11,7 @@ export interface Tab {
 @Component({
   selector: 'app-tabs',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   template: `
     <div class="tabs-container">
       <div class="tabs-header">
@@ -23,7 +24,7 @@ export interface Tab {
             @if (tab.icon) {
               <i [class]="tab.icon"></i>
             }
-            <span>{{ tab.label }}</span>
+            <span>{{ tab.label | translate }}</span>
           </button>
         }
       </div>

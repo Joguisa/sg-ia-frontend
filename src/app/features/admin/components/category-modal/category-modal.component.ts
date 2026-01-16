@@ -92,7 +92,7 @@ export class CategoryModalComponent implements OnInit, OnChanges {
   saveCategory(): void {
     // Validación del formulario
     if (this.categoryForm.invalid) {
-      this.notification.warning(this.translate.instant('admin.settings.notifications.category_modal.notifications.name_required'), NOTIFICATION_DURATION.DEFAULT);
+      this.notification.warning(this.translate.instant('admin.settings.category_modal.notifications.name_required'), NOTIFICATION_DURATION.DEFAULT);
       this.categoryForm.markAllAsTouched();
       return;
     }
@@ -111,19 +111,19 @@ export class CategoryModalComponent implements OnInit, OnChanges {
       this.adminService.createCategory(name, description || undefined).subscribe({
         next: (response) => {
           if (response.ok) {
-            this.notification.success(this.translate.instant('admin.settings.notifications.category_modal.notifications.create_success'), NOTIFICATION_DURATION.SHORT);
+            this.notification.success(this.translate.instant('admin.settings.category_modal.notifications.create_success'), NOTIFICATION_DURATION.SHORT);
             this.saved.emit();
             this.closeModal();
           } else {
-            this.notification.error(response.error || this.translate.instant('admin.settings.notifications.category_modal.notifications.create_error'), NOTIFICATION_DURATION.DEFAULT);
+            this.notification.error(response.error || this.translate.instant('admin.settings.category_modal.notifications.create_error'), NOTIFICATION_DURATION.DEFAULT);
             this.categoryForm.enable();
           }
           this.isSavingCategory.set(false);
         },
         error: (error) => {
-          let errorMsg = this.translate.instant('admin.settings.notifications.category_modal.notifications.create_error');
+          let errorMsg = this.translate.instant('admin.settings.category_modal.notifications.create_error');
           if (error.status === HttpStatus.BAD_REQUEST) {
-            errorMsg = error.error?.error || this.translate.instant('admin.settings.notifications.category_modal.notifications.invalid_data');
+            errorMsg = error.error?.error || this.translate.instant('admin.settings.category_modal.notifications.invalid_data');
           }
           this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
           this.categoryForm.enable();
@@ -134,7 +134,7 @@ export class CategoryModalComponent implements OnInit, OnChanges {
       // Editar categoría existente
       const categoryId = this.categoryToEdit?.id;
       if (!categoryId) {
-        this.notification.error(this.translate.instant('admin.settings.notifications.category_modal.notifications.id_not_found'), NOTIFICATION_DURATION.DEFAULT);
+        this.notification.error(this.translate.instant('admin.settings.category_modal.notifications.id_not_found'), NOTIFICATION_DURATION.DEFAULT);
         this.categoryForm.enable();
         this.isSavingCategory.set(false);
         return;
@@ -143,19 +143,19 @@ export class CategoryModalComponent implements OnInit, OnChanges {
       this.adminService.updateCategory(categoryId, name, description || undefined).subscribe({
         next: (response) => {
           if (response.ok) {
-            this.notification.success(this.translate.instant('admin.settings.notifications.category_modal.notifications.update_success'), NOTIFICATION_DURATION.SHORT);
+            this.notification.success(this.translate.instant('admin.settings.category_modal.notifications.update_success'), NOTIFICATION_DURATION.SHORT);
             this.saved.emit();
             this.closeModal();
           } else {
-            this.notification.error(response.error || this.translate.instant('admin.settings.notifications.category_modal.notifications.update_error'), NOTIFICATION_DURATION.DEFAULT);
+            this.notification.error(response.error || this.translate.instant('admin.settings.category_modal.notifications.update_error'), NOTIFICATION_DURATION.DEFAULT);
             this.categoryForm.enable();
           }
           this.isSavingCategory.set(false);
         },
         error: (error) => {
-          let errorMsg = this.translate.instant('admin.settings.notifications.category_modal.notifications.update_error');
+          let errorMsg = this.translate.instant('admin.settings.category_modal.notifications.update_error');
           if (error.status === HttpStatus.BAD_REQUEST) {
-            errorMsg = error.error?.error || this.translate.instant('admin.settings.notifications.category_modal.notifications.invalid_data');
+            errorMsg = error.error?.error || this.translate.instant('admin.settings.category_modal.notifications.invalid_data');
           }
           this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
           this.categoryForm.enable();

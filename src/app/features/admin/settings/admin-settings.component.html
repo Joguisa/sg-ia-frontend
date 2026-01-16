@@ -20,22 +20,8 @@
         </button>
       </div>
     </div>
-  </div>
 
-  <!-- Success & Error Messages -->
-  @if (successMessage()) {
-  <div class="alert alert-success">
-    <i class="fas fa-check"></i>
-    <span>{{ successMessage() }}</span>
   </div>
-  }
-
-  @if (errorMessage()) {
-  <div class="alert alert-danger">
-    <i class="fas fa-circle-info"></i>
-    <span>{{ errorMessage() }}</span>
-  </div>
-  }
 
   <!-- Loading State -->
   @if (isLoading()) {
@@ -79,7 +65,8 @@
               </textarea>
 
             <div class="textarea-footer">
-              <span class="char-count">{{ promptTextValue.length }} {{ 'admin.settings.characters' | translate }}</span>
+              <span class="char-count">{{ promptTextValue.length }} {{ 'admin.settings.characters' | translate
+                }}</span>
             </div>
           </div>
         </form>
@@ -194,7 +181,8 @@
             </div>
 
             <p class="form-help">
-              <strong>{{ 'admin.settings.deterministic' | translate }}</strong> {{ 'admin.settings.deterministicDesc' |
+              <strong>{{ 'admin.settings.deterministic' | translate }}</strong> {{ 'admin.settings.deterministicDesc'
+              |
               translate }}
               <br>
               <strong>{{ 'admin.settings.creativeMax' | translate }}</strong> {{ 'admin.settings.creativeMaxDesc' |
@@ -265,9 +253,11 @@
               <div>
                 <strong>{{ 'admin.settings.errorBelowMinimum' | translate }}</strong> {{
                 'admin.settings.errorBelowMinimumMsg' | translate }} <strong>{{ maxQuestionsValue }}</strong> {{
-                'admin.settings.errorBelowMinimumMsg2' | translate }} <strong>{{ minimumQuestionsRequired }}</strong> {{
+                'admin.settings.errorBelowMinimumMsg2' | translate }} <strong>{{ minimumQuestionsRequired }}</strong>
+                {{
                 'admin.settings.errorBelowMinimumMsg3' | translate }}
-                {{ 'admin.settings.errorBelowMinimumMsg4' | translate }} <strong>{{ minimumQuestionsRequired }}</strong>
+                {{ 'admin.settings.errorBelowMinimumMsg4' | translate }} <strong>{{ minimumQuestionsRequired
+                  }}</strong>
                 {{ 'admin.settings.errorBelowMinimumMsg5' | translate }}
               </div>
             </div>
@@ -349,6 +339,9 @@
                 [disabled]="isDeletingCategory() === category.id" [title]="'admin.settings.editCategory' | translate">
                 <i class="fas fa-edit"></i>
               </button>
+
+              <!-- Delete with Confirmation -->
+              @if (deleteCategoryConfirmId() !== category.id) {
               <button class="btn-action btn-delete" (click)="deleteCategory(category)"
                 [disabled]="isDeletingCategory() === category.id" [title]="'admin.settings.deleteCategory' | translate">
                 @if (isDeletingCategory() !== category.id) {
@@ -357,6 +350,18 @@
                 <span class="spinner-small"></span>
                 }
               </button>
+              } @else {
+              <div class="confirm-buttons">
+                <button class="btn-confirm confirm-yes" (click)="confirmDeleteCategory(category.id!)"
+                  [title]="'admin.settings.confirmDeletion' | translate">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="btn-confirm confirm-no" (click)="cancelDeleteCategory()"
+                  [title]="'admin.settings.cancel' | translate">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              }
             </div>
           </div>
           }
