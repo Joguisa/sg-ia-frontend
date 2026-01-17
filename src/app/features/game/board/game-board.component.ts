@@ -176,8 +176,13 @@ export class GameBoardComponent implements OnInit {
           this.gameState.set('playing');
           this.startTimer();
         } else if (response.completed) {
-          // Cuestionario completado exitosamente
-          this.handleGameCompleted(response.message || this.translate.instant('game.notifications.board.completed'));
+          if (this.questionCount() === 0) {
+            // No hay preguntas desde el inicio - NO es una felicitación
+            this.handleNoQuestionsFromStart();
+          } else {
+            // Cuestionario completado exitosamente
+            this.handleGameCompleted(response.message || this.translate.instant('game.notifications.board.completed'));
+          }
         } else {
           // No hay más preguntas disponibles - fin del juego por completar todas
           this.handleNoQuestionsAvailable(this.translate.instant('game.notifications.board.no_questions'));
@@ -209,8 +214,24 @@ export class GameBoardComponent implements OnInit {
     // Ya no redirigimos automáticamente - el usuario controla con un botón
   }
 
+  private handleNoQuestionsFromStart(): void {
+    this.stopTimer();
+    this.gameState.set('no_questions');
+    this.notification.warning(
+      this.translate.instant('game.notifications.board.no_questions_available'),
+      NOTIFICATION_DURATION.LONG
+    );
+  }
+
   goToProfile(): void {
     this.router.navigate(['/profile']);
+  }
+
+  goToHome(): void {
+    localStorage.removeItem('playerId');
+    localStorage.removeItem('playerName');
+    localStorage.removeItem('roomCode');
+    this.router.navigate(['/play']);
   }
 
   viewResults(): void {

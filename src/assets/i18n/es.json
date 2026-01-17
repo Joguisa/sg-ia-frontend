@@ -125,7 +125,9 @@
       "viewProfile": "Ver Perfil",
       "quizCompleted": "¡Has completado todas las preguntas!",
       "quizCompletedBadge": "Quiz Completado",
-      "finalDifficulty": "Dificultad Final"
+      "finalDifficulty": "Dificultad Final",
+      "noQuestionsTitle": "Sin preguntas disponibles",
+      "noQuestionsMessage": "No hay preguntas disponibles en este momento. Por favor, intenta más tarde o contacta al administrador."
     },
     "notifications": {
       "board": {
@@ -137,7 +139,8 @@
         "connection_error": "Error de conexión. Por favor, verifica tu conexión a internet.",
         "select_option": "Por favor selecciona una opción",
         "submit_error": "Error al enviar respuesta",
-        "process_error": "Error al procesar tu respuesta"
+        "process_error": "Error al procesar tu respuesta",
+        "no_questions_available": "No hay preguntas disponibles para jugar en este momento."
       },
       "start": {
         "name_required": "Por favor ingresa tu nombre",

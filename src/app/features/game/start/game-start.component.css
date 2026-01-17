@@ -66,7 +66,7 @@
 
 .card-header {
   padding: 40px 30px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #764ba2 0%, #764ba2 100%);
   color: white;
   text-align: center;
 }
@@ -115,7 +115,7 @@
 
 .form-control:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #764ba2;
   background-color: white;
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
@@ -154,7 +154,7 @@
   padding: 14px 32px;
   font-size: 18px;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #764ba2 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -221,7 +221,7 @@
 .link-button {
   background: none;
   border: none;
-  color: #667eea;
+  color: #764ba2;
   font-weight: 600;
   cursor: pointer;
   padding: 0 4px;
@@ -367,8 +367,8 @@
 }
 
 .room-code-toggle:hover:not(:disabled) {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #764ba2;
+  color: #764ba2;
   background-color: rgba(102, 126, 234, 0.05);
 }
 
@@ -416,9 +416,9 @@
 
 .btn-validate {
   padding: 12px 20px;
-  border: 2px solid #667eea;
+  border: 2px solid #764ba2;
   background: transparent;
-  color: #667eea;
+  color: #764ba2;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
@@ -430,7 +430,7 @@
 }
 
 .btn-validate:hover:not(:disabled) {
-  background: #667eea;
+  background: #764ba2;
   color: white;
 }
 
@@ -443,7 +443,7 @@
   width: 16px;
   height: 16px;
   border: 2px solid rgba(102, 126, 234, 0.3);
-  border-top-color: #667eea;
+  border-top-color: #764ba2;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }

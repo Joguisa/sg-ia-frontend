@@ -449,17 +449,17 @@ button.btn-action i {
 /* Success Rate Colors */
 .success-rate-success-high {
   background: rgba(39, 174, 96, 0.1);
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .success-rate-success-medium {
   background: rgba(243, 156, 18, 0.1);
-  color: #f39c12;
+  color: #f59e0b;
 }
 
 .success-rate-success-low {
   background: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 /* Base .no-data is in admin-styles.css */
@@ -723,12 +723,12 @@ button.btn-action i {
 
 .type-ai_generated {
   background: rgba(52, 152, 219, 0.15);
-  color: #3498db;
+  color: #38bdf8;
 }
 
 .type-csv_imported {
   background: rgba(39, 174, 96, 0.15);
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .type-manual {
@@ -766,15 +766,15 @@ button.btn-action i {
 }
 
 .progress-bar.progress-complete::after {
-  background: linear-gradient(90deg, #27ae60, #2ecc71);
+  background: linear-gradient(90deg, #22c55e, #2ecc71);
 }
 
 .progress-bar.progress-partial::after {
-  background: linear-gradient(90deg, #f39c12, #f1c40f);
+  background: linear-gradient(90deg, #f59e0b, #f1c40f);
 }
 
 .progress-bar.progress-low::after {
-  background: linear-gradient(90deg, #e74c3c, #c0392b);
+  background: linear-gradient(90deg, #dc2626, #c0392b);
 }
 
 .progress-text {
@@ -794,17 +794,17 @@ button.btn-action i {
 
 .batch-status-complete {
   background: rgba(39, 174, 96, 0.15);
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .batch-status-partial {
   background: rgba(243, 156, 18, 0.15);
-  color: #f39c12;
+  color: #f59e0b;
 }
 
 .batch-status-pending {
   background: rgba(231, 76, 60, 0.15);
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 .batch-date {
@@ -822,7 +822,7 @@ button.btn-action i {
 }
 
 .btn-view {
-  color: #3498db;
+  color: #38bdf8;
 }
 
 .btn-view:hover {

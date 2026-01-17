@@ -719,7 +719,7 @@
 .admin-alert-danger {
   background-color: rgba(244, 67, 54, 0.1);
   border: 1px solid rgba(244, 67, 54, 0.3);
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 .admin-alert-danger strong {

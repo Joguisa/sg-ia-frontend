@@ -381,12 +381,12 @@
 
 .status-verified {
   background: rgba(39, 174, 96, 0.1);
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .status-pending {
   background: rgba(243, 156, 18, 0.1);
-  color: #f39c12;
+  color: #f59e0b;
 }
 
 .status-badge i {
@@ -407,7 +407,7 @@
 
 .ai-badge {
   background: rgba(52, 152, 219, 0.1);
-  color: #3498db;
+  color: #38bdf8;
 }
 
 .ai-badge i {
@@ -439,7 +439,7 @@
 }
 
 .btn-verify {
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .btn-verify:hover {
@@ -447,7 +447,7 @@
 }
 
 .btn-delete {
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 .btn-delete:hover {
@@ -477,7 +477,7 @@
 }
 
 .confirm-yes {
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .confirm-yes:hover {
@@ -485,7 +485,7 @@
 }
 
 .confirm-no {
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 .confirm-no:hover {
@@ -664,7 +664,7 @@
    CSV IMPORT SECTION
    ============================================================================ */
 .csv-import-section .generator-title i {
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .csv-info {
@@ -713,7 +713,7 @@
   align-items: center;
   gap: 10px;
   padding: 16px 32px;
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  background: linear-gradient(135deg, #22c55e, #2ecc71);
   color: white;
   border-radius: 8px;
   cursor: pointer;
@@ -762,11 +762,11 @@
 }
 
 .import-stat.success {
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .import-stat.error {
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 .error-details {
@@ -777,7 +777,7 @@
 
 .error-details p {
   margin: 0 0 8px;
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 .error-details ul {
@@ -797,12 +797,12 @@
    UNVERIFIED QUESTIONS SECTION
    ============================================================================ */
 .unverified-section .generator-title i {
-  color: #f39c12;
+  color: #f59e0b;
 }
 
 .badge-warning {
   background: rgba(243, 156, 18, 0.2);
-  color: #f39c12;
+  color: #f59e0b;
   margin-left: 10px;
   padding: 4px 10px;
   border-radius: 12px;
@@ -862,7 +862,7 @@
 }
 
 .btn-edit {
-  color: #3498db;
+  color: #38bdf8;
 }
 
 .btn-edit:hover {
@@ -872,7 +872,7 @@
 .no-data-small {
   text-align: center;
   padding: 30px;
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .no-data-small i {
@@ -917,7 +917,7 @@
 
 .bulk-info i {
   font-size: 20px;
-  color: #3498db;
+  color: #38bdf8;
 }
 
 .bulk-stats {
@@ -942,7 +942,7 @@
 
 .btn-verify-all {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  background: linear-gradient(135deg, #22c55e, #2ecc71);
   color: white;
   border: none;
   border-radius: 8px;
@@ -959,7 +959,7 @@
 .btn-verify-all:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(39, 174, 96, 0.4);
-  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  background: linear-gradient(135deg, #2ecc71, #22c55e);
 }
 
 .btn-verify-all:disabled {
@@ -980,7 +980,7 @@
 
 .btn-unverify-all {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #f39c12, #d68910);
+  background: linear-gradient(135deg, #f59e0b, #d68910);
   color: white;
   border: none;
   border-radius: 8px;
@@ -997,7 +997,7 @@
 .btn-unverify-all:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(243, 156, 18, 0.4);
-  background: linear-gradient(135deg, #d68910, #f39c12);
+  background: linear-gradient(135deg, #d68910, #f59e0b);
 }
 
 .btn-unverify-all:disabled {
@@ -1012,7 +1012,7 @@
 
 .btn-delete-all {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  background: linear-gradient(135deg, #dc2626, #c0392b);
   color: white;
   border: none;
   border-radius: 8px;
@@ -1029,7 +1029,7 @@
 .btn-delete-all:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(231, 76, 60, 0.4);
-  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  background: linear-gradient(135deg, #c0392b, #dc2626);
 }
 
 .btn-delete-all:disabled {

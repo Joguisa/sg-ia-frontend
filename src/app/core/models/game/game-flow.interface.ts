@@ -64,4 +64,4 @@ export interface GameSession {
 /**
  * States for the game UI component
  */
-export type GameState = 'loading' | 'playing' | 'feedback' | 'gameover' | 'completed';
+export type GameState = 'loading' | 'playing' | 'feedback' | 'gameover' | 'completed' | 'no_questions';

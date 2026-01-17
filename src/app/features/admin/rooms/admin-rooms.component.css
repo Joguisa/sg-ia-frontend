@@ -578,29 +578,29 @@
 /* Success Rate Colors - Matching Dashboard */
 .success-rate-high {
   background: rgba(39, 174, 96, 0.1);
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .success-rate-high .rate-value {
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .success-rate-medium {
   background: rgba(243, 156, 18, 0.1);
-  color: #f39c12;
+  color: #f59e0b;
 }
 
 .success-rate-medium .rate-value {
-  color: #f39c12;
+  color: #f59e0b;
 }
 
 .success-rate-low {
   background: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 .success-rate-low .rate-value {
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 .empty-analytics {

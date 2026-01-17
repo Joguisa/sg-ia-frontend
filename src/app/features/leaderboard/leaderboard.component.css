@@ -74,7 +74,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-text {
@@ -153,7 +155,7 @@
 }
 
 .rank-badge.rank-gold {
-  background: linear-gradient(135deg, #f39c12, #e67e22);
+  background: linear-gradient(135deg, #f59e0b, #e67e22);
 }
 
 .rank-badge.rank-silver {
@@ -385,17 +387,17 @@
 
 .accuracy-high {
   background: rgba(39, 174, 96, 0.1);
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .accuracy-medium {
   background: rgba(243, 156, 18, 0.1);
-  color: #f39c12;
+  color: #f59e0b;
 }
 
 .accuracy-low {
   background: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 .no-data {
@@ -538,7 +540,7 @@
 }
 
 .text-warning {
-  color: #f39c12 !important;
+  color: #f59e0b !important;
 }
 
 .text-gray-400 {

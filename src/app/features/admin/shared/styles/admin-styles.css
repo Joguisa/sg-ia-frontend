@@ -247,7 +247,7 @@
 
 /* Warning Button - Caution actions (Orange gradient) */
 .btn-warning {
-    background: linear-gradient(135deg, #f39c12, #e67e22);
+    background: linear-gradient(135deg, #f59e0b, #e67e22);
     color: white;
 }
 
@@ -258,7 +258,7 @@
 
 /* Danger Button - Destructive actions (Red) */
 .btn-danger {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    background: linear-gradient(135deg, #dc2626, #c0392b);
     color: white;
 }
 
@@ -320,7 +320,7 @@
 
 /* Verify Action */
 .btn-action.btn-verify {
-    color: #27ae60;
+    color: #22c55e;
 }
 
 .btn-action.btn-verify:hover:not(:disabled) {
@@ -329,7 +329,7 @@
 
 /* Delete Action */
 .btn-action.btn-delete {
-    color: #e74c3c;
+    color: #dc2626;
 }
 
 .btn-action.btn-delete:hover:not(:disabled) {
@@ -338,7 +338,7 @@
 
 /* Toggle/Status Action */
 .btn-action.btn-toggle {
-    color: #f39c12;
+    color: #f59e0b;
 }
 
 .btn-action.btn-toggle:hover:not(:disabled) {
@@ -369,7 +369,7 @@
 }
 
 .confirm-yes {
-    color: #27ae60;
+    color: #22c55e;
 }
 
 .confirm-yes:hover {
@@ -377,7 +377,7 @@
 }
 
 .confirm-no {
-    color: #e74c3c;
+    color: #dc2626;
 }
 
 .confirm-no:hover {
@@ -394,19 +394,19 @@
 }
 
 .text-danger {
-    color: #e74c3c !important;
+    color: #dc2626 !important;
 }
 
 .text-success {
-    color: #27ae60 !important;
+    color: #22c55e !important;
 }
 
 .text-warning {
-    color: #f39c12 !important;
+    color: #f59e0b !important;
 }
 
 .text-info {
-    color: #3498db !important;
+    color: #38bdf8 !important;
 }
 
 .text-muted {
@@ -543,19 +543,19 @@
 }
 
 .difficulty-1 {
-    background: #27ae60;
+    background: #22c55e;
 }
 
 .difficulty-2 {
-    background: #3498db;
+    background: #38bdf8;
 }
 
 .difficulty-3 {
-    background: #f39c12;
+    background: #f59e0b;
 }
 
 .difficulty-4 {
-    background: #e74c3c;
+    background: #dc2626;
 }
 
 .difficulty-5 {
@@ -654,19 +654,19 @@
 .accuracy-badge.high,
 .success-badge.high {
     background: rgba(39, 174, 96, 0.1);
-    color: #27ae60;
+    color: #22c55e;
 }
 
 .accuracy-badge.medium,
 .success-badge.medium {
     background: rgba(243, 156, 18, 0.1);
-    color: #f39c12;
+    color: #f59e0b;
 }
 
 .accuracy-badge.low,
 .success-badge.low {
     background: rgba(231, 76, 60, 0.1);
-    color: #e74c3c;
+    color: #dc2626;
 }
 
 /* ============================================================================
@@ -859,7 +859,7 @@ code {
 .admin-alert-success {
     background: rgba(39, 174, 96, 0.1);
     border: 1px solid rgba(39, 174, 96, 0.3);
-    color: #27ae60;
+    color: #22c55e;
 }
 
 /* Danger/Error Alert */
@@ -873,14 +873,14 @@ code {
 .admin-alert-warning {
     background: rgba(243, 156, 18, 0.1);
     border: 1px solid rgba(243, 156, 18, 0.3);
-    color: #f39c12;
+    color: #f59e0b;
 }
 
 /* Info Alert */
 .admin-alert-info {
     background: rgba(102, 126, 234, 0.1);
     border: 1px solid rgba(102, 126, 234, 0.3);
-    color: #667eea;
+    color: #764ba2;
 }
 
 /* ============================================================================
@@ -907,7 +907,7 @@ code {
 .form-label.required::after,
 .required {
     content: ' *';
-    color: #e74c3c;
+    color: #dc2626;
     font-weight: 700;
 }
 

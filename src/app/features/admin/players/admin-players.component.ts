@@ -183,14 +183,18 @@ export class AdminPlayersComponent implements OnInit {
       labels,
       datasets: [
         {
-          label: 'High Score',
+          // label: 'High Score',
+          // traducir
+          label: this.translate.instant('admin.players.highScore'),
           data: scores,
           backgroundColor: 'rgba(102, 126, 234, 0.6)',
           borderColor: 'rgba(102, 126, 234, 1)',
           borderWidth: 2
         },
         {
-          label: 'Total Juegos',
+          // label: 'Total Juegos',
+          // traducir
+          label: this.translate.instant('admin.players.totalGames'),
           data: totalGames,
           backgroundColor: 'rgba(118, 75, 162, 0.6)',
           borderColor: 'rgba(118, 75, 162, 1)',
@@ -291,7 +295,7 @@ export class AdminPlayersComponent implements OnInit {
     this.selectedPlayerId.set(null);
     this.selectedPlayerStats.set(null);
     this.profileChartData.set(null);
-    this.activeTab.set('players');
+    this.onTabChange('players');
   }
 
   // ============================================================================

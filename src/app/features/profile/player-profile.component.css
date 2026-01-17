@@ -30,7 +30,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-text {
@@ -259,19 +261,19 @@
 }
 
 .progress-success {
-  background: linear-gradient(90deg, #27ae60, #2ecc71);
+  background: linear-gradient(90deg, #22c55e, #2ecc71);
 }
 
 .progress-info {
-  background: linear-gradient(90deg, #3498db, #5dade2);
+  background: linear-gradient(90deg, #38bdf8, #5dade2);
 }
 
 .progress-warning {
-  background: linear-gradient(90deg, #f39c12, #f7dc6f);
+  background: linear-gradient(90deg, #f59e0b, #f7dc6f);
 }
 
 .progress-danger {
-  background: linear-gradient(90deg, #e74c3c, #ec7063);
+  background: linear-gradient(90deg, #dc2626, #ec7063);
 }
 
 /* ============================================================================
@@ -350,15 +352,15 @@
 }
 
 .accuracy-high {
-  color: #27ae60;
+  color: #22c55e;
 }
 
 .accuracy-medium {
-  color: #f39c12;
+  color: #f59e0b;
 }
 
 .accuracy-low {
-  color: #e74c3c;
+  color: #dc2626;
 }
 
 .accuracy-bar {
@@ -502,19 +504,19 @@
 }
 
 .text-success {
-  color: #27ae60 !important;
+  color: #22c55e !important;
 }
 
 .text-warning {
-  color: #f39c12 !important;
+  color: #f59e0b !important;
 }
 
 .text-info {
-  color: #3498db !important;
+  color: #38bdf8 !important;
 }
 
 .text-danger {
-  color: #e74c3c !important;
+  color: #dc2626 !important;
 }
 
 /* ============================================================================

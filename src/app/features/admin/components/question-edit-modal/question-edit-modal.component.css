@@ -74,7 +74,7 @@
 }
 
 .option-item.correct {
-  border-color: #27ae60;
+  border-color: #22c55e;
   background: rgba(39, 174, 96, 0.05);
 }
 
@@ -89,7 +89,7 @@
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #27ae60;
+  accent-color: #22c55e;
 }
 
 .option-label {
@@ -126,7 +126,7 @@
   background: rgba(243, 156, 18, 0.1);
   border: 1px solid rgba(243, 156, 18, 0.3);
   border-radius: 6px;
-  color: #f39c12;
+  color: #f59e0b;
   font-size: 13px;
   font-weight: 500;
 }
@@ -147,11 +147,11 @@
 
 /* Utility Classes */
 .text-success {
-  color: #27ae60 !important;
+  color: #22c55e !important;
 }
 
 .text-danger {
-  color: #e74c3c !important;
+  color: #dc2626 !important;
 }
 
 /* Responsive */

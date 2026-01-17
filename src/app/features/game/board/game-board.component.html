@@ -302,5 +302,23 @@
         </div>
       </div>
     }
+
+    <!-- NO QUESTIONS AVAILABLE STATE -->
+    @if (gameState() === 'no_questions') {
+      <div class="gameover-screen">
+        <div class="gameover-card d-flex flex-column align-items-center text-center">
+          <i class="fas fa-exclamation-triangle fs-2x text-warning mb-4"></i>
+          <h2 class="gameover-title text-warning">{{ 'game.over.noQuestionsTitle' | translate }}</h2>
+          <p class="gameover-message">
+            {{ 'game.over.noQuestionsMessage' | translate }}
+          </p>
+          <div class="action-section mt-4">
+            <button class="btn btn-profile" (click)="goToHome()">
+              <i class="fas fa-home me-2"></i>{{ 'game.over.backToStart' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
   </div>
 </div>
