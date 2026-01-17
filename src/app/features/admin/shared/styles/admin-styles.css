@@ -598,7 +598,7 @@
 .admin-table th,
 .data-table th {
     padding: 14px 12px;
-    text-align: left;
+    text-align: center;
     font-weight: 700;
     color: #2c3e50;
     text-transform: uppercase;
@@ -608,12 +608,23 @@
     white-space: nowrap;
 }
 
+.admin-table th:first-child,
+.data-table th:first-child {
+    text-align: left;
+}
+
 .admin-table td,
 .data-table td {
     padding: 14px 12px;
     vertical-align: middle;
     border-bottom: 1px solid #ecf0f1;
     color: #4b5563;
+    text-align: center;
+}
+
+.admin-table td:first-child,
+.data-table td:first-child {
+    text-align: left;
 }
 
 .admin-table tbody tr,
@@ -757,11 +768,15 @@ code {
 
 .admin-table th {
     padding: 16px;
-    text-align: left;
+    text-align: center;
     font-weight: 600;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.admin-table th:first-child {
+    text-align: left;
 }
 
 /* Table Body */
@@ -778,6 +793,11 @@ code {
     padding: 16px;
     font-size: 14px;
     color: #2c3e50;
+    text-align: center;
+}
+
+.admin-table td:first-child {
+    text-align: left;
 }
 
 /* ============================================================================

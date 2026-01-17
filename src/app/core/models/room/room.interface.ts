@@ -165,11 +165,11 @@ export interface RoomPlayerStats {
   player_id: number;
   player_name: string;
   player_age: number;
-  sessions_played: number;
+  total_sessions: number;
   high_score: number;
   avg_score: number;
   total_answers: number;
-  accuracy_percent: number;
+  accuracy: number;
   avg_time_sec: number;
 }
 

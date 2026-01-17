@@ -288,7 +288,7 @@
                   <div class="question-item" *ngFor="let question of topHardest(); let idx = index">
                     <div class="question-rank">{{ idx + 1 }}</div>
                     <div class="question-info">
-                      <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
+                      <p class="question-text">{{ question.statement }}</p>
                       <p class="question-meta">
                         <i class="fas fa-circle-info"></i>
                         ID: {{ question.id }} | {{ question.times_answered }} {{ 'admin.rooms.answers' | translate }}
@@ -318,7 +318,7 @@
                   <div class="question-item" *ngFor="let question of topEasiest(); let idx = index">
                     <div class="question-rank">{{ idx + 1 }}</div>
                     <div class="question-info">
-                      <p class="question-text">{{ truncateText(question.statement, 60) }}</p>
+                      <p class="question-text">{{ question.statement }}</p>
                       <p class="question-meta">
                         <i class="fas fa-circle-info"></i>
                         ID: {{ question.id }} | {{ question.times_answered }} {{ 'admin.rooms.answers' | translate }}
@@ -353,13 +353,12 @@
               <tbody>
                 <tr *ngFor="let player of roomPlayerStats()">
                   <td>{{ player.player_name }}</td>
-                  <td>{{ player.sessions_played }}</td>
+                  <td>{{ player.total_sessions }}</td>
                   <td>{{ player.total_answers }}</td>
                   <td>
-                    <span class="accuracy-badge" [class.high]="player.accuracy_percent >= 70"
-                      [class.medium]="player.accuracy_percent >= 50 && player.accuracy_percent < 70"
-                      [class.low]="player.accuracy_percent < 50">
-                      {{ player.accuracy_percent }}%
+                    <span class="accuracy-badge" [class.high]="player.accuracy >= 70"
+                      [class.medium]="player.accuracy >= 50 && player.accuracy < 70" [class.low]="player.accuracy < 50">
+                      {{ player.accuracy }}%
                     </span>
                   </td>
                   <td>{{ player.avg_score }}</td>

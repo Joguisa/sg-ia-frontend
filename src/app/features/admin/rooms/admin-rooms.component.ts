@@ -1,10 +1,11 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 import { TabsComponent, Tab } from '../../../shared/tabs/tabs.component';
 import { RoomService } from '../../../core/services/room.service';
@@ -35,7 +36,7 @@ import { RoomFormModalComponent } from '../components/room-form-modal/room-form-
   templateUrl: './admin-rooms.component.html',
   styleUrls: ['../shared/styles/admin-styles.css', './admin-rooms.component.css']
 })
-export class AdminRoomsComponent implements OnInit {
+export class AdminRoomsComponent implements OnInit, OnDestroy {
 
   // Tabs configuration - labels will be translated in template
   tabs: Tab[] = [];
@@ -127,6 +128,8 @@ export class AdminRoomsComponent implements OnInit {
   // Export
   isExporting = signal<boolean>(false);
 
+  private langChangeSubscription: Subscription | undefined;
+
   constructor(
     private roomService: RoomService,
     private adminService: AdminService,
@@ -141,6 +144,12 @@ export class AdminRoomsComponent implements OnInit {
   ngOnInit(): void {
     // Initialize translations for charts
     this.updateChartTranslations();
+
+    // Subscribe to language changes
+    this.langChangeSubscription = this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
+      this.updateChartTranslations();
+      this.initTabs(); // Also update tabs labels
+    });
 
     // Initialize translated tabs
     this.initTabs();
@@ -167,6 +176,12 @@ export class AdminRoomsComponent implements OnInit {
 
     // Load initial data
     this.loadRooms();
+  }
+
+  ngOnDestroy(): void {
+    if (this.langChangeSubscription) {
+      this.langChangeSubscription.unsubscribe();
+    }
   }
 
   onTabChange(tabId: string): void {
@@ -463,7 +478,7 @@ export class AdminRoomsComponent implements OnInit {
 
     const topPlayers = players.slice(0, 10);
     const labels = topPlayers.map(p => p.player_name);
-    const accuracy = topPlayers.map(p => p.accuracy_percent);
+    const accuracy = topPlayers.map(p => p.accuracy);
     const scores = topPlayers.map(p => p.high_score);
 
     this.playerStatsChartData.set({
@@ -626,6 +641,8 @@ export class AdminRoomsComponent implements OnInit {
   updateChartTranslations(): void {
     this.playerStatsChartOptions = {
       ...this.playerStatsChartOptions,
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         ...this.playerStatsChartOptions?.plugins,
         title: {
@@ -653,6 +670,8 @@ export class AdminRoomsComponent implements OnInit {
 
     this.categoryStatsChartOptions = {
       ...this.categoryStatsChartOptions,
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         ...this.categoryStatsChartOptions?.plugins,
         title: {

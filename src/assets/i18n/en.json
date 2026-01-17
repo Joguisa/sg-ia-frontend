@@ -771,6 +771,7 @@
       "rank": "Rank",
       "highScore": "High Score",
       "games": "Games",
+      "totalGames": "Total Games",
       "actions": "Actions",
       "viewFullProfile": "View full profile",
       "allPlayersTitle": "All Players",
@@ -778,6 +779,13 @@
       "searchPlaceholder": "Search by name or ID...",
       "resultsCount": "of",
       "playersLabel": "players",
+      "charts": {
+        "top10HighScore": "Top 10 Players - High Score",
+        "score": "Score",
+        "player": "Player",
+        "performanceByCategory": "Performance by Category",
+        "accuracy": "Accuracy (%)"
+      },
       "loadingPlayers": "Loading players...",
       "noPlayersFound": "No players found with those criteria",
       "viewStats": "View Statistics",

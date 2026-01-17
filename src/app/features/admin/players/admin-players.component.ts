@@ -15,7 +15,7 @@ import { NOTIFICATION_DURATION } from '../../../core/constants/notification-conf
 
 import { LeaderboardEntry } from '../../../core/models/game/leaderboard.interface';
 import { Player } from '../../../core/models/player/player.interface';
-import { PlayerStatsResponse, PlayerGlobalStats, PlayerTopicStats } from '../../../core/models/player/player-stats.interface';
+import { PlayerStatsResponse, PlayerTopicStats } from '../../../core/models/player/player-stats.interface';
 
 @Component({
   selector: 'app-admin-players',
@@ -47,11 +47,11 @@ export class AdminPlayersComponent implements OnInit {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: true, position: 'top' },
-      title: { display: true, text: 'Top 10 Jugadores - High Score' }
+      title: { display: true, text: '' }
     },
     scales: {
-      y: { beginAtZero: true, title: { display: true, text: 'Puntaje' } },
-      x: { title: { display: true, text: 'Jugador' } }
+      y: { beginAtZero: true, title: { display: true, text: '' } },
+      x: { title: { display: true, text: '' } }
     }
   };
   leaderboardChartType: ChartType = 'bar';
@@ -79,7 +79,7 @@ export class AdminPlayersComponent implements OnInit {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: true, position: 'top' },
-      title: { display: true, text: 'Rendimiento por Categoría' }
+      title: { display: true, text: '' }
     },
     scales: {
       r: {
@@ -121,6 +121,19 @@ export class AdminPlayersComponent implements OnInit {
 
     // Load initial data based on active tab
     this.loadTabData(this.activeTab());
+
+    this.updateChartTranslations();
+
+    this.translate.onLangChange.subscribe(() => {
+      this.updateChartTranslations();
+      if (this.leaderboardData().length > 0) {
+        this.buildLeaderboardChart(this.leaderboardData().slice(0, 10));
+      }
+      const stats = this.selectedPlayerStats();
+      if (stats && stats.topics && stats.topics.length > 0) {
+        this.buildProfileChart(stats.topics);
+      }
+    });
   }
 
   onTabChange(tabId: string): void {
@@ -277,7 +290,7 @@ export class AdminPlayersComponent implements OnInit {
       labels,
       datasets: [
         {
-          label: 'Precisión (%)',
+          label: this.translate.instant('admin.players.charts.accuracy'),
           data: accuracyData,
           backgroundColor: 'rgba(102, 126, 234, 0.3)',
           borderColor: 'rgba(102, 126, 234, 1)',
@@ -313,5 +326,24 @@ export class AdminPlayersComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/admin/login']);
+  }
+
+  private updateChartTranslations(): void {
+    // Cast to any to avoid strict type checking on chart options
+    const leaderboardOptions = this.leaderboardChartOptions as any;
+    if (leaderboardOptions?.plugins?.title) {
+      leaderboardOptions.plugins.title.text = this.translate.instant('admin.players.charts.top10HighScore');
+    }
+    if (leaderboardOptions?.scales?.['y']?.title) {
+      leaderboardOptions.scales['y'].title.text = this.translate.instant('admin.players.charts.score');
+    }
+    if (leaderboardOptions?.scales?.['x']?.title) {
+      leaderboardOptions.scales['x'].title.text = this.translate.instant('admin.players.charts.player');
+    }
+
+    const profileOptions = this.profileChartOptions as any;
+    if (profileOptions?.plugins?.title) {
+      profileOptions.plugins.title.text = this.translate.instant('admin.players.charts.performanceByCategory');
+    }
   }
 }

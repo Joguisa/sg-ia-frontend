@@ -66,7 +66,7 @@
 
 .card-header {
   padding: 40px 30px 30px;
-  background: linear-gradient(135deg, #764ba2 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   text-align: center;
 }
@@ -154,7 +154,7 @@
   padding: 14px 32px;
   font-size: 18px;
   font-weight: 700;
-  background: linear-gradient(135deg, #764ba2 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -221,7 +221,7 @@
 .link-button {
   background: none;
   border: none;
-  color: #764ba2;
+  color: #667eea;
   font-weight: 600;
   cursor: pointer;
   padding: 0 4px;
@@ -230,7 +230,7 @@
 }
 
 .link-button:hover:not(:disabled) {
-  color: #764ba2;
+  color: #667eea;
 }
 
 .link-button:disabled {
