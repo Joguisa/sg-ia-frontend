@@ -152,7 +152,7 @@
 
 /* KPI Colors */
 .kpi-players::before {
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
 }
 
 .kpi-sessions::before {
@@ -178,7 +178,7 @@
 }
 
 .kpi-players .kpi-icon {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
 }
 
 .kpi-sessions .kpi-icon {
@@ -261,7 +261,7 @@
 .action-icon i {
   font-size: 32px;
   line-height: 1;
-  color: #667eea;
+  color: #3b82f6;
 }
 
 .action-content {
@@ -284,7 +284,7 @@
 
 button.btn-action {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
   color: white !important;
   border: none;
   border-radius: 6px;
@@ -379,7 +379,7 @@ button.btn-action i {
 
 .question-item:hover {
   background: #f0f2f5;
-  border-left-color: #667eea;
+  border-left-color: #3b82f6;
 }
 
 .question-rank {
@@ -387,7 +387,7 @@ button.btn-action i {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
   display: flex;
   align-items: center;
@@ -932,6 +932,6 @@ button.btn-action i {
 
 .ai-provider-other {
   background: rgba(102, 126, 234, 0.15);
-  color: #667eea;
+  color: #3b82f6;
   border: 1px solid rgba(102, 126, 234, 0.3);
 }

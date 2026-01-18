@@ -59,12 +59,12 @@ export interface Tab {
     }
 
     .tab-button:hover {
-      color: #667eea;
+      color: #3b82f6;
       background: rgba(102, 126, 234, 0.05);
     }
 
     .tab-button.active {
-      color: #667eea;
+      color: #3b82f6;
       font-weight: 600;
     }
 
@@ -75,7 +75,7 @@ export interface Tab {
       left: 0;
       right: 0;
       height: 3px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       border-radius: 3px 3px 0 0;
     }
 

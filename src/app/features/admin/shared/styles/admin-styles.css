@@ -175,7 +175,7 @@
 /* Dark variant - For light backgrounds */
 .admin-spinner-dark {
     border-color: #e8ecf1;
-    border-top-color: #667eea;
+    border-top-color: #3b82f6;
 }
 
 /* Spin animation */
@@ -222,7 +222,7 @@
 /* Primary Button - Main actions (Purple gradient) */
 .btn-primary,
 .admin-btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
     box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);
 }
@@ -311,7 +311,7 @@
 
 /* Edit Action */
 .btn-action.btn-edit {
-    color: #667eea;
+    color: #3b82f6;
 }
 
 .btn-action.btn-edit:hover:not(:disabled) {
@@ -390,7 +390,7 @@
 
 /* Text Colors */
 .text-primary {
-    color: #667eea !important;
+    color: #3b82f6 !important;
 }
 
 .text-danger {
@@ -689,7 +689,7 @@ code {
     padding: 4px 8px;
     border-radius: 4px;
     font-family: 'Monaco', 'Courier New', monospace;
-    color: #667eea;
+    color: #3b82f6;
     font-weight: 600;
     font-size: 12px;
 }
@@ -727,7 +727,7 @@ code {
 
 .admin-card-title i {
     font-size: 24px;
-    color: #667eea;
+    color: #3b82f6;
 }
 
 /* Card Subtitle */
@@ -762,7 +762,7 @@ code {
 
 /* Table Header */
 .admin-table thead {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
 }
 
@@ -900,7 +900,7 @@ code {
 .admin-alert-info {
     background: rgba(102, 126, 234, 0.1);
     border: 1px solid rgba(102, 126, 234, 0.3);
-    color: #764ba2;
+    color: #2563eb;
 }
 
 /* ============================================================================
@@ -952,7 +952,7 @@ code {
 
 .form-control:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -1006,7 +1006,7 @@ code {
 
 .search-input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #3b82f6;
     background: white;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
@@ -1024,7 +1024,7 @@ code {
 
 .filter-select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -1046,7 +1046,7 @@ code {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     border: none;
@@ -1062,7 +1062,7 @@ code {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     cursor: pointer;
     border: none;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
@@ -1094,7 +1094,7 @@ code {
 
 .form-textarea:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -1148,7 +1148,7 @@ code {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
     padding: 8px 14px;
     border-radius: 6px;
@@ -1260,7 +1260,7 @@ code {
     align-items: center;
     padding: 20px 24px;
     border-bottom: 1px solid #e0e0e0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     border-radius: 12px 12px 0 0;
     flex-shrink: 0;
 }
@@ -1353,7 +1353,7 @@ code {
 
 .modal-body .form-control:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -1416,7 +1416,7 @@ code {
 .modal-body .form-select:focus,
 .modal-body select.form-control:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 

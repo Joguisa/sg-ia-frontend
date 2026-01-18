@@ -98,16 +98,16 @@
   min-width: 30px;
   text-align: center;
   font-weight: 700;
-  color: #667eea;
+  color: #3b82f6;
   font-size: 16px;
 }
 
 .generation-message {
   padding: 12px;
   background: rgba(102, 126, 234, 0.1);
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #3b82f6;
   border-radius: 4px;
-  color: #667eea;
+  color: #3b82f6;
   font-size: 13px;
   margin-bottom: 16px;
 }
@@ -115,7 +115,7 @@
 .btn-generate {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
   border: none;
   border-radius: 6px;
@@ -162,7 +162,7 @@
 
 .form-group select.form-control:focus {
   background-color: white;
-  border-color: #667eea;
+  border-color: #3b82f6;
 }
 
 /* ============================================================================
@@ -364,7 +364,7 @@
 
 .badge-primary {
   background: rgba(102, 126, 234, 0.15);
-  color: #667eea;
+  color: #3b82f6;
 }
 
 /* difficulty-badge and difficulty-* colors are now in admin-styles.css */

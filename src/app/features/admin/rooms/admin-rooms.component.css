@@ -88,7 +88,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
   padding: 8px 14px;
   border-radius: 6px;
@@ -245,7 +245,7 @@
   gap: 8px;
   background: none;
   border: none;
-  color: #667eea;
+  color: #3b82f6;
   font-weight: 600;
   cursor: pointer;
   margin-bottom: 20px;
@@ -281,7 +281,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
   padding: 10px 18px;
   border-radius: 8px;
@@ -363,7 +363,7 @@
 
 .stat-card i {
   font-size: 28px;
-  color: #667eea;
+  color: #3b82f6;
   margin-bottom: 10px;
 }
 
@@ -435,7 +435,7 @@
 }
 
 .section-subtitle i {
-  color: #667eea;
+  color: #3b82f6;
 }
 
 .analytics-grid {
@@ -517,7 +517,7 @@
   height: 28px;
   min-width: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
   display: flex;
   align-items: center;
