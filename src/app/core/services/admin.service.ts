@@ -357,6 +357,39 @@ export class AdminService {
   }
 
   /**
+   * Descarga la plantilla CSV para importar preguntas
+   *
+   * Backend: GET /admin/csv-template
+   * Devuelve un archivo CSV con headers y ejemplos
+   * @returns Observable que completa cuando la descarga finaliza
+   */
+  downloadCsvTemplate(): Observable<void> {
+    return new Observable(observer => {
+      this.http.get(
+        `${this.apiUrl}${environment.apiEndpoints.admin.csvTemplate}`,
+        { responseType: 'blob' }
+      ).subscribe({
+        next: (blob) => {
+          // Crear URL temporal para el blob
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'plantilla_preguntas.csv';
+          link.click();
+
+          // Limpiar
+          window.URL.revokeObjectURL(url);
+          observer.next();
+          observer.complete();
+        },
+        error: (error) => {
+          observer.error(error);
+        }
+      });
+    });
+  }
+
+  /**
    * Edita el texto de una explicación
    *
    * Backend: PUT /admin/explanation/{explanationId}

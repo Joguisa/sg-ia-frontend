@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Player, PlayerResponse, PlayersListResponse, PlayerStatsResponse } from '../models/player';
+import { Player, PlayerResponse, PlayersListResponse, PlayerStatsResponse, PlayerStreaksResponse, SessionStreaksResponse, PlayerSessionsResponse } from '../models/player';
+import { SessionAnswersResponse } from '../models/game/session-stats.interface';
 
 /**
  * PlayerService
@@ -63,6 +64,65 @@ export class PlayerService {
   getPlayerStats(playerId: number): Observable<PlayerStatsResponse> {
     return this.http.get<PlayerStatsResponse>(
       `${this.apiUrl}${environment.apiEndpoints.stats.playerStats(playerId)}`
+    );
+  }
+
+  /**
+   * Obtiene las rachas (streaks) de un jugador
+   *
+   * Backend: GET /stats/player/{id}/streaks
+   * Incluye: racha actual, racha máxima, estadísticas
+   * @param playerId ID del jugador
+   * @returns Observable con rachas del jugador
+   */
+  getPlayerStreaks(playerId: number): Observable<PlayerStreaksResponse> {
+    return this.http.get<PlayerStreaksResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.stats.playerStreaks(playerId)}`
+    );
+  }
+
+  /**
+   * Obtiene las rachas (streaks) de una sesión
+   *
+   * Backend: GET /stats/session/{id}/streaks
+   * Incluye: racha máxima de la sesión, racha final, todas las rachas
+   * @param sessionId ID de la sesión
+   * @returns Observable con rachas de la sesión
+   */
+  getSessionStreaks(sessionId: number): Observable<SessionStreaksResponse> {
+    return this.http.get<SessionStreaksResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.stats.sessionStreaks(sessionId)}`
+    );
+  }
+
+  /**
+   * Obtiene el historial de respuestas de una sesión
+   *
+   * Backend: GET /stats/session/{id}/answers
+   * Incluye: pregunta, opciones, respuesta seleccionada, respuesta correcta, explicación
+   * @param sessionId ID de la sesión
+   * @param errorsOnly Si true, solo devuelve respuestas incorrectas
+   * @returns Observable con historial de respuestas
+   */
+  getSessionAnswers(sessionId: number, errorsOnly: boolean = false): Observable<SessionAnswersResponse> {
+    const url = errorsOnly
+      ? `${this.apiUrl}${environment.apiEndpoints.stats.sessionAnswers(sessionId)}?errors_only=1`
+      : `${this.apiUrl}${environment.apiEndpoints.stats.sessionAnswers(sessionId)}`;
+    return this.http.get<SessionAnswersResponse>(url);
+  }
+
+  /**
+   * Obtiene las sesiones recientes de un jugador
+   *
+   * Backend: GET /stats/player/{id}/sessions
+   * Incluye: lista de sesiones con score, status, dificultad, estadísticas
+   * @param playerId ID del jugador
+   * @param limit Número máximo de sesiones (default: 10)
+   * @returns Observable con sesiones del jugador
+   */
+  getPlayerSessions(playerId: number, limit: number = 10): Observable<PlayerSessionsResponse> {
+    return this.http.get<PlayerSessionsResponse>(
+      `${this.apiUrl}${environment.apiEndpoints.stats.playerSessions(playerId)}?limit=${limit}`
     );
   }
 }

@@ -143,4 +143,13 @@ export class LeaderboardComponent implements OnInit {
   formatAccuracy(accuracy: number): string {
     return accuracy.toFixed(2);
   }
+
+  /**
+   * Navega al perfil del usuario
+   */
+  goToProfile(): void {
+    if (this.myPlayerId()) {
+      this.router.navigate(['/profile']);
+    }
+  }
 }

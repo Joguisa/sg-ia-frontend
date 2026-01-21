@@ -6,11 +6,15 @@ import { NotificationService } from '../../core/services/notification.service';
 import {
   PlayerProfileResponse,
   PlayerGlobalStats,
-  PlayerTopicStats
+  PlayerTopicStats,
+  PlayerStreaks,
+  PlayerStreaksResponse
 } from '../../core/models/player';
 import { HttpStatus } from '../../core/constants/http-status.const';
 import { NOTIFICATION_DURATION } from '../../core/constants/notification-config.const';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { PlayerSessionsResponse } from '../../core/models/player';
+import { SessionAnswer, SessionAnswersResponse } from '../../core/models/game/session-stats.interface';
 
 
 @Component({
@@ -25,9 +29,15 @@ export class PlayerProfileComponent implements OnInit {
   playerName = signal<string>('Jugador');
   playerStats = signal<PlayerGlobalStats | null>(null);
   topicStats = signal<PlayerTopicStats[] | null>(null);
+  playerStreaks = signal<PlayerStreaks | null>(null);
 
   isLoading = signal<boolean>(true);
+  isLoadingStreaks = signal<boolean>(true);
+  isLoadingErrors = signal<boolean>(true);
   errorMessage = signal<string>('');
+
+  // New signal for recent errors
+  recentErrors = signal<SessionAnswer[]>([]);
 
   constructor(
     private playerService: PlayerService,
@@ -62,8 +72,10 @@ export class PlayerProfileComponent implements OnInit {
         this.playerName.set(playerName);
       }
 
+      const playerIdNum = parseInt(playerId);
+
       // Llamar al servicio para obtener estadísticas
-      this.playerService.getPlayerStats(parseInt(playerId)).subscribe({
+      this.playerService.getPlayerStats(playerIdNum).subscribe({
         next: (response: PlayerProfileResponse) => {
 
           if (response.ok && response.global && response.topics) {
@@ -89,6 +101,23 @@ export class PlayerProfileComponent implements OnInit {
           this.isLoading.set(false);
         }
       });
+
+      // Cargar rachas del jugador
+      this.playerService.getPlayerStreaks(playerIdNum).subscribe({
+        next: (response: PlayerStreaksResponse) => {
+          if (response.ok && response.streaks) {
+            this.playerStreaks.set(response.streaks);
+          }
+          this.isLoadingStreaks.set(false);
+        },
+        error: () => {
+          this.isLoadingStreaks.set(false);
+        }
+      });
+
+      // Cargar errores de la última sesión
+      this.loadRecentErrors(playerIdNum);
+
     } catch (error) {
       this.notification.error(this.translate.instant('game.notifications.profile.unexpected_error'), NOTIFICATION_DURATION.LONG);
       this.errorMessage.set(this.translate.instant('game.notifications.profile.unexpected_error'));
@@ -142,5 +171,40 @@ export class PlayerProfileComponent implements OnInit {
    */
   formatTime(seconds: number): string {
     return `${seconds.toFixed(1)}s`;
+  }
+
+  /**
+   * Carga los errores de la última sesión del jugador
+   */
+  private loadRecentErrors(playerId: number): void {
+    this.isLoadingErrors.set(true);
+
+    // 1. Obtener la última sesión
+    this.playerService.getPlayerSessions(playerId, 1).subscribe({
+      next: (response: PlayerSessionsResponse) => {
+        if (response.ok && response.sessions && response.sessions.length > 0) {
+          const lastSessionId = response.sessions[0].session_id;
+
+          // 2. Obtener errores de esa sesión
+          this.playerService.getSessionAnswers(lastSessionId, true).subscribe({
+            next: (answersResponse: SessionAnswersResponse) => {
+              if (answersResponse.ok && answersResponse.answers) {
+                this.recentErrors.set(answersResponse.answers);
+              }
+              this.isLoadingErrors.set(false);
+            },
+            error: () => {
+              this.isLoadingErrors.set(false);
+            }
+          });
+        } else {
+          // No hay sesiones o error
+          this.isLoadingErrors.set(false);
+        }
+      },
+      error: () => {
+        this.isLoadingErrors.set(false);
+      }
+    });
   }
 }

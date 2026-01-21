@@ -50,8 +50,16 @@ export const environment = {
     stats: {
       /** GET /stats/session/{id} - Estadísticas de sesión */
       session: (id: number) => `/stats/session/${id}`,
+      /** GET /stats/session/{id}/answers - Historial de respuestas de la sesión */
+      sessionAnswers: (id: number) => `/stats/session/${id}/answers`,
+      /** GET /stats/session/{id}/streaks - Rachas de la sesión */
+      sessionStreaks: (id: number) => `/stats/session/${id}/streaks`,
       /** GET /stats/player/{id} - Estadísticas globales del jugador */
       playerStats: (id: number) => `/stats/player/${id}`,
+      /** GET /stats/player/{id}/sessions - Sesiones del jugador */
+      playerSessions: (id: number) => `/stats/player/${id}/sessions`,
+      /** GET /stats/player/{id}/streaks - Rachas del jugador */
+      playerStreaks: (id: number) => `/stats/player/${id}/streaks`,
       /** GET /stats/leaderboard - Top 10 jugadores */
       leaderboard: '/stats/leaderboard'
     },
@@ -93,6 +101,8 @@ export const environment = {
       verifyBatch: (batchId: number) => `/admin/batch/${batchId}/verify`,
       /** POST /admin/batch/import-csv - Importar preguntas desde CSV */
       importCsv: '/admin/batch/import-csv',
+      /** GET /admin/csv-template - Descargar plantilla CSV */
+      csvTemplate: '/admin/csv-template',
       /** PUT /admin/explanation/{explanationId} - Editar explicación */
       editExplanation: (explanationId: number) => `/admin/explanation/${explanationId}`,
 

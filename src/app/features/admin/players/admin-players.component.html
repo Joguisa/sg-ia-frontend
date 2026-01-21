@@ -263,6 +263,44 @@
           </div>
         </div>
 
+        <!-- Streaks Section -->
+        @if (selectedPlayerStreaks()?.streaks) {
+        <div class="streaks-section">
+          <h3 class="admin-section-title dark">{{ 'admin.players.streaks.title' | translate }}</h3>
+          <div class="streaks-grid">
+            <div class="streak-card" [class.active]="selectedPlayerStreaks()!.streaks!.is_on_streak">
+              <div class="streak-icon">
+                <i class="fas fa-fire"></i>
+              </div>
+              <div class="streak-content">
+                <span class="streak-label">{{ 'admin.players.streaks.current' | translate }}</span>
+                <span class="streak-value">{{ selectedPlayerStreaks()!.streaks!.current }}</span>
+                @if (selectedPlayerStreaks()!.streaks!.is_on_streak) {
+                <span class="streak-badge">{{ 'admin.players.streaks.onFire' | translate }}</span>
+                }
+              </div>
+            </div>
+
+            <div class="streak-card best">
+              <div class="streak-icon">
+                <i class="fas fa-crown"></i>
+              </div>
+              <div class="streak-content">
+                <span class="streak-label">{{ 'admin.players.streaks.best' | translate }}</span>
+                <span class="streak-value">{{ selectedPlayerStreaks()!.streaks!.max }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        } @else if (isLoadingStreaks()) {
+        <div class="streaks-section">
+          <h3 class="admin-section-title dark">{{ 'admin.players.streaks.title' | translate }}</h3>
+          <div class="admin-loading-container admin-loading-container-dark" style="min-height: 80px">
+            <div class="admin-spinner admin-spinner-dark"></div>
+          </div>
+        </div>
+        }
+
         <!-- Radar Chart -->
         @if (profileChartData()) {
         <div class="chart-section">
@@ -304,6 +342,197 @@
           </table>
         </div>
         }
+
+        <!-- Player Sessions Section -->
+        <div class="sessions-section">
+          <h3 class="admin-section-title dark">{{ 'admin.players.sessions.title' | translate }}</h3>
+
+          @if (isLoadingSessions()) {
+          <div class="admin-loading-container admin-loading-container-dark" style="min-height: 100px">
+            <div class="admin-spinner admin-spinner-dark"></div>
+          </div>
+          } @else if (playerSessions().length > 0) {
+          <div class="sessions-grid">
+            @for (session of playerSessions(); track session.session_id) {
+            <div
+              class="session-card"
+              [class.selected]="selectedSessionId() === session.session_id"
+              (click)="selectSession(session.session_id)">
+              <div class="session-card-header">
+                <span class="session-id">#{{ session.session_id }}</span>
+                <span class="session-status" [ngClass]="getSessionStatusClass(session.status)">
+                  {{ 'admin.players.sessions.status.' + session.status | translate }}
+                </span>
+              </div>
+              <div class="session-card-body">
+                <div class="session-stat">
+                  <i class="fas fa-star"></i>
+                  <span>{{ session.score }}</span>
+                </div>
+                <div class="session-stat">
+                  <i class="fas fa-check-circle"></i>
+                  <span>{{ session.stats.correct_answers }}/{{ session.stats.total_answers }}</span>
+                </div>
+                <div class="session-stat">
+                  <i class="fas fa-percentage"></i>
+                  <span>{{ session.stats.accuracy.toFixed(0) }}%</span>
+                </div>
+              </div>
+              <div class="session-card-footer">
+                <span class="session-date">
+                  <i class="fas fa-calendar"></i>
+                  {{ formatDate(session.started_at) }}
+                </span>
+                @if (session.room) {
+                <span class="session-room">
+                  <i class="fas fa-door-open"></i>
+                  {{ session.room.name }}
+                </span>
+                }
+              </div>
+            </div>
+            }
+          </div>
+          } @else {
+          <div class="admin-no-data small">
+            <i class="fas fa-history"></i>
+            <p>{{ 'admin.players.sessions.noSessions' | translate }}</p>
+          </div>
+          }
+        </div>
+
+        <!-- Session Answers Section -->
+        <div class="session-answers-section">
+          <h3 class="admin-section-title dark">{{ 'admin.players.sessionAnswers.title' | translate }}</h3>
+
+          <!-- Session ID Input (alternative to clicking a session card) -->
+          <div class="session-search-container">
+            <div class="session-input-wrapper">
+              <i class="fas fa-hashtag"></i>
+              <input
+                type="number"
+                class="session-input"
+                [placeholder]="'admin.players.sessionAnswers.placeholder' | translate"
+                [value]="sessionIdInput()"
+                (input)="onSessionIdChange($event)"
+                (keyup.enter)="loadSessionAnswers()">
+            </div>
+            <button
+              class="admin-btn admin-btn-primary"
+              (click)="loadSessionAnswers()"
+              [disabled]="isLoadingSessionAnswers() || !sessionIdInput()">
+              @if (isLoadingSessionAnswers()) {
+                <span class="spinner-small"></span>
+              } @else {
+                <i class="fas fa-search"></i>
+              }
+              {{ 'admin.players.sessionAnswers.search' | translate }}
+            </button>
+            <label class="errors-filter-toggle">
+              <input
+                type="checkbox"
+                [checked]="showOnlyErrors()"
+                (change)="toggleErrorsFilter()">
+              <span>{{ 'admin.players.sessionAnswers.errorsOnly' | translate }}</span>
+            </label>
+          </div>
+
+          <!-- Session Answers Results -->
+          @if (sessionAnswers()) {
+          <div class="session-answers-results">
+            <!-- Summary -->
+            <div class="session-summary">
+              <div class="summary-item">
+                <span class="summary-label">{{ 'admin.players.sessionAnswers.sessionId' | translate }}</span>
+                <span class="summary-value">#{{ sessionAnswers()!.session_id }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">{{ 'admin.players.sessionAnswers.score' | translate }}</span>
+                <span class="summary-value">{{ sessionAnswers()!.score }}</span>
+              </div>
+              <div class="summary-item correct">
+                <span class="summary-label">{{ 'admin.players.sessionAnswers.correct' | translate }}</span>
+                <span class="summary-value">{{ sessionAnswers()!.summary!.correct }}</span>
+              </div>
+              <div class="summary-item incorrect">
+                <span class="summary-label">{{ 'admin.players.sessionAnswers.incorrect' | translate }}</span>
+                <span class="summary-value">{{ sessionAnswers()!.summary!.incorrect }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">{{ 'admin.players.accuracy' | translate }}</span>
+                <span class="summary-value">{{ sessionAnswers()!.summary!.accuracy }}%</span>
+              </div>
+            </div>
+
+            <!-- Answers List -->
+            @if (sessionAnswers()!.answers && sessionAnswers()!.answers!.length > 0) {
+            <div class="answers-list">
+              @for (answer of sessionAnswers()!.answers; track answer.answer_id) {
+              <div class="answer-card" [class.correct]="answer.is_correct" [class.incorrect]="!answer.is_correct">
+                <div class="answer-header" (click)="toggleAnswerExpand(answer.answer_id)">
+                  <div class="answer-status">
+                    @if (answer.is_correct) {
+                      <i class="fas fa-check-circle"></i>
+                    } @else {
+                      <i class="fas fa-times-circle"></i>
+                    }
+                  </div>
+                  <div class="answer-question-preview">
+                    <span class="question-number">Q{{ answer.question.id }}</span>
+                    <span class="question-text">{{ answer.question.statement | slice:0:80 }}{{ answer.question.statement.length > 80 ? '...' : '' }}</span>
+                  </div>
+                  <div class="answer-meta">
+                    <span class="answer-time" *ngIf="answer.time_to_answer">{{ answer.time_to_answer.toFixed(1) }}s</span>
+                    <span class="difficulty-badge">D{{ answer.question.difficulty }}</span>
+                    <i class="fas" [class.fa-chevron-down]="expandedAnswerId() !== answer.answer_id" [class.fa-chevron-up]="expandedAnswerId() === answer.answer_id"></i>
+                  </div>
+                </div>
+
+                @if (expandedAnswerId() === answer.answer_id) {
+                <div class="answer-details">
+                  <div class="question-full">
+                    <p class="question-statement">{{ answer.question.statement }}</p>
+                    <span class="question-category">{{ answer.question.category }}</span>
+                  </div>
+
+                  <div class="options-list">
+                    @for (option of answer.question.options; track option.id) {
+                    <div class="option-item"
+                         [class.selected]="option.id === answer.selected_option.id"
+                         [class.correct-option]="option.is_correct"
+                         [class.wrong-selection]="option.id === answer.selected_option.id && !option.is_correct">
+                      <span class="option-marker">
+                        @if (option.is_correct) {
+                          <i class="fas fa-check"></i>
+                        } @else if (option.id === answer.selected_option.id) {
+                          <i class="fas fa-times"></i>
+                        }
+                      </span>
+                      <span class="option-text">{{ option.text }}</span>
+                    </div>
+                    }
+                  </div>
+
+                  @if (answer.explanation) {
+                  <div class="explanation-box" [class.correct]="answer.is_correct" [class.incorrect]="!answer.is_correct">
+                    <i class="fas fa-lightbulb"></i>
+                    <p>{{ answer.explanation }}</p>
+                  </div>
+                  }
+                </div>
+                }
+              </div>
+              }
+            </div>
+            } @else {
+            <div class="admin-no-data small">
+              <i class="fas fa-inbox"></i>
+              <p>{{ 'admin.players.sessionAnswers.noAnswers' | translate }}</p>
+            </div>
+            }
+          </div>
+          }
+        </div>
         }
       </div>
     </div>

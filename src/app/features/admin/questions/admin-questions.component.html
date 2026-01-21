@@ -141,6 +141,18 @@
             <i class="fas fa-info-circle"></i>
             {{ 'admin.questions.csvNote' | translate }}
           </p>
+          <button
+            type="button"
+            class="btn btn-secondary btn-download-template"
+            (click)="downloadCsvTemplate()"
+            [disabled]="isDownloadingTemplate()">
+            @if (isDownloadingTemplate()) {
+              <span class="spinner-small"></span>
+            } @else {
+              <i class="fas fa-download"></i>
+            }
+            {{ 'admin.questions.downloadTemplate' | translate }}
+          </button>
         </div>
 
         <div class="csv-upload-area">

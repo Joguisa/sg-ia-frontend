@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, effect } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -89,12 +89,8 @@ export class GameBoardComponent implements OnInit {
     private translate: TranslateService,
     private router: Router
   ) {
-    // Watch for game over state
-    effect(() => {
-      if (this.lives() === 0) {
-        this.endGame();
-      }
-    });
+    // Game over is now handled in submitAnswer() via setTimeout
+    // to allow showing feedback before transitioning to gameover state
   }
 
   ngOnInit(): void {
@@ -235,7 +231,7 @@ export class GameBoardComponent implements OnInit {
   }
 
   viewResults(): void {
-    this.handleGameCompleted(this.translate.instant('game.notifications.board.completed'));
+    this.router.navigate(['/leaderboard']);
   }
 
   private showErrorMessage(message: string): void {
@@ -301,19 +297,13 @@ export class GameBoardComponent implements OnInit {
             return;
           }
 
-          // IMPORTANTE: Si lives = 0, el effect() activará endGame() automáticamente
+          // Si lives = 0, el effect() activará endGame() automáticamente
           // Pero mostramos el feedback brevemente antes de game over
           this.gameState.set('feedback');
           this.isAnswering.set(false);
 
-          // Si lives = 0, después de mostrar feedback por 3 segundos, forzar game over
-          if (response.lives === 0) {
-            setTimeout(() => {
-              if (this.lives() === 0 && this.gameState() !== 'gameover') {
-                this.endGame();
-              }
-            }, 3000);
-          }
+          // Si lives = 0, mantenemos el estado de feedback para que el usuario vea por qué perdió
+          // y le permitimos navegar a resultados manualmente
         } else {
           this.notification.error(response.error || this.translate.instant('game.notifications.board.submit_error'), NOTIFICATION_DURATION.DEFAULT);
           this.isAnswering.set(false);

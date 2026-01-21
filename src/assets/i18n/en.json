@@ -127,7 +127,12 @@
       "quizCompletedBadge": "Quiz Completed",
       "finalDifficulty": "Final Difficulty",
       "noQuestionsTitle": "No questions available",
-      "noQuestionsMessage": "There are no questions available at this time. Please try again later or contact the administrator."
+      "noQuestionsMessage": "There are no questions available at this time. Please try again later or contact the administrator.",
+      "viewErrors": "View Errors",
+      "hideErrors": "Hide Errors",
+      "errorsTitle": "Your Mistakes",
+      "noErrors": "Excellent! You made no mistakes.",
+      "errorsLoadError": "Error loading mistakes"
     },
     "notifications": {
       "board": {
@@ -481,6 +486,7 @@
       "csvImportTitle": "Import from CSV",
       "csvFormatRequired": "CSV format required:",
       "csvNote": "category_id: existing ID | difficulty: 1-5 | correct_option_index: 0-3 (0=option_1) | Max 5MB",
+      "downloadTemplate": "Download Template",
       "selectCsvFile": "Select CSV file",
       "importing": "Importing...",
       "imported": "imported",
@@ -602,6 +608,8 @@
         "csv_import_success": "{{imported}} questions imported successfully",
         "csv_import_error": "Error importing CSV",
         "csv_invalid": "Invalid CSV file",
+        "template_downloaded": "Template downloaded successfully",
+        "template_download_error": "Error downloading template",
         "load_full_error": "Error loading question",
         "form_error": "Please correct the form errors",
         "update_success": "Question updated successfully. Status: Pending verification.",
@@ -797,6 +805,36 @@
       "totalGames": "Total Games",
       "avgScore": "Average Score",
       "avgDifficulty": "Average Difficulty",
+      "streaks": {
+        "title": "Streaks",
+        "current": "Current Streak",
+        "best": "Best Streak",
+        "onFire": "On Fire"
+      },
+      "sessions": {
+        "title": "Player Sessions",
+        "noSessions": "This player has no sessions recorded",
+        "status": {
+          "completed": "Completed",
+          "in_progress": "In Progress",
+          "abandoned": "Abandoned"
+        }
+      },
+      "sessionAnswers": {
+        "title": "Session Answer History",
+        "selectSession": "Select a session above or enter an ID manually",
+        "placeholder": "Session ID",
+        "search": "Search",
+        "errorsOnly": "Errors only",
+        "sessionId": "Session",
+        "score": "Score",
+        "correct": "Correct",
+        "incorrect": "Incorrect",
+        "noAnswers": "No answers to display",
+        "invalidSessionId": "Please enter a valid session ID",
+        "loadError": "Error loading answers",
+        "sessionNotFound": "Session not found"
+      },
       "performanceByCategory": "Performance by Category",
       "categoryDetail": "Category Detail",
       "category": "Category",
@@ -989,7 +1027,13 @@
     "noStats": "You have no statistics in any category. Start playing!",
     "playAgain": "Play Again",
     "backToHome": "Back to Home",
-    "statsUpdatedRealtime": "Statistics updated in real-time"
+    "statsUpdatedRealtime": "Statistics updated in real-time",
+    "streaks": {
+      "title": "Your Streaks",
+      "current": "Current Streak",
+      "best": "Best Streak",
+      "onFire": "On Fire"
+    }
   },
   "layout": {
     "game": "Game",

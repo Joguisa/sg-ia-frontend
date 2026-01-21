@@ -15,7 +15,8 @@ import { NOTIFICATION_DURATION } from '../../../core/constants/notification-conf
 
 import { LeaderboardEntry } from '../../../core/models/game/leaderboard.interface';
 import { Player } from '../../../core/models/player/player.interface';
-import { PlayerStatsResponse, PlayerTopicStats } from '../../../core/models/player/player-stats.interface';
+import { PlayerStatsResponse, PlayerTopicStats, PlayerStreaksResponse, PlayerSession, PlayerSessionsResponse } from '../../../core/models/player/player-stats.interface';
+import { SessionAnswersResponse, SessionAnswer } from '../../../core/models/game/session-stats.interface';
 
 @Component({
   selector: 'app-admin-players',
@@ -72,8 +73,22 @@ export class AdminPlayersComponent implements OnInit {
   // Tab 3: Player Profile
   selectedPlayerId = signal<number | null>(null);
   selectedPlayerStats = signal<PlayerStatsResponse | null>(null);
+  selectedPlayerStreaks = signal<PlayerStreaksResponse | null>(null);
   isLoadingProfile = signal<boolean>(false);
+  isLoadingStreaks = signal<boolean>(false);
   profileChartData = signal<ChartData<'radar'> | null>(null);
+
+  // Player Sessions
+  playerSessions = signal<PlayerSession[]>([]);
+  isLoadingSessions = signal<boolean>(false);
+  selectedSessionId = signal<number | null>(null);
+
+  // Session Answers
+  sessionIdInput = signal<string>('');
+  sessionAnswers = signal<SessionAnswersResponse | null>(null);
+  isLoadingSessionAnswers = signal<boolean>(false);
+  showOnlyErrors = signal<boolean>(false);
+  expandedAnswerId = signal<number | null>(null);
   profileChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false,
@@ -262,7 +277,15 @@ export class AdminPlayersComponent implements OnInit {
 
   loadPlayerProfile(playerId: number): void {
     this.isLoadingProfile.set(true);
+    this.isLoadingStreaks.set(true);
+    this.isLoadingSessions.set(true);
 
+    // Clear previous session data
+    this.playerSessions.set([]);
+    this.selectedSessionId.set(null);
+    this.clearSessionAnswers();
+
+    // Load player stats
     this.playerService.getPlayerStats(playerId).subscribe({
       next: (response) => {
         if (response.ok && response.global) {
@@ -278,6 +301,32 @@ export class AdminPlayersComponent implements OnInit {
       error: () => {
         this.notification.error(this.translate.instant('admin.players.notifications.load_profile_connection_error'), NOTIFICATION_DURATION.DEFAULT);
         this.isLoadingProfile.set(false);
+      }
+    });
+
+    // Load player streaks
+    this.playerService.getPlayerStreaks(playerId).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.selectedPlayerStreaks.set(response);
+        }
+        this.isLoadingStreaks.set(false);
+      },
+      error: () => {
+        this.isLoadingStreaks.set(false);
+      }
+    });
+
+    // Load player sessions
+    this.playerService.getPlayerSessions(playerId, 15).subscribe({
+      next: (response) => {
+        if (response.ok && response.sessions) {
+          this.playerSessions.set(response.sessions);
+        }
+        this.isLoadingSessions.set(false);
+      },
+      error: () => {
+        this.isLoadingSessions.set(false);
       }
     });
   }
@@ -307,8 +356,99 @@ export class AdminPlayersComponent implements OnInit {
   clearPlayerSelection(): void {
     this.selectedPlayerId.set(null);
     this.selectedPlayerStats.set(null);
+    this.selectedPlayerStreaks.set(null);
     this.profileChartData.set(null);
+    this.clearSessionAnswers();
     this.onTabChange('players');
+  }
+
+  // ============================================================================
+  // SESSION ANSWERS
+  // ============================================================================
+
+  onSessionIdChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.sessionIdInput.set(input.value);
+  }
+
+  loadSessionAnswers(): void {
+    const sessionId = parseInt(this.sessionIdInput(), 10);
+    if (isNaN(sessionId) || sessionId <= 0) {
+      this.notification.warning(
+        this.translate.instant('admin.players.sessionAnswers.invalidSessionId'),
+        NOTIFICATION_DURATION.DEFAULT
+      );
+      return;
+    }
+
+    this.isLoadingSessionAnswers.set(true);
+    this.sessionAnswers.set(null);
+    this.expandedAnswerId.set(null);
+
+    this.playerService.getSessionAnswers(sessionId, this.showOnlyErrors()).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.sessionAnswers.set(response);
+        } else {
+          this.notification.error(
+            response.error || this.translate.instant('admin.players.sessionAnswers.loadError'),
+            NOTIFICATION_DURATION.DEFAULT
+          );
+        }
+        this.isLoadingSessionAnswers.set(false);
+      },
+      error: (error) => {
+        const errorMsg = error.status === 404
+          ? this.translate.instant('admin.players.sessionAnswers.sessionNotFound')
+          : this.translate.instant('admin.players.sessionAnswers.loadError');
+        this.notification.error(errorMsg, NOTIFICATION_DURATION.DEFAULT);
+        this.isLoadingSessionAnswers.set(false);
+      }
+    });
+  }
+
+  toggleErrorsFilter(): void {
+    this.showOnlyErrors.set(!this.showOnlyErrors());
+    if (this.sessionAnswers()) {
+      this.loadSessionAnswers();
+    }
+  }
+
+  toggleAnswerExpand(answerId: number): void {
+    if (this.expandedAnswerId() === answerId) {
+      this.expandedAnswerId.set(null);
+    } else {
+      this.expandedAnswerId.set(answerId);
+    }
+  }
+
+  selectSession(sessionId: number): void {
+    this.selectedSessionId.set(sessionId);
+    this.sessionIdInput.set(sessionId.toString());
+    this.loadSessionAnswers();
+  }
+
+  clearSessionAnswers(): void {
+    this.sessionIdInput.set('');
+    this.sessionAnswers.set(null);
+    this.expandedAnswerId.set(null);
+    this.showOnlyErrors.set(false);
+    this.selectedSessionId.set(null);
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '-';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  getSessionStatusClass(status: string): string {
+    switch (status) {
+      case 'completed': return 'status-completed';
+      case 'in_progress': return 'status-in-progress';
+      case 'abandoned': return 'status-abandoned';
+      default: return '';
+    }
   }
 
   // ============================================================================

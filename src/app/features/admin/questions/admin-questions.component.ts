@@ -51,6 +51,7 @@ export class AdminQuestionsComponent implements OnInit {
   batchStatistics = signal<BatchStatistics[]>([]);
   isCsvImportOpen = signal<boolean>(false);
   isImportingCsv = signal<boolean>(false);
+  isDownloadingTemplate = signal<boolean>(false);
   isVerifyingBatch = signal<boolean>(false);
   lastImportResult = signal<CsvImportResponse | null>(null);
 
@@ -610,6 +611,30 @@ export class AdminQuestionsComponent implements OnInit {
 
     this.importCsvFile(file);
     input.value = '';
+  }
+
+  /**
+   * Descarga la plantilla CSV para importar preguntas
+   */
+  downloadCsvTemplate(): void {
+    this.isDownloadingTemplate.set(true);
+
+    this.adminService.downloadCsvTemplate().subscribe({
+      next: () => {
+        this.notification.success(
+          this.translate.instant('admin.questions.notifications.template_downloaded'),
+          NOTIFICATION_DURATION.DEFAULT
+        );
+        this.isDownloadingTemplate.set(false);
+      },
+      error: () => {
+        this.notification.error(
+          this.translate.instant('admin.questions.notifications.template_download_error'),
+          NOTIFICATION_DURATION.DEFAULT
+        );
+        this.isDownloadingTemplate.set(false);
+      }
+    });
   }
 
   /**

@@ -614,9 +614,11 @@
 /* ============ GAME OVER STATE ============ */
 .gameover-screen {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 400px;
+  padding: 40px 20px;
 }
 
 .gameover-card {
@@ -822,6 +824,229 @@
   font-size: 12px;
   font-weight: 600;
   border: 1px solid #ddd;
+}
+
+/* ============ ERRORS SECTION ============ */
+.btn-errors {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-errors:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(220, 53, 69, 0.5);
+}
+
+.errors-section {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
+}
+
+.errors-title {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.errors-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+}
+
+.errors-loading p {
+  color: #666;
+  margin: 0;
+}
+
+.no-errors {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.no-errors i {
+  font-size: 48px;
+}
+
+.no-errors p {
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.errors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.error-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.error-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+  border-left: 4px solid #dc3545;
+}
+
+.error-question-number {
+  background: #dc3545;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.error-question-text {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.error-header i {
+  color: #999;
+  font-size: 14px;
+}
+
+.error-details {
+  padding: 20px;
+  border-top: 1px solid #eee;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.error-statement {
+  font-size: 16px;
+  color: #333;
+  line-height: 1.6;
+  margin: 0 0 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.error-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.error-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #f5f5f5;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.error-option.correct {
+  background: #d4edda;
+  border: 2px solid #28a745;
+}
+
+.error-option.wrong {
+  background: #f8d7da;
+  border: 2px solid #dc3545;
+}
+
+.option-marker {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.error-option.correct .option-marker {
+  color: #28a745;
+}
+
+.error-option.wrong .option-marker {
+  color: #dc3545;
+}
+
+.error-option .option-text {
+  flex: 1;
+  line-height: 1.5;
+}
+
+.error-explanation {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+}
+
+.error-explanation i {
+  color: #ffc107;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.error-explanation p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #5d4037;
 }
 
 /* ============ RESPONSIVE ============ */

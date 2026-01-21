@@ -127,7 +127,12 @@
       "quizCompletedBadge": "Quiz Completado",
       "finalDifficulty": "Dificultad Final",
       "noQuestionsTitle": "Sin preguntas disponibles",
-      "noQuestionsMessage": "No hay preguntas disponibles en este momento. Por favor, intenta más tarde o contacta al administrador."
+      "noQuestionsMessage": "No hay preguntas disponibles en este momento. Por favor, intenta más tarde o contacta al administrador.",
+      "viewErrors": "Ver Errores",
+      "hideErrors": "Ocultar Errores",
+      "errorsTitle": "Tus Errores",
+      "noErrors": "¡Excelente! No cometiste errores.",
+      "errorsLoadError": "Error al cargar los errores"
     },
     "notifications": {
       "board": {
@@ -501,6 +506,7 @@
       "csvImportTitle": "Importar desde CSV",
       "csvFormatRequired": "Formato requerido del CSV:",
       "csvNote": "category_id: ID existente | difficulty: 1-5 | correct_option_index: 0-3 (0=option_1) | Max 5MB",
+      "downloadTemplate": "Descargar Plantilla",
       "selectCsvFile": "Seleccionar archivo CSV",
       "importing": "Importando...",
       "imported": "importadas",
@@ -622,6 +628,8 @@
         "csv_import_success": "{{imported}} preguntas importadas exitosamente",
         "csv_import_error": "Error al importar CSV",
         "csv_invalid": "Archivo CSV inválido",
+        "template_downloaded": "Plantilla descargada exitosamente",
+        "template_download_error": "Error al descargar la plantilla",
         "load_full_error": "Error al cargar la pregunta",
         "form_error": "Por favor corrige los errores del formulario",
         "update_success": "Pregunta actualizada exitosamente. Estado: Pendiente de verificación.",
@@ -817,6 +825,36 @@
       "totalGames": "Total Juegos",
       "avgScore": "Promedio Score",
       "avgDifficulty": "Dificultad Promedio",
+      "streaks": {
+        "title": "Rachas",
+        "current": "Racha Actual",
+        "best": "Mejor Racha",
+        "onFire": "En Racha"
+      },
+      "sessions": {
+        "title": "Sesiones del Jugador",
+        "noSessions": "Este jugador no tiene sesiones registradas",
+        "status": {
+          "completed": "Completada",
+          "in_progress": "En Progreso",
+          "abandoned": "Abandonada"
+        }
+      },
+      "sessionAnswers": {
+        "title": "Historial de Respuestas por Sesión",
+        "selectSession": "Selecciona una sesión arriba o ingresa un ID manualmente",
+        "placeholder": "ID de sesión",
+        "search": "Buscar",
+        "errorsOnly": "Solo errores",
+        "sessionId": "Sesión",
+        "score": "Puntaje",
+        "correct": "Correctas",
+        "incorrect": "Incorrectas",
+        "noAnswers": "No hay respuestas para mostrar",
+        "invalidSessionId": "Por favor ingresa un ID de sesión válido",
+        "loadError": "Error al cargar las respuestas",
+        "sessionNotFound": "Sesión no encontrada"
+      },
       "performanceByCategory": "Rendimiento por Categoría",
       "categoryDetail": "Detalle por Categoría",
       "category": "Categoría",
@@ -1009,7 +1047,13 @@
     "noStats": "Aún no tienes estadísticas en ninguna categoría. ¡Comienza a jugar!",
     "playAgain": "Jugar de Nuevo",
     "backToHome": "Volver al Inicio",
-    "statsUpdatedRealtime": "Estadísticas actualizadas en tiempo real"
+    "statsUpdatedRealtime": "Estadísticas actualizadas en tiempo real",
+    "streaks": {
+      "title": "Tus Rachas",
+      "current": "Racha Actual",
+      "best": "Mejor Racha",
+      "onFire": "En Racha"
+    }
   },
   "layout": {
     "game": "Juego",
