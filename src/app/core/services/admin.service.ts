@@ -246,14 +246,16 @@ export class AdminService {
   }
 
   /**
-   * Obtiene todas las preguntas activas con información de categoría
+   * Obtiene preguntas con filtro de estado activo/inactivo
    *
-   * Backend: GET /admin/questions
+   * Backend: GET /admin/questions?status=active|inactive|all
+   * @param status Filtro de estado: 'active' (default), 'inactive', o 'all'
    * @returns Observable con listado de preguntas
    */
-  getQuestions(): Observable<GetQuestionsResponse> {
+  getQuestions(status: 'active' | 'inactive' | 'all' = 'active'): Observable<GetQuestionsResponse> {
+    const params = status !== 'active' ? `?status=${status}` : '';
     return this.http.get<GetQuestionsResponse>(
-      `${this.apiUrl}/admin/questions`
+      `${this.apiUrl}/admin/questions${params}`
     );
   }
 
@@ -270,7 +272,7 @@ export class AdminService {
   }
 
   /**
-   * Elimina una pregunta de la base de datos
+   * Elimina una pregunta de la base de datos (soft delete)
    *
    * Backend: DELETE /admin/questions/{id}
    * @param questionId ID de la pregunta a eliminar
@@ -279,6 +281,20 @@ export class AdminService {
   deleteQuestion(questionId: number): Observable<DeleteQuestionResponse> {
     return this.http.delete<DeleteQuestionResponse>(
       `${this.apiUrl}${environment.apiEndpoints.admin.deleteQuestion(questionId)}`
+    );
+  }
+
+  /**
+   * Restaura una pregunta eliminada lógicamente
+   *
+   * Backend: PATCH /admin/questions/{id}/restore
+   * @param questionId ID de la pregunta a restaurar
+   * @returns Observable con confirmación de restauración
+   */
+  restoreQuestion(questionId: number): Observable<{ ok: boolean; message?: string }> {
+    return this.http.patch<{ ok: boolean; message?: string }>(
+      `${this.apiUrl}${environment.apiEndpoints.admin.restoreQuestion(questionId)}`,
+      {}
     );
   }
 

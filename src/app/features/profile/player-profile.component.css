@@ -326,9 +326,12 @@
 }
 
 @keyframes pulse-streak {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4);
   }
+
   50% {
     box-shadow: 0 0 20px 10px rgba(255, 107, 53, 0);
   }
@@ -338,7 +341,8 @@
    DIFFICULTY SECTION
    ============================================================================ */
 .difficulty-section,
-.topics-section {
+.topics-section,
+.errors-section {
   background: white;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
@@ -533,6 +537,7 @@
   background: #f8f9fa;
   border-radius: 8px;
 }
+
 
 /* ============================================================================
    ACTION BUTTONS
@@ -769,7 +774,8 @@
   gap: 8px;
 }
 
-.your-answer, .correct-answer {
+.your-answer,
+.correct-answer {
   margin: 0;
   display: flex;
   align-items: center;

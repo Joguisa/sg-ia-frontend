@@ -227,13 +227,23 @@
             </select>
           </div>
 
-          <!-- Status Filter -->
+          <!-- Status Filter (Verified/Pending) -->
           <div class="filter-item">
             <label>{{ 'admin.questions.status' | translate }}</label>
             <select formControlName="status" class="form-control">
               <option value="all">{{ 'admin.questions.all' | translate }}</option>
               <option value="verified">{{ 'admin.questions.filter.verified' | translate }}</option>
               <option value="pending">{{ 'admin.questions.filter.pending' | translate }}</option>
+            </select>
+          </div>
+
+          <!-- Active Status Filter (Active/Inactive) -->
+          <div class="filter-item">
+            <label>{{ 'admin.questions.activeStatus' | translate }}</label>
+            <select formControlName="activeStatus" class="form-control">
+              <option value="active">{{ 'admin.questions.filter.activeOnly' | translate }}</option>
+              <option value="inactive">{{ 'admin.questions.filter.inactiveOnly' | translate }}</option>
+              <option value="all">{{ 'admin.questions.filter.allQuestions' | translate }}</option>
             </select>
           </div>
 
@@ -297,13 +307,14 @@
               <th class="col-category">{{ 'admin.questions.category' | translate }}</th>
               <th class="col-difficulty">{{ 'admin.questions.difficulty' | translate }}</th>
               <th class="col-status">{{ 'admin.questions.status' | translate }}</th>
+              <th class="col-active-status">{{ 'admin.questions.activeStatus' | translate }}</th>
               <th class="col-ai">{{ 'admin.questions.ai' | translate }}</th>
               <th class="col-actions">{{ 'admin.questions.actions' | translate }}</th>
             </tr>
           </thead>
           <tbody>
             @for (question of filteredQuestions(); track question.id) {
-            <tr class="table-row" [ngClass]="{ 'pending-verify': !(question.admin_verified ?? false) }">
+            <tr class="table-row" [ngClass]="{ 'pending-verify': !(question.admin_verified ?? false), 'inactive-question': question.is_active === 0 || question.is_active === false }">
               <!-- ID -->
               <td class="col-id">
                 <code>{{ question.id }}</code>
@@ -330,7 +341,7 @@
                 </div>
               </td>
 
-              <!-- Status -->
+              <!-- Status (Verified/Pending) -->
               <td class="col-status">
                 @if (question.admin_verified ?? false) {
                 <span class="status-badge status-verified">
@@ -341,6 +352,21 @@
                 <span class="status-badge status-pending">
                   <i class="fas fa-clock"></i>
                   {{ 'admin.questions.pending' | translate }}
+                </span>
+                }
+              </td>
+
+              <!-- Active Status (Active/Inactive) -->
+              <td class="col-active-status">
+                @if (question.is_active === 1 || question.is_active === true || question.is_active === undefined) {
+                <span class="status-badge status-active">
+                  <i class="fas fa-circle-check"></i>
+                  {{ 'admin.questions.active' | translate }}
+                </span>
+                } @else {
+                <span class="status-badge status-inactive">
+                  <i class="fas fa-circle-xmark"></i>
+                  {{ 'admin.questions.inactive' | translate }}
                 </span>
                 }
               </td>
@@ -377,23 +403,33 @@
                     }
                   </button>
 
-                  <!-- Delete with Confirmation -->
-                  @if (deleteConfirmId() !== question.id) {
-                  <button class="btn-action btn-delete" (click)="deleteQuestion(question.id)"
-                    [title]="'admin.questions.delete' | translate">
-                    <i class="fas fa-trash"></i>
+                  <!-- Restore (only for inactive questions) -->
+                  @if (question.is_active === 0 || question.is_active === false) {
+                  <button class="btn-action btn-restore" (click)="restoreQuestion(question.id)"
+                    [title]="'admin.questions.restore' | translate">
+                    <i class="fas fa-rotate-left"></i>
                   </button>
-                  } @else {
-                  <div class="confirm-buttons">
-                    <button class="btn-confirm confirm-yes" (click)="confirmDelete(question.id)"
-                      [title]="'admin.questions.confirmDeletion' | translate">
-                      <i class="fas fa-check"></i>
+                  }
+
+                  <!-- Delete with Confirmation (only for active questions) -->
+                  @if (question.is_active !== 0 && question.is_active !== false) {
+                    @if (deleteConfirmId() !== question.id) {
+                    <button class="btn-action btn-delete" (click)="deleteQuestion(question.id)"
+                      [title]="'admin.questions.delete' | translate">
+                      <i class="fas fa-trash"></i>
                     </button>
-                    <button class="btn-confirm confirm-no" (click)="cancelDelete()"
-                      [title]="'admin.questions.cancel' | translate">
-                      <i class="fas fa-times"></i>
-                    </button>
-                  </div>
+                    } @else {
+                    <div class="confirm-buttons">
+                      <button class="btn-confirm confirm-yes" (click)="confirmDelete(question.id)"
+                        [title]="'admin.questions.confirmDeletion' | translate">
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button class="btn-confirm confirm-no" (click)="cancelDelete()"
+                        [title]="'admin.questions.cancel' | translate">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                    }
                   }
                 </div>
               </td>

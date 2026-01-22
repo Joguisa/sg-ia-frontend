@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { TabsComponent, Tab } from '../../../shared/tabs/tabs.component';
 import { GameService } from '../../../core/services/game.service';
@@ -21,7 +21,7 @@ import { SessionAnswersResponse, SessionAnswer } from '../../../core/models/game
 @Component({
   selector: 'app-admin-players',
   standalone: true,
-  imports: [CommonModule, FormsModule, TabsComponent, BaseChartDirective, TranslatePipe],
+  imports: [CommonModule, FormsModule, TabsComponent, BaseChartDirective, TranslateModule],
   templateUrl: './admin-players.component.html',
   styleUrls: [
     '../shared/styles/admin-styles.css',
@@ -445,7 +445,9 @@ export class AdminPlayersComponent implements OnInit {
   getSessionStatusClass(status: string): string {
     switch (status) {
       case 'completed': return 'status-completed';
+      case 'game_over': return 'status-completed';
       case 'in_progress': return 'status-in-progress';
+      case 'active': return 'status-in-progress';
       case 'abandoned': return 'status-abandoned';
       default: return '';
     }

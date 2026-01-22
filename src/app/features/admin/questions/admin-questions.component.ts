@@ -136,14 +136,23 @@ export class AdminQuestionsComponent implements OnInit {
     this.filterForm = this.fb.group({
       search: ['', [Validators.maxLength(100)]],
       category: [null],
-      status: ['all']
+      status: ['all'],
+      activeStatus: ['active']  // Filtro de estado activo/inactivo
     });
 
     // Suscribirse a cambios en los filtros para activar el recomputo
-    this.filterForm.valueChanges.subscribe(() => {
+    this.filterForm.valueChanges.subscribe((values) => {
       this.filterTrigger.set(this.filterTrigger() + 1);
+      // Si cambia el filtro de activeStatus, recargar desde backend
+      if (values.activeStatus !== this._lastActiveStatus) {
+        this._lastActiveStatus = values.activeStatus;
+        this.loadQuestions();
+      }
     });
   }
+
+  // Variable para trackear el último estado de activeStatus
+  private _lastActiveStatus: string = 'active';
 
   // Validador personalizado para cantidad
   quantityValidator(control: AbstractControl): ValidationErrors | null {
@@ -168,12 +177,15 @@ export class AdminQuestionsComponent implements OnInit {
   }
 
   /**
- * Carga la lista de preguntas desde el backend
+ * Carga la lista de preguntas desde el backend con filtro de estado
  */
   private loadQuestions(): void {
     this.isLoading.set(true);
 
-    this.adminService.getQuestions().subscribe({
+    // Obtener el filtro de estado activo/inactivo
+    const activeStatus = this.filterForm?.get('activeStatus')?.value || 'active';
+
+    this.adminService.getQuestions(activeStatus as 'active' | 'inactive' | 'all').subscribe({
       next: (response) => {
         this.allQuestions.set(response.questions || []);
         this.isLoading.set(false);
@@ -489,6 +501,35 @@ export class AdminQuestionsComponent implements OnInit {
    */
   cancelDelete(): void {
     this.deleteConfirmId.set(null);
+  }
+
+  /**
+   * Restaura una pregunta eliminada lógicamente
+   */
+  restoreQuestion(questionId: number): void {
+    this.adminService.restoreQuestion(questionId).subscribe({
+      next: (response) => {
+        if (response.ok) {
+          this.notification.success(
+            this.translate.instant('admin.questions.notifications.restore_success'),
+            NOTIFICATION_DURATION.SHORT
+          );
+          // Recargar preguntas para actualizar la lista
+          this.loadQuestions();
+        } else {
+          this.notification.error(
+            response.message || this.translate.instant('admin.questions.notifications.restore_error'),
+            NOTIFICATION_DURATION.DEFAULT
+          );
+        }
+      },
+      error: (error) => {
+        this.notification.error(
+          this.translate.instant('admin.questions.notifications.restore_error'),
+          NOTIFICATION_DURATION.DEFAULT
+        );
+      }
+    });
   }
 
   /**

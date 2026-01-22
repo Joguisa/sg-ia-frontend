@@ -79,6 +79,8 @@ export const environment = {
       verifyQuestion: (id: number) => `/admin/questions/${id}/verify`,
       /** DELETE /admin/questions/{id} - Eliminar pregunta */
       deleteQuestion: (id: number) => `/admin/questions/${id}`,
+      /** PATCH /admin/questions/{id}/restore - Restaurar pregunta eliminada */
+      restoreQuestion: (id: number) => `/admin/questions/${id}/restore`,
       /** GET /admin/questions - Obtener todas las preguntas con info de categoría */
       getQuestions: '/admin/questions',
       /** GET /admin/config/prompt - Obtener configuración de prompt IA */

@@ -466,8 +466,15 @@
       "filter": {
         "all": "Todas",
         "verified": "Verificadas",
-        "pending": "Pendientes"
+        "pending": "Pendientes",
+        "activeOnly": "Solo Activas",
+        "inactiveOnly": "Solo Inactivas",
+        "allQuestions": "Todas las Preguntas"
       },
+      "activeStatus": "Estado Activo",
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "restore": "Restaurar",
       "noQuestions": "No hay preguntas",
       "noQuestionsDesc": "No se encontraron preguntas con los filtros aplicados.",
       "loadingQuestions": "Cargando preguntas...",
@@ -638,7 +645,9 @@
         "bulk_delete_error": "Error al eliminar preguntas",
         "bulk_unverify_success": "{{count}} pregunta(s) desverificada(s) exitosamente",
         "bulk_unverify_error": "Error al desverificar preguntas",
-        "no_verified": "No hay preguntas verificadas"
+        "no_verified": "No hay preguntas verificadas",
+        "restore_success": "Pregunta restaurada exitosamente",
+        "restore_error": "Error al restaurar la pregunta"
       }
     },
     "batches": {
@@ -837,7 +846,9 @@
         "status": {
           "completed": "Completada",
           "in_progress": "En Progreso",
-          "abandoned": "Abandonada"
+          "abandoned": "Abandonada",
+          "active": "Activa",
+          "game_over": "Terminada"
         }
       },
       "sessionAnswers": {
@@ -863,7 +874,6 @@
       "avgTime": "Tiempo Promedio",
       "player": "Jugador",
       "age": "Edad",
-      "sessions": "Sesiones",
       "totalAnswers": "Respuestas",
       "maxScore": "Máx. Puntaje",
       "lastPlayed": "Última partida",

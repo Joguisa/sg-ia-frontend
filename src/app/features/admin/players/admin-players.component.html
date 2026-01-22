@@ -354,9 +354,7 @@
           } @else if (playerSessions().length > 0) {
           <div class="sessions-grid">
             @for (session of playerSessions(); track session.session_id) {
-            <div
-              class="session-card"
-              [class.selected]="selectedSessionId() === session.session_id"
+            <div class="session-card" [class.selected]="selectedSessionId() === session.session_id"
               (click)="selectSession(session.session_id)">
               <div class="session-card-header">
                 <span class="session-id">#{{ session.session_id }}</span>
@@ -409,30 +407,21 @@
           <div class="session-search-container">
             <div class="session-input-wrapper">
               <i class="fas fa-hashtag"></i>
-              <input
-                type="number"
-                class="session-input"
-                [placeholder]="'admin.players.sessionAnswers.placeholder' | translate"
-                [value]="sessionIdInput()"
-                (input)="onSessionIdChange($event)"
-                (keyup.enter)="loadSessionAnswers()">
+              <input type="number" class="session-input"
+                [placeholder]="'admin.players.sessionAnswers.placeholder' | translate" [value]="sessionIdInput()"
+                (input)="onSessionIdChange($event)" (keyup.enter)="loadSessionAnswers()">
             </div>
-            <button
-              class="admin-btn admin-btn-primary"
-              (click)="loadSessionAnswers()"
+            <button class="admin-btn admin-btn-primary" (click)="loadSessionAnswers()"
               [disabled]="isLoadingSessionAnswers() || !sessionIdInput()">
               @if (isLoadingSessionAnswers()) {
-                <span class="spinner-small"></span>
+              <span class="spinner-small"></span>
               } @else {
-                <i class="fas fa-search"></i>
+              <i class="fas fa-search"></i>
               }
               {{ 'admin.players.sessionAnswers.search' | translate }}
             </button>
             <label class="errors-filter-toggle">
-              <input
-                type="checkbox"
-                [checked]="showOnlyErrors()"
-                (change)="toggleErrorsFilter()">
+              <input type="checkbox" [checked]="showOnlyErrors()" (change)="toggleErrorsFilter()">
               <span>{{ 'admin.players.sessionAnswers.errorsOnly' | translate }}</span>
             </label>
           </div>
@@ -472,19 +461,22 @@
                 <div class="answer-header" (click)="toggleAnswerExpand(answer.answer_id)">
                   <div class="answer-status">
                     @if (answer.is_correct) {
-                      <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-check-circle"></i>
                     } @else {
-                      <i class="fas fa-times-circle"></i>
+                    <i class="fas fa-times-circle"></i>
                     }
                   </div>
                   <div class="answer-question-preview">
                     <span class="question-number">Q{{ answer.question.id }}</span>
-                    <span class="question-text">{{ answer.question.statement | slice:0:80 }}{{ answer.question.statement.length > 80 ? '...' : '' }}</span>
+                    <span class="question-text">{{ answer.question.statement | slice:0:80 }}{{
+                      answer.question.statement.length > 80 ? '...' : '' }}</span>
                   </div>
                   <div class="answer-meta">
-                    <span class="answer-time" *ngIf="answer.time_to_answer">{{ answer.time_to_answer.toFixed(1) }}s</span>
+                    <span class="answer-time" *ngIf="answer.time_to_answer">{{ answer.time_to_answer.toFixed(1)
+                      }}s</span>
                     <span class="difficulty-badge">D{{ answer.question.difficulty }}</span>
-                    <i class="fas" [class.fa-chevron-down]="expandedAnswerId() !== answer.answer_id" [class.fa-chevron-up]="expandedAnswerId() === answer.answer_id"></i>
+                    <i class="fas" [class.fa-chevron-down]="expandedAnswerId() !== answer.answer_id"
+                      [class.fa-chevron-up]="expandedAnswerId() === answer.answer_id"></i>
                   </div>
                 </div>
 
@@ -497,15 +489,14 @@
 
                   <div class="options-list">
                     @for (option of answer.question.options; track option.id) {
-                    <div class="option-item"
-                         [class.selected]="option.id === answer.selected_option.id"
-                         [class.correct-option]="option.is_correct"
-                         [class.wrong-selection]="option.id === answer.selected_option.id && !option.is_correct">
+                    <div class="option-item" [class.selected]="option.id === answer.selected_option.id"
+                      [class.correct-option]="option.is_correct"
+                      [class.wrong-selection]="option.id === answer.selected_option.id && !option.is_correct">
                       <span class="option-marker">
                         @if (option.is_correct) {
-                          <i class="fas fa-check"></i>
+                        <i class="fas fa-check"></i>
                         } @else if (option.id === answer.selected_option.id) {
-                          <i class="fas fa-times"></i>
+                        <i class="fas fa-times"></i>
                         }
                       </span>
                       <span class="option-text">{{ option.text }}</span>
@@ -514,7 +505,8 @@
                   </div>
 
                   @if (answer.explanation) {
-                  <div class="explanation-box" [class.correct]="answer.is_correct" [class.incorrect]="!answer.is_correct">
+                  <div class="explanation-box" [class.correct]="answer.is_correct"
+                    [class.incorrect]="!answer.is_correct">
                     <i class="fas fa-lightbulb"></i>
                     <p>{{ answer.explanation }}</p>
                   </div>

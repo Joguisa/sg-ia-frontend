@@ -317,6 +317,10 @@
   width: 120px;
 }
 
+.col-active-status {
+  width: 100px;
+}
+
 .col-ai {
   width: 80px;
 }
@@ -337,6 +341,17 @@
 
 .table-row.pending-verify {
   background-color: rgba(243, 156, 18, 0.05);
+}
+
+/* Estilo para preguntas inactivas */
+.table-row.inactive-question {
+  background-color: #f8f9fa;
+  opacity: 0.7;
+}
+
+.table-row.inactive-question:hover {
+  background-color: #f1f3f5;
+  opacity: 0.85;
 }
 
 .table-row td {
@@ -387,6 +402,17 @@
 .status-pending {
   background: rgba(243, 156, 18, 0.1);
   color: #f59e0b;
+}
+
+/* Estados activo/inactivo */
+.status-active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-inactive {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
 .status-badge i {
@@ -452,6 +478,15 @@
 
 .btn-delete:hover {
   background: rgba(231, 76, 60, 0.1);
+}
+
+/* Botón restaurar para preguntas inactivas */
+.btn-restore {
+  color: #28a745;
+}
+
+.btn-restore:hover {
+  background: rgba(40, 167, 69, 0.1);
 }
 
 .btn-action i {

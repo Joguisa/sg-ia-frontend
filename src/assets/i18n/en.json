@@ -446,8 +446,15 @@
       "filter": {
         "all": "All",
         "verified": "Verified",
-        "pending": "Pending"
+        "pending": "Pending",
+        "activeOnly": "Active Only",
+        "inactiveOnly": "Inactive Only",
+        "allQuestions": "All Questions"
       },
+      "activeStatus": "Active Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "restore": "Restore",
       "noQuestions": "No questions found",
       "noQuestionsDesc": "No questions found with the applied filters.",
       "loadingQuestions": "Loading questions...",
@@ -618,7 +625,9 @@
         "bulk_delete_error": "Error deleting questions",
         "bulk_unverify_success": "{{count}} question(s) unverified successfully",
         "bulk_unverify_error": "Error unverifying questions",
-        "no_verified": "No verified questions"
+        "no_verified": "No verified questions",
+        "restore_success": "Question restored successfully",
+        "restore_error": "Error restoring question"
       }
     },
     "batches": {
@@ -817,7 +826,9 @@
         "status": {
           "completed": "Completed",
           "in_progress": "In Progress",
-          "abandoned": "Abandoned"
+          "abandoned": "Abandoned",
+          "active": "Active",
+          "game_over": "Game Over"
         }
       },
       "sessionAnswers": {
@@ -843,7 +854,6 @@
       "avgTime": "Average Time",
       "player": "Player",
       "age": "Age",
-      "sessions": "Sessions",
       "totalAnswers": "Total Answers",
       "maxScore": "Max Score",
       "lastPlayed": "Last Played",
