@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.sg-ia.com',
+  apiBaseUrl: 'https://franklinparrales.es/SGcolon/public',
   apiEndpoints: {
     // ========== AUTH (PUBLIC) ==========
     // AuthController - Autenticación de administradores
